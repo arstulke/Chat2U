@@ -1,4 +1,4 @@
-package de.chat2u.client;
+package de.chat2u.client.gui;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

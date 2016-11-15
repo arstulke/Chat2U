@@ -1,10 +1,13 @@
 package de.chat2u.client.cucumber.steps;
 
-import cucumber.api.PendingException;
 import cucumber.api.java.de.Dann;
 import cucumber.api.java.de.Gegebensei;
-import cucumber.api.java.de.Und;
 import cucumber.api.java.de.Wenn;
+import de.chat2u.client.Client;
+import de.chat2u.client.Result;
+import de.chat2u.client.Security;
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
 
 /**
  * Created RegisterSteps in de.chat2u.client.cucumber.steps
@@ -12,39 +15,41 @@ import cucumber.api.java.de.Wenn;
  */
 public class RegisterSteps {
 
-    @Wenn("^ich mich als Teilnehmer \"([^\"]*)\" und dem Passwort \"([^\"]*)\" registriere,$")
-    public void ichMichAlsTeilnehmerUndDemPasswortRegistriere(String arg0, String arg1) throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
-    }
-
-    @Dann("^wird \"([^\"]*)\" zur Teilnehmerliste hinzugefügt.$")
-    public void wirdZurTeilnehmerlisteHinzugefügt(String arg0) throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
-    }
-
-    @Dann("^wird das Registrieren verweigert$")
-    public void wirdDasRegistrierenVerweigert() throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
-    }
-
-    @Und("^ich den Token \"([^\"]*)\" eingebe$")
-    public void ichDenTokenEingebe(String arg0) throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
-    }
-
-    @Und("^wird unter \"([^\"]*)\" zur Administratorenliste hinzugefügt$")
-    public void wirdUnterZurAdministratorenlisteHinzugefügt(String arg0) throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
-    }
+    private Client client;
+    private Result result;
 
     @Gegebensei("^der Registriertoken \"([^\"]*)\".$")
-    public void derRegistriertoken(String arg0) throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
+    public void derRegistriertoken(String token) throws Throwable {
     }
+
+    //region Wenn
+    @Wenn("^ich mich als Teilnehmer \"([^\"]*)\" und dem Passwort \"([^\"]*)\" mit dem Token \"([^\"]*)\" registriere,$")
+    public void ichMichAlsTeilnehmerUndDemPasswortMitDemTokrnRegistriere(String nickname, String password, String token) throws Throwable {
+        String ip = "127.0.0.1";             //10.250.25.78
+        int port = 8080;
+        client = new Client(ip, port);
+        result = client.sendWithResult("/register " + nickname + " " + Security.createHash(password) + " " + token);
+    }
+
+    @Wenn("^ich mich als Teilnehmer \"([^\"]*)\" und dem Passwort \"([^\"]*)\" registriere,$")
+    public void ichMichAlsTeilnehmerUndDemPasswortRegistriere(String nickname, String password) throws Throwable {
+        String ip = "127.0.0.1";             //10.250.25.78
+        int port = 8080;
+        client = new Client(ip, port);
+        result = client.sendWithResult("/register " + nickname + " " + Security.createHash(password));
+
+    }
+    //endregion
+
+    //region Dann
+    @Dann("^wird das Registrieren genehmigt mit der Nachricht \"([^\"]*)\"$")
+    public void wirdDasRegistrierenGenehmigtMitDerNachricht(String message) throws Throwable {
+        Assert.assertThat(result, CoreMatchers.is(new Result(200, message)));
+    }
+
+    @Dann("^wird das Registrieren verweigert mit der Nachricht \"([^\"]*)\"$")
+    public void wirdDasRegistrierenVerweigertMitDerNachricht(String message) throws Throwable {
+        Assert.assertThat(result, CoreMatchers.is(new Result(403, message)));
+    }
+    //endregion
 }

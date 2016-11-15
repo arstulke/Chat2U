@@ -1,9 +1,12 @@
 package de.chat2u.client.unit;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * Chat2U:
@@ -12,8 +15,16 @@ import static org.junit.Assert.assertThat;
  */
 public class Tests {
 
+    @Ignore
     @Test
-    public void test(){
-        assertThat(0, is(0));
+    public void CopyToClipboard() {
+        try {
+            String address = InetAddress.getLocalHost().getHostAddress();
+            StringSelection selection = new StringSelection(address);
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
+            System.out.println(address);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
     }
 }
