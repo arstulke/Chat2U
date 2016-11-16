@@ -15,12 +15,13 @@ public class RegisterSteps {
     }
 
     //region Wenn
-    @Wenn("^ich mich als Teilnehmer \"([^\"]*)\" und dem Passwort \"([^\"]*)\" mit dem Token \"([^\"]*)\" registriere,$")
-    public void ichMichAlsTeilnehmerUndDemPasswortMitDemTokrnRegistriere(String nickname, String password, String token) throws Throwable {
-    }
-
     @Wenn("^ich mich als Teilnehmer \"([^\"]*)\" und dem Passwort \"([^\"]*)\" registriere,$")
     public void ichMichAlsTeilnehmerUndDemPasswortRegistriere(String nickname, String password) throws Throwable {
+
+    }
+
+    @Wenn("^ich mich als Teilnehmer \"([^\"]*)\" und dem Passwort \"([^\"]*)\" mit dem Token \"([^\"]*)\" registriere,$")
+    public void ichMichAlsTeilnehmerUndDemPasswortMitDemTokrnRegistriere(String nickname, String password, String token) throws Throwable {
 
     }
     //endregion

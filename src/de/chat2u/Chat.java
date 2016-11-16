@@ -1,60 +1,28 @@
 package de.chat2u;
 
-import org.eclipse.jetty.websocket.api.Session;
-import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static j2html.TagCreator.*;
 
 /**
- * Created Chat in PACKAGE_NAME
+ * Created Chat in de.chat2u
  * by ARSTULKE on 16.11.2016.
  */
 public class Chat {
-    static Map<Session, User> users = new ConcurrentHashMap<>();
+    private final UserRepository userRepository;
+    private final List<User> onlineUsers = new ArrayList<>();
 
-    /**
-     * Sends a message to all users.
-     *
-     * @param sender  sender's username
-     * @param message text message
-     */
-    public static void broadcastMessage(String sender, String message) {
-        String timestamp = new SimpleDateFormat("HH:mm:ss").format(new Date());
-
-        List<String> usernameList = Utils.getUsernameList();
-        users.keySet().stream().filter(Session::isOpen).forEach(session -> {
-            try {
-                session.getRemote().sendString(String.valueOf(new JSONObject()
-                        .put("sender", sender)
-                        .put("timestamp", timestamp)
-                        .put("userMessage", createHTMLMessage(sender, message, timestamp))
-                        .put("userlist", usernameList)
-                ));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+    public Chat(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    /**
-     * Creates a message in HTMl Format.
-     *
-     * @param sender    sender's username
-     * @param message   text message
-     * @param timestamp timestamp when the message where send
-     */
-    private static String createHTMLMessage(String sender, String message, String timestamp) {
-        return article()
-                .with(
-                        b(sender),
-                        p(message),
-                        small(timestamp).withClass("text-muted"))
-                .render();
+    public void login(String username, String password) {
+        User user = userRepository.authenticate(username, password);
+        if(user != null){
+            onlineUsers.add(user);
+        }
+    }
+
+    public List<User> getOnlineUsers() {
+        return onlineUsers;
     }
 }
