@@ -17,6 +17,9 @@ import java.util.HashMap;
 @WebSocket
 public class ChatWebSocketHandler {
 
+    /**
+     * Is called when a Client connects to Server.
+     * */
     @OnWebSocketConnect
     public void onConnect(Session user) throws Exception {
         HashMap<String, String> params = Utils.getParams(((WebSocketSession) user).getRequestURI().getQuery());
@@ -34,6 +37,10 @@ public class ChatWebSocketHandler {
         }
     }
 
+
+    /**
+     * Is called when a connected Client closes the connection
+     * */
     @OnWebSocketClose
     public void onClose(Session user, int statusCode, String reason) {
         String username = Chat.users.get(user).getUsername();
@@ -43,8 +50,24 @@ public class ChatWebSocketHandler {
         }
     }
 
+    /**
+     * Is called when Client sends a message to the Server.
+     * */
     @OnWebSocketMessage
     public void onMessage(Session user, String message) {
-        Chat.broadcastMessage(Chat.users.get(user).getUsername(), message);
+        if (message.startsWith("/")) {
+            executeCommand(message);
+        } else {
+            Chat.broadcastMessage(Chat.users.get(user).getUsername(), message);
+        }
+    }
+
+    /**
+     * Executes a command which where called  by the Client.
+     *
+     * @param command To executed Command.
+     * */
+    private void executeCommand(String command) {
+
     }
 }

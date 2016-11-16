@@ -3,6 +3,11 @@ package de.chat2u;
 import java.util.HashMap;
 
 public class Utils {
+    /**
+     * Get Query params from Request/Query String
+     *
+     * @param query Querystring from Request
+     * */
     static HashMap<String, String> getParams(String query) {
         HashMap<String, String> parameters = new HashMap<>();
         String[] params = query.split("&");
