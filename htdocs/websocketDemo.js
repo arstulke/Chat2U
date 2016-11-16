@@ -3,7 +3,7 @@ var parentGuest = document.getElementById("chat");
 parentGuest.className = 'media-list';
 var childGuest = document.getElementById("li");
 childGuest.className = 'media';
-var webSocket = new WebSocket("ws://10.250.25.78:80/chat?username=" + prompt("Nickname:"));
+var webSocket = new WebSocket("ws://10.250.25.78:8080/chat?username=" + prompt("Nickname:"));
 var audio = new Audio('assets/sound/message.mp3');
 var scrollBar = document.getElementById("scroll");
 
@@ -50,7 +50,7 @@ function updateChat(msg) {
     scrollBar.scrollTop = scrollBar.scrollHeight;
     if (window.blurred) {
         audio.play();
-		document.title = "Chat2U (new message)";
+		document.title = "Chat2U (!)";
     }
 }
 
