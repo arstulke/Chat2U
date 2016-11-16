@@ -24,6 +24,6 @@ public class SecurityTest {
 
     @Test
     public void generatesUniqueTokens(){
-        
+
     }
 }
