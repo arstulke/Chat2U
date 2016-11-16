@@ -18,7 +18,13 @@ import java.util.HashMap;
 public class ChatWebSocketHandler {
 
     /**
-     * Is called when a Client connects to Server.
+     * Is called when a Client connects to Server. It checks
+     * if the given Username is already taken or if it is too
+     * short. Else it broadcastg to everyone, that a user joins.
+     * <p>
+     *
+     * @param user is the query from the URL with the given keys and
+     *             values
      * */
     @OnWebSocketConnect
     public void onConnect(Session user) throws Exception {

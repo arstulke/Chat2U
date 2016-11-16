@@ -4,9 +4,12 @@ import java.util.HashMap;
 
 public class Utils {
     /**
-     * Get Query params from Request/Query String
+     * Write the parameters from the URL into a {@link HashMap} with
+     * Key and value
+     * <p>
      *
-     * @param query Querystring from Request
+     * @param query is the querry String from the URL
+     * @return a {@link HashMap} with key and Value of each queryArgument
      * */
     static HashMap<String, String> getParams(String query) {
         HashMap<String, String> parameters = new HashMap<>();
