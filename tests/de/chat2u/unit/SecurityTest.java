@@ -1,21 +1,15 @@
 package de.chat2u.unit;
 
-import org.junit.Ignore;
 import org.junit.Test;
-
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 /**
  * Chat2U:
  * * de.chat2u.server.unit:
  * * * Created by KAABERT on 15.11.2016.
  */
-public class Tests {
+public class SecurityTest {
 
-    @Ignore
+    /*@Ignore
     @Test
     public void CopyToClipboard() {
         try {
@@ -26,5 +20,10 @@ public class Tests {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
+    }*/
+
+    @Test
+    public void generatesUniqueTokens(){
+        
     }
 }

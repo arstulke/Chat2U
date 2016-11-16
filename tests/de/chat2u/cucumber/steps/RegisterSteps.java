@@ -3,17 +3,12 @@ package de.chat2u.cucumber.steps;
 import cucumber.api.java.de.Dann;
 import cucumber.api.java.de.Gegebensei;
 import cucumber.api.java.de.Wenn;
-import de.chat2u.server.Client;
-import de.chat2u.server.Result;
 
 /**
  * Created RegisterSteps in de.chat2u.server.cucumber.steps
  * by ARSTULKE on 15.11.2016.
  */
 public class RegisterSteps {
-
-    private Client client;
-    private Result result;
 
     @Gegebensei("^der Registriertoken \"([^\"]*)\".$")
     public void derRegistriertoken(String token) throws Throwable {
