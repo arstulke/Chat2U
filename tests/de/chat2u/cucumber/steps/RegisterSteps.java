@@ -1,13 +1,13 @@
-package de.chat2u.client.cucumber.steps;
+package de.chat2u.cucumber.steps;
 
 import cucumber.api.java.de.Dann;
 import cucumber.api.java.de.Gegebensei;
 import cucumber.api.java.de.Wenn;
-import de.chat2u.client.Client;
-import de.chat2u.client.Result;
+import de.chat2u.server.Client;
+import de.chat2u.server.Result;
 
 /**
- * Created RegisterSteps in de.chat2u.client.cucumber.steps
+ * Created RegisterSteps in de.chat2u.server.cucumber.steps
  * by ARSTULKE on 15.11.2016.
  */
 public class RegisterSteps {

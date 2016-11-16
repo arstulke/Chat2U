@@ -1,4 +1,4 @@
-package de.chat2u.client.cucumber.steps;
+package de.chat2u.cucumber.steps;
 
 import cucumber.api.PendingException;
 import cucumber.api.java.de.Dann;
@@ -10,7 +10,7 @@ import org.junit.Assert;
 import static org.hamcrest.CoreMatchers.is;
 
 /**
- * Created de.chat2u.client.cucumber.steps.LoginSteps in PACKAGE_NAME
+ * Created LoginSteps in PACKAGE_NAME
  * by ARSTULKE on 15.11.2016.
  */
 public class LoginSteps {

@@ -1,4 +1,4 @@
-package de.chat2u.client.unit;
+package de.chat2u.unit;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -10,7 +10,7 @@ import java.net.UnknownHostException;
 
 /**
  * Chat2U:
- * * de.chat2u.client.unit:
+ * * de.chat2u.server.unit:
  * * * Created by KAABERT on 15.11.2016.
  */
 public class Tests {

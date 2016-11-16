@@ -1,4 +1,4 @@
-package de.chat2u.client.cucumber.steps;
+package de.chat2u.cucumber.steps;
 
 import cucumber.api.PendingException;
 import cucumber.api.java.de.Dann;
@@ -6,7 +6,7 @@ import cucumber.api.java.de.Gegebensei;
 import cucumber.api.java.de.Wenn;
 
 /**
- * Created de.chat2u.client.cucumber.steps.LogoutSteps in PACKAGE_NAME
+ * Created LogoutSteps in PACKAGE_NAME
  * by ARSTULKE on 15.11.2016.
  */
 public class LogoutSteps {
