@@ -29,10 +29,10 @@ public class ChatWebSocketHandler {
             user.getRemote().sendString("/msg=Username to short.");
         }
 
-        if (Chat.users.size() > 0 && Chat.getUsernameList().contains(username)) {
+        if (Chat.users.size() > 0 && Utils.getUsernameList().contains(username)) {
             user.getRemote().sendString("/msg=Username is already used.");
         } else if (username != null && username.length() >= 1) {
-            Chat.users.put(user, new User(username, Chat.generateUniqueToken()));
+            Chat.users.put(user, new User(username, Utils.generateUniqueToken()));
             Chat.broadcastMessage("Server", username + " joined the chat");
         }
     }
