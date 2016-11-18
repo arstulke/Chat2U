@@ -14,7 +14,7 @@ public class Utils {
      *
      * @param query Querystring from Request
      * @return a Hashmap with the querxKey as Key and the value as value
-     * */
+     */
     public static HashMap<String, String> getParams(String query) {
         HashMap<String, String> parameters = new HashMap<>();
         String[] params = query.split("&");
@@ -47,6 +47,7 @@ public class Utils {
         try {
             String timestamp = new SimpleDateFormat("hh:mm dd.MM.yyyy").format(new Date());
             return String.valueOf(new JSONObject()
+                    .put("type", "msg")
                     .put("sender", sender)
                     .put("timestamp", timestamp)
                     .put("userMessage", createHTMLMessage(sender, message, timestamp))
@@ -72,5 +73,16 @@ public class Utils {
                         TagCreator.p(message),
                         TagCreator.small(timestamp).withClass("text-muted"))
                 .render();
+    }
+
+    public static String buildExceptionMessage(Exception exception) {
+        try {
+            return String.valueOf(new JSONObject()
+                    .put("type", "error")
+                    .put("msg", exception.getMessage()));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

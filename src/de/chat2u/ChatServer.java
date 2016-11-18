@@ -131,10 +131,6 @@ public class ChatServer {
      */
     public static void broadcastTextMessage(String sender, String message) {
         String msg = Utils.buildMessage(sender, message);
-        broadcastMessage(msg);
-    }
-
-    private static void broadcastMessage(String msg) {
         onlineUsers.getUsernameList().forEach(username -> {
             try {
                 User user = onlineUsers.getByUsername(username);
@@ -155,7 +151,7 @@ public class ChatServer {
      * @param msg     ist die zu sendene Nachricht.
      * @throws IOException wenn das senden fehlschlägt.
      */
-    private static void sendMessageToSession(String msg, Session session) throws IOException {
+    public static void sendMessageToSession(String msg, Session session) throws IOException {
         if (session != null)
             session.getRemote().sendString(msg);
     }
