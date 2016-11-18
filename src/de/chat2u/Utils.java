@@ -8,6 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
+import static j2html.TagCreator.p;
+
 public class Utils {
     /**
      * Get Query params from Request/Query String
@@ -70,7 +72,7 @@ public class Utils {
         return TagCreator.article()
                 .with(
                         TagCreator.b(sender),
-                        TagCreator.p(message),
+                        p(message),
                         TagCreator.small(timestamp).withClass("text-muted"))
                 .render();
     }
@@ -79,7 +81,8 @@ public class Utils {
         try {
             return String.valueOf(new JSONObject()
                     .put("type", "error")
-                    .put("msg", exception.getMessage()));
+                    .put("exceptionType", exception.getClass().getSimpleName())
+                    .put("msg", "<p style=\"color:#F70505\">" + exception.getMessage() + "</p>"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
