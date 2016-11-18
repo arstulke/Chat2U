@@ -7,6 +7,7 @@ import de.chat2u.exceptions.AccessDeniedException;
 import de.chat2u.exceptions.UsernameExistException;
 import de.chat2u.model.AuthenticationUser;
 import de.chat2u.model.User;
+import de.chat2u.utils.MessageBuilder;
 import org.eclipse.jetty.websocket.api.Session;
 
 import java.io.IOException;
@@ -130,7 +131,7 @@ public class ChatServer {
      * @param message ist die zu sendene Nachricht
      */
     public static void broadcastTextMessage(String sender, String message) {
-        String msg = Utils.buildMessage(sender, message);
+        String msg = MessageBuilder.buildMessage(sender, message);
         onlineUsers.getUsernameList().forEach(username -> {
             try {
                 User user = onlineUsers.getByUsername(username);

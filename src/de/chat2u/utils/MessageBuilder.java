@@ -1,40 +1,22 @@
-package de.chat2u;
+package de.chat2u.utils;
 
+import de.chat2u.ChatServer;
 import j2html.TagCreator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 
-import static j2html.TagCreator.*;
+import static j2html.TagCreator.b;
+import static j2html.TagCreator.p;
+import static j2html.TagCreator.small;
 
-public class Utils {
-    /**
-     * Get Query params from Request/Query String
-     *
-     * @param query Querystring from Request
-     * @return a Hashmap with the querxKey as Key and the value as value
-     */
-    public static HashMap<String, String> getParams(String query) {
-        HashMap<String, String> parameters = new HashMap<>();
-        String[] params = query.split("&");
-
-        for (String param : params) {
-            if (param.contains("=")) {
-                if (param.split("=").length > 1) {
-                    parameters.put(param.split("=")[0], param.split("=")[1]);
-                } else {
-                    parameters.put(param, "");
-                }
-            } else {
-                parameters.put(param, "");
-            }
-        }
-        return parameters;
-    }
-
+/**
+ * Created MessageBuilder in de.chat2u
+ * by ARSTULKE on 18.11.2016.
+ */
+public class MessageBuilder {
     /**
      * Generieren der zu sendenen Nachricht. Die Nachricht wird zusammengesetzt aus
      * <p>- Absender
@@ -47,7 +29,7 @@ public class Utils {
      */
     public static String buildMessage(String sender, String message) {
         try {
-            String timestamp = new SimpleDateFormat("hh:mm dd.MM.yyyy").format(new Date());
+            String timestamp = getTimestamp(new Date());
             return String.valueOf(new JSONObject()
                     .put("type", "msg")
                     .put("sender", sender)
@@ -77,16 +59,35 @@ public class Utils {
                 .render();
     }
 
+    /**
+     * Baut aus eine nachricht aus einer Exception.
+     * <p>
+     *
+     * @param exception ist die Exception, zu der eine Nachricht gebaut werden soll.
+     * @return die gebaute Nachricht
+     * */
     public static String buildExceptionMessage(Exception exception) {
         try {
+            String timestamp = getTimestamp(new Date());
             return String.valueOf(new JSONObject()
                     .put("type", "error")
                     .put("exceptionType", exception.getClass().getSimpleName())
                     .put("exceptionMessage", exception.getMessage())
+                    .put("timestamp", timestamp)
                     .put("msg", "<p style=\"color:#F70505\">" + exception.getMessage() + "</p>"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Gibt die aktuelle Zeit und das aktuelle Datum aus
+     * <p>
+     *
+     * @return Zeittempel
+     * @param date*/
+    public static String getTimestamp(Date date) {
+        return new SimpleDateFormat("hh:mm dd.MM.yyyy").format(date);
     }
 }

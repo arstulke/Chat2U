@@ -4,15 +4,15 @@ import cucumber.api.java.de.Dann;
 import cucumber.api.java.de.Gegebensei;
 import cucumber.api.java.de.Wenn;
 import de.chat2u.ChatServer;
-import de.chat2u.Utils;
+import de.chat2u.utils.MessageBuilder;
 import de.chat2u.authentication.AuthenticationService;
 import de.chat2u.authentication.Permissions;
 import de.chat2u.authentication.UserRepository;
 import de.chat2u.model.AuthenticationUser;
 import de.chat2u.model.User;
-import org.junit.Assert;
 
 import static org.hamcrest.Matchers.contains;
+import static org.junit.Assert.assertThat;
 
 /**
  * Created SendMessageSteps in PACKAGE_NAME
@@ -39,14 +39,14 @@ public class SendMessageSteps {
 
     @Wenn("^\"([^\"]*)\" die Nachricht \"([^\"]*)\" sendet$")
     public void dieNachrichtSendet(String username, String message) throws Throwable {
-        this.message = Utils.buildMessage(username, message);
+        this.message = MessageBuilder.buildMessage(username, message);
         ChatServer.broadcastTextMessage(username, message);
     }
 
     @Dann("^soll diese im Chat angezeigt werden.$")
     public void sollDieseImChatAngezeigtWerden() throws Throwable {
         UserRepository<User> users = ChatServer.getOnlineUsers();
-        Assert.assertThat(users.getByUsername(user1).getHistory(), contains(message));
-        Assert.assertThat(users.getByUsername(user2).getHistory(), contains(message));
+        assertThat(users.getByUsername(user1).getHistory(), contains(message));
+        assertThat(users.getByUsername(user2).getHistory(), contains(message));
     }
 }

@@ -19,6 +19,7 @@ import static de.chat2u.authentication.Permissions.ADMIN;
 import static de.chat2u.authentication.Permissions.MOD;
 import static de.chat2u.authentication.Permissions.USER;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 /**
  * Created RegisterSteps in de.chat2u.server.cucumber.steps
@@ -92,12 +93,12 @@ public class RegisterSteps {
 
     @Dann("^wird das Registrieren abgeschlossen mit der Nachricht \"([^\"]*)\"$")
     public void wirdDasRegistrierenGenehmigtMitDerNachricht(String message) throws Throwable {
-        Assert.assertThat(response, is(message));
+        assertThat(response, is(message));
         if (exception != null)
             Assert.assertTrue(exception.getClass().getSuperclass().equals(IllegalArgumentException.class));
     }
 
-    //region Utils
+    //region NetworkUtils
     public static Permissions getPermissions(String lvlString) {
         switch (lvlString) {
             case "Administrator":

@@ -13,6 +13,7 @@ import org.junit.Assert;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.contains;
+import static org.junit.Assert.assertThat;
 
 /**
  * Created LoginSteps in PACKAGE_NAME
@@ -41,7 +42,7 @@ public class LoginSteps {
 
     @Dann("^sehe ich \"([^\"]*)\" in der Liste der Teilnehmer, die gerade Online sind$")
     public void seheIchInDerListeDerTeilnehmerDieGeradeOnlineSind(String username) throws Throwable {
-        Assert.assertThat(ChatServer.getOnlineUsers().getUsernameList(), contains(username));
+        assertThat(ChatServer.getOnlineUsers().getUsernameList(), contains(username));
     }
 
     @Dann("^wird der Zugriff verweigert$")
@@ -51,6 +52,6 @@ public class LoginSteps {
 
     @Und("^die Nachricht \"([^\"]*)\" erscheint.$")
     public void dieNachrichtErscheint(String message) throws Throwable {
-        Assert.assertThat(response, is(message));
+        assertThat(response, is(message));
     }
 }

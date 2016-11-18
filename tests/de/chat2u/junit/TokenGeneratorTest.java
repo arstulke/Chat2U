@@ -10,6 +10,8 @@ import org.junit.Test;
 import static de.chat2u.authentication.Permissions.ADMIN;
 import static de.chat2u.authentication.Permissions.MOD;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created TokenGeneratorTest in de.chat2u.junit
@@ -27,8 +29,8 @@ public class TokenGeneratorTest {
         String token = ChatServer.generateToken(ADMIN);
 
         //then
-        Assert.assertThat(token.length(), is(32));
-        Assert.assertTrue(token.matches("^[a-zA-Z0-9]*$"));
+        assertThat(token.length(), is(32));
+        assertTrue(token.matches("^[a-zA-Z0-9]*$"));
     }
 
     @Test
@@ -39,7 +41,7 @@ public class TokenGeneratorTest {
         ChatServer.register("user1", "pw1", token);
 
         //then
-        Assert.assertThat(ChatServer.getRegisteredUserByName("user1").getPermissions(), is(ADMIN));
+        assertThat(ChatServer.getRegisteredUserByName("user1").getPermissions(), is(ADMIN));
     }
 
     @Test
@@ -49,6 +51,6 @@ public class TokenGeneratorTest {
         ChatServer.register("user1", "pw1", token);
 
         //then
-        Assert.assertThat(ChatServer.getRegisteredUserByName("user1").getPermissions(), is(MOD));
+        assertThat(ChatServer.getRegisteredUserByName("user1").getPermissions(), is(MOD));
     }
 }
