@@ -45,7 +45,13 @@ public class ChatWebSocketHandler {
 
 
     /**
-     * Is called when a connected Client closes the connection
+     * This Method is called when a User disconnects. The given parameters
+     * aren't necessary.
+     * <p>
+     *
+     * @param user is the user, who disconnects
+     * @param reason is the reason, hwy he disconnects
+     * @param statusCode is the StatusCode of thier disconect
      * */
     @OnWebSocketClose
     public void onClose(Session user, int statusCode, String reason) {
@@ -57,7 +63,12 @@ public class ChatWebSocketHandler {
     }
 
     /**
-     * Is called when Client sends a message to the Server.
+     * Is called when the Server receives a message from a client. The method
+     * decides whether it is a serverCommand or a textMessage.
+     * <p>
+     *
+     * @param user is the user, who sends a message
+     * @param message is the message from the user
      * */
     @OnWebSocketMessage
     public void onMessage(Session user, String message) {

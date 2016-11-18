@@ -19,10 +19,11 @@ public class Chat {
     static Map<Session, User> users = new ConcurrentHashMap<>();
 
     /**
-     * Sends a message to all users.
+     * Broadcasts the message to all users, who are online.
+     * <p>
      *
-     * @param sender  sender's username
-     * @param message text message
+     * @param sender  is a normal {@link String} with sender's username
+     * @param message is a normal {@link String} with text message
      */
     public static void broadcastMessage(String sender, String message) {
         String timestamp = new SimpleDateFormat("HH:mm:ss").format(new Date());
@@ -43,11 +44,14 @@ public class Chat {
     }
 
     /**
-     * Creates a message in HTMl Format.
+     * Creates a message in HTMl Format with given parameters. E.g. name
+     * should be bold etc.
+     * <p>
      *
      * @param sender    sender's username
      * @param message   text message
      * @param timestamp timestamp when the message where send
+     * @return a {@link String} with the HTML script for the web client.
      */
     private static String createHTMLMessage(String sender, String message, String timestamp) {
         return article()
