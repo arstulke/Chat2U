@@ -1,22 +1,21 @@
 package de.chat2u;
 
-import org.apache.commons.lang3.RandomStringUtils;
+import j2html.TagCreator;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class Utils {
     /**
-     * Write the parameters from the URL into a {@link HashMap} with
-     * Key and value
-     * <p>
+     * Get Query params from Request/Query String
      *
-     * @param query is the querry String from the URL
-     * @return a {@link HashMap} with key and Value of each queryArgument
-     * */
-    static HashMap<String, String> getParams(String query) {
+     * @param query Querystring from Request
+     * @return a Hashmap with the querxKey as Key and the value as value
+     */
+    public static HashMap<String, String> getParams(String query) {
         HashMap<String, String> parameters = new HashMap<>();
         String[] params = query.split("&");
 
@@ -35,27 +34,55 @@ public class Utils {
     }
 
     /**
-     * Generates a user token that isn't existing.
-     * */
-    public static String generateUniqueToken() {
-        List<String> tokens = getUserTokens();
-        String token = RandomStringUtils.random(32, true, true);
-        while (tokens.contains(token))
-            token = RandomStringUtils.random(32, true, true);
-        return token;
+     * Generieren der zu sendenen Nachricht. Die Nachricht wird zusammengesetzt aus
+     * <p>- Absender
+     * <p>- Nachricht
+     * <p>
+     *
+     * @param message ist die zu sendene Nachricht
+     * @param sender  ist der Absender der Nachricht
+     * @return die fertig generierte Nachricht.
+     */
+    public static String buildMessage(String sender, String message) {
+        try {
+            String timestamp = new SimpleDateFormat("hh:mm dd.MM.yyyy").format(new Date());
+            return String.valueOf(new JSONObject()
+                    .put("type", "msg")
+                    .put("sender", sender)
+                    .put("timestamp", timestamp)
+                    .put("userMessage", createHTMLMessage(sender, message, timestamp))
+                    .put("userlist", ChatServer.getOnlineUsers().getUsernameList())
+            );
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
-     * Returns a list of existing User Tokens.
+     * Creates a message in HTMl Format.
+     *
+     * @param sender    sender's username
+     * @param message   text message
+     * @param timestamp timestamp when the message where send
      */
-    public static List<String> getUserTokens() {
-        return Chat.users.values().stream().map(User::getToken).collect(Collectors.toCollection(ArrayList::new));
+    private static String createHTMLMessage(String sender, String message, String timestamp) {
+        return TagCreator.article()
+                .with(
+                        TagCreator.b(sender),
+                        TagCreator.p(message),
+                        TagCreator.small(timestamp).withClass("text-muted"))
+                .render();
     }
 
-    /**
-     * Returns a list of existing Usernames.
-     */
-    public static List<String> getUsernameList() {
-        return Chat.users.values().stream().map(User::getUsername).collect(Collectors.toCollection(ArrayList::new));
+    public static String buildExceptionMessage(Exception exception) {
+        try {
+            return String.valueOf(new JSONObject()
+                    .put("type", "error")
+                    .put("msg", exception.getMessage()));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
