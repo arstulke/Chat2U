@@ -190,6 +190,7 @@ public class ChatServer {
     }
 
     public static User getUsernameBySession(Session webSocketSession) {
+        checksIllegalState();
         return onlineUsers.getBySession(webSocketSession);
     }
 }

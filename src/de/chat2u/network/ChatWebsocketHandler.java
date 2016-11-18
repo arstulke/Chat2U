@@ -9,6 +9,8 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.common.WebSocketSession;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -43,7 +45,12 @@ public class ChatWebsocketHandler {
 
     @OnWebSocketMessage
     public void onMessage(Session webSocketSession, String message) {
-        String sender = ChatServer.getUsernameBySession(webSocketSession).getUsername();
-        ChatServer.broadcastTextMessage(sender, message);
+        try {
+            //JSONObject object = new JSONObject(message);
+            String sender = ChatServer.getUsernameBySession(webSocketSession).getUsername();
+            ChatServer.broadcastTextMessage(sender + ":", message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

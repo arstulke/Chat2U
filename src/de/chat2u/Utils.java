@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
-import static j2html.TagCreator.p;
+import static j2html.TagCreator.*;
 
 public class Utils {
     /**
@@ -71,9 +71,9 @@ public class Utils {
     private static String createHTMLMessage(String sender, String message, String timestamp) {
         return TagCreator.article()
                 .with(
-                        TagCreator.b(sender),
+                        b(sender),
                         p(message),
-                        TagCreator.small(timestamp).withClass("text-muted"))
+                        small(timestamp).withClass("text-muted"))
                 .render();
     }
 
@@ -82,6 +82,7 @@ public class Utils {
             return String.valueOf(new JSONObject()
                     .put("type", "error")
                     .put("exceptionType", exception.getClass().getSimpleName())
+                    .put("exceptionMessage", exception.getMessage())
                     .put("msg", "<p style=\"color:#F70505\">" + exception.getMessage() + "</p>"));
         } catch (JSONException e) {
             e.printStackTrace();
