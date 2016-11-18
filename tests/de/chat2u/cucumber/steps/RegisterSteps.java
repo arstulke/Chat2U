@@ -14,6 +14,10 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static de.chat2u.ChatServer.register;
+import static de.chat2u.authentication.Permissions.ADMIN;
+import static de.chat2u.authentication.Permissions.MOD;
+import static de.chat2u.authentication.Permissions.USER;
 import static org.hamcrest.CoreMatchers.is;
 
 /**
@@ -26,29 +30,59 @@ public class RegisterSteps {
 
     private String response;
     private Exception exception;
+    private String token;
 
-    public void initialize() {
-        AuthenticationService authenticationService = new AuthenticationService(new UserRepository<>());
-        new ChatServer(authenticationService);
+    public void initialize(UserRepository<AuthenticationUser> repo) {
+        AuthenticationService authenticationService = new AuthenticationService(repo);
+        ChatServer.initialize(authenticationService);
+    }
+
+    //region Gegeben sei
+    @Gegebensei("^der registrierte Teilnehmer \"([^\"]*)\" mit dem Passwort \"([^\"]*)\"$")
+    public void derRegistrierteTeilnehmerMitDemPasswort(String username, String password) throws Throwable {
+        UserRepository<AuthenticationUser> userRepository = new UserRepository<>();
+        userRepository.addUser(new AuthenticationUser(username, password, USER));
+        initialize(userRepository);
     }
 
     @Gegebenseien("^keine registrierten Benutzer$")
     public void keineRegistriertenBenutzer() throws Throwable {
-        initialize();
+        initialize(new UserRepository<>());
     }
 
-    @Gegebensei("^der registrierte Teilnehmer \"([^\"]*)\" mit dem Passwort \"([^\"]*)\"$")
-    public void derRegistrierteTeilnehmerMitDemPasswort(String username, String password) throws Throwable {
-        UserRepository<AuthenticationUser> userRepository = new UserRepository<>();
-        userRepository.addUser(new AuthenticationUser(username, password, Permissions.USER));
-        new ChatServer(new AuthenticationService(userRepository));
+    @Gegebensei("^ein zufällig generierter Registriertoken mit \"([^\"]*)\" Berechtigungen$")
+    public void einZufälligGenerierterRegistriertokenMitBerechtigungen(String permissions) throws Throwable {
+        initialize(new UserRepository<>());
+        token = ChatServer.generateToken(getPermissions(permissions));
     }
+    //endregion
 
     //region Wenn
     @Wenn("^ich mich als Teilnehmer \"([^\"]*)\" und dem Passwort \"([^\"]*)\" registriere,$")
-    public void ichMichAlsTeilnehmerUndDemPasswortRegistriere(String nickname, String password) throws Throwable {
+    public void ichMichAlsTeilnehmerUndDemPasswortRegistriere(String username, String password) throws Throwable {
         try {
-            response = ChatServer.register(nickname, password);
+            response = register(username, password);
+        } catch (Exception e) {
+            exception = e;
+            response = e.getMessage();
+        }
+    }
+
+    @Wenn("^ich mich als Teilnehmer \"([^\"]*)\" und dem Passwort \"([^\"]*)\" mit dem Token registriere,$")
+    public void ichMichAlsTeilnehmerUndDemPasswortMitDemTokenRegistriere(String username, String password) throws Throwable {
+        try {
+            response = ChatServer.register(username, password, token);
+        } catch (Exception e) {
+            exception = e;
+            response = e.getMessage();
+        }
+    }
+
+    @Wenn("^ich mich als Teilnehmer \"([^\"]*)\" und dem Passwort \"([^\"]*)\" mit einem anderen Token registriere,$")
+    public void ichMichAlsTeilnehmerUndDemPasswortMitEinemAnderenTokenRegistriere(String username, String password) throws Throwable {
+        //falscher token
+        try {
+            response = register(username, password, "abc");
         } catch (Exception e) {
             exception = e;
             response = e.getMessage();
@@ -62,4 +96,20 @@ public class RegisterSteps {
         if (exception != null)
             Assert.assertTrue(exception.getClass().getSuperclass().equals(IllegalArgumentException.class));
     }
+
+    //region Utils
+    public static Permissions getPermissions(String lvlString) {
+        switch (lvlString) {
+            case "Administrator":
+                return ADMIN;
+
+            case "Teilnehmer":
+                return USER;
+
+            case "Moderator":
+                return MOD;
+        }
+        return null;
+    }
+    //endregion
 }

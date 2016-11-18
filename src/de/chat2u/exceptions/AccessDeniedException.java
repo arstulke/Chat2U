@@ -6,9 +6,10 @@ package de.chat2u.exceptions;
  */
 public class AccessDeniedException extends IllegalArgumentException {
     private String message;
+
     /**
      * Exception
-     * */
+     */
     public AccessDeniedException(String message) {
         this.message = message;
     }

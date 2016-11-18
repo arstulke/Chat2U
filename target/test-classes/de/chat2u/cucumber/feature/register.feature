@@ -11,12 +11,4 @@ Funktionalität: Registrieren
 		Wenn ich mich als Teilnehmer "Carsten" und dem Passwort "geheim2" registriere,
 		Dann wird das Registrieren abgeschlossen mit der Nachricht "Benutzername bereits vergeben"
 
-	#Szenario: Als Administrator mit validen Token registrieren
-		#Gegeben sei der Registriertoken "UNIQUETOKEN123".
-		#Wenn ich mich als Teilnehmer "Carsten" und dem Passwort "geheim" mit dem Token "UNIQUETOKEN123" registriere,
-		#Dann wird das Registrieren abgeschlossen mit der Nachricht "Registrierung erfolgreich; 'Carsten' ist Aministrator"
-		
-	#Szenario: Als Administrator mit invaliden Token registrieren
-		#Gegeben sei der Registriertoken "UNIQUETOKEN123".
-		#Wenn ich mich als Teilnehmer "Carsten" und dem Passwort "geheim" mit dem Token "RANDOMTOKEN123" registriere,
-		#Dann wird das Registrieren abgeschlossen mit der Nachricht "Ungültiger Token"
+

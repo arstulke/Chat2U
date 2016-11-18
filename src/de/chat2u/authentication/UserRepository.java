@@ -1,8 +1,11 @@
 package de.chat2u.authentication;
 
 import de.chat2u.model.User;
+import org.eclipse.jetty.websocket.api.Session;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created UserRepository in de.chat2u
@@ -14,8 +17,9 @@ public class UserRepository<U extends User> {
     /**
      * Fügt einen {@link User} zur Liste hinzu.
      * <p>
+     *
      * @param user ist der hinzu zufügende User.
-     * */
+     */
     public void addUser(U user) {
         users.put(user.getUsername(), user);
     }
@@ -26,8 +30,8 @@ public class UserRepository<U extends User> {
      *
      * @param username ist der Benutzername, des Benutzers
      * @return einen User, wenn dieser gefunden wurde oder {@code null} wenn
-     *          dieser nicht gefunden werden konnte
-     * */
+     * dieser nicht gefunden werden konnte
+     */
     public U getByUsername(String username) {
         return users.get(username);
     }
@@ -37,7 +41,7 @@ public class UserRepository<U extends User> {
      * <p>
      *
      * @return alle Benutzername der Liste
-     * */
+     */
     public Set<String> getUsernameList() {
         return users.keySet();
     }
@@ -47,9 +51,9 @@ public class UserRepository<U extends User> {
      * <p>
      *
      * @param user ist der zu entfernende User
-     * */
+     */
     public void removeUser(U user) {
-        if(user != null && users.containsValue(user)) {
+        if (user != null && users.containsValue(user)) {
             users.remove(user.getUsername());
         }
     }
@@ -59,8 +63,17 @@ public class UserRepository<U extends User> {
      * <p>
      *
      * @param username ist der zu überprüfende Benutzername
-     * */
+     */
     boolean containsUsername(String username) {
         return users.containsKey(username);
+    }
+
+
+    public User getBySession(Session webSocketSession) {
+        for (User user : users.values()) {
+            if (user.getSession().equals(webSocketSession))
+                return user;
+        }
+        return null;
     }
 }

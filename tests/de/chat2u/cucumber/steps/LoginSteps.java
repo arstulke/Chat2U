@@ -26,7 +26,7 @@ public class LoginSteps {
     public void derRegistrierteTeilnehmerMitDemPasswort(String username, String password) throws Throwable {
         UserRepository<AuthenticationUser> userRepository = new UserRepository<>();
         userRepository.addUser(new AuthenticationUser(username, password, Permissions.USER));
-        new ChatServer(new AuthenticationService(userRepository));
+        ChatServer.initialize(new AuthenticationService(userRepository));
     }
 
     @Wenn("^ich mich als Teilnehmer \"([^\"]*)\" mit dem Passwort \"([^\"]*)\" anmelde,$")

@@ -20,7 +20,7 @@ public class LogoutSteps {
     public void derAngemeldeteTeilnehmerMitDemPasswort(String username, String password) throws Throwable {
         UserRepository<AuthenticationUser> userRepository = new UserRepository<>();
         userRepository.addUser(new AuthenticationUser(username, password, Permissions.USER));
-        new ChatServer(new AuthenticationService(userRepository));
+        ChatServer.initialize(new AuthenticationService(userRepository));
 
         ChatServer.login(username, password, null);
     }

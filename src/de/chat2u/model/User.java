@@ -31,42 +31,42 @@ public class User {
 
     /**
      * @return den Benutzernamen
-     * */
+     */
     public String getUsername() {
         return username;
     }
 
     /**
      * @return das Berechtigungslevel
-     * */
+     */
     public Permissions getPermissions() {
         return permissions;
     }
 
     /**
      * @return den Chatverlauf
-     * */
+     */
     public List<String> getHistory() {
         return history;
     }
 
     /**
      * @return die aktuelle WebSocketSession
-     * */
+     */
     public Session getSession() {
         return session;
     }
 
     /**
      * @param session setzt die aktuelle WebSocketSession
-     * */
+     */
     public void setSession(Session session) {
         this.session = session;
     }
 
     /**
      * @param msg fügt eine Nachricht zum Chatverlauf hinzu
-     * */
+     */
     public void addMessageToHistory(String msg) {
         history.add(msg);
     }

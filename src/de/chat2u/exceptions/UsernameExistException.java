@@ -14,7 +14,7 @@ public class UsernameExistException extends IllegalArgumentException {
 
     /**
      * Exception
-     * */
+     */
     public UsernameExistException(String message) {
         this.message = message;
     }

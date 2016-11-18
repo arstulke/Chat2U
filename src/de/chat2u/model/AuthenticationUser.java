@@ -12,7 +12,7 @@ public class AuthenticationUser extends User {
 
     /**
      * @see User
-     * */
+     */
     public AuthenticationUser(String username, String password, Permissions permissions) {
         super(username, permissions);
         this.password = password;
@@ -20,14 +20,14 @@ public class AuthenticationUser extends User {
 
     /**
      * @return das Password des Users
-     * */
+     */
     public String getPassword() {
         return password;
     }
 
     /**
      * @return einen neuen {@link User} ohne Passwort
-     * */
+     */
     public User getSimpleUser() {
         return new User(getUsername(), getPermissions(), getHistory(), getSession());
     }

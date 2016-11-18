@@ -4,6 +4,7 @@ import cucumber.api.java.de.Dann;
 import cucumber.api.java.de.Gegebensei;
 import cucumber.api.java.de.Wenn;
 import de.chat2u.ChatServer;
+import de.chat2u.Utils;
 import de.chat2u.authentication.AuthenticationService;
 import de.chat2u.authentication.Permissions;
 import de.chat2u.authentication.UserRepository;
@@ -31,15 +32,15 @@ public class SendMessageSteps {
         String password = "Test123";
         userRepository.addUser(new AuthenticationUser(user1, password, Permissions.USER));
         userRepository.addUser(new AuthenticationUser(user2, password, Permissions.USER));
-        new ChatServer(new AuthenticationService(userRepository));
+        ChatServer.initialize(new AuthenticationService(userRepository));
         ChatServer.login(user1, password, null);
         ChatServer.login(user2, password, null);
     }
 
     @Wenn("^\"([^\"]*)\" die Nachricht \"([^\"]*)\" sendet$")
     public void dieNachrichtSendet(String username, String message) throws Throwable {
-        this.message = username + ": " + message;
-        ChatServer.broadcastMessage(username, message);
+        this.message = Utils.buildMessage(username, message);
+        ChatServer.broadcastTextMessage(username, message);
     }
 
     @Dann("^soll diese im Chat angezeigt werden.$")

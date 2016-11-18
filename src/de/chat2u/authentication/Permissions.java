@@ -5,7 +5,7 @@ package de.chat2u.authentication;
  * by ARSTULKE on 17.11.2016.
  */
 public enum Permissions {
-    ADMIN("Administrator"), USER("Teilnehmer");
+    ADMIN("Administrator"), USER("Teilnehmer"), MOD("Moderator");
 
     private final String lvlString;
 
