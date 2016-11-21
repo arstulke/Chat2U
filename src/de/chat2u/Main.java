@@ -4,7 +4,15 @@ import de.chat2u.authentication.AuthenticationService;
 import de.chat2u.authentication.UserRepository;
 import de.chat2u.model.AuthenticationUser;
 import de.chat2u.network.ChatWebsocketHandler;
+import spark.Request;
+import spark.Response;
+import spark.Route;
 import spark.Spark;
+
+import java.io.File;
+
+import static spark.Spark.externalStaticFileLocation;
+import static spark.Spark.get;
 
 /**
  * Created Main in de.chat2u
@@ -17,10 +25,12 @@ public class Main {
         repo.addUser(new AuthenticationUser("Arne", "Test123", null));
         ChatServer.initialize(new AuthenticationService(repo));
 
-
-        Spark.staticFileLocation("/public");
         Spark.webSocket("/chat", ChatWebsocketHandler.class);
+        //Spark.staticFileLocation("/public");
+        externalStaticFileLocation("C:\\Users\\kaabert\\Desktop\\Projekte\\GIT\\Chat2U\\htdocs");
         Spark.port(8080);
         Spark.init();
+
+
     }
 }

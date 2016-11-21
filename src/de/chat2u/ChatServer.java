@@ -100,7 +100,7 @@ public class ChatServer {
         if (user != null) {
             user.setSession(userSession);
             onlineUsers.addUser(user.getSimpleUser());
-            broadcastTextMessage("Server", user.getUsername() + " joined the Server");
+            broadcastTextMessage("Server:", user.getUsername() + " joined the Server");
             return "Gültige Zugangsdaten";
         }
         throw new AccessDeniedException("Ungültige Zugangsdaten");
@@ -114,7 +114,7 @@ public class ChatServer {
      */
     public static void logout(String username) {
         onlineUsers.removeUser(onlineUsers.getByUsername(username));
-        broadcastTextMessage("Server", username + " left the Server");
+        broadcastTextMessage("Server:", username + " left the Server");
     }
 
     //endregion

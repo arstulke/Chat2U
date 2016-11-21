@@ -8,9 +8,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static j2html.TagCreator.b;
-import static j2html.TagCreator.p;
-import static j2html.TagCreator.small;
+import static j2html.TagCreator.*;
 
 /**
  * Created MessageBuilder in de.chat2u
@@ -54,8 +52,8 @@ public class MessageBuilder {
         return TagCreator.article()
                 .with(
                         b(sender),
-                        p(message),
-                        small(timestamp).withClass("text-muted"))
+                        unsafeHtml(" "+message),
+                        p().with(small(timestamp).withClass("text-muted")))
                 .render();
     }
 

@@ -1,5 +1,5 @@
 //Establish the WebSocket connection and set up event handlers
-var webSocket = new WebSocket("ws://10.250.25.78:8080/chat?username=" + prompt("Nickname:") + "&password=" + prompt("Passwort:"));
+var webSocket = new WebSocket("ws://localhost:8080/chat?username=" + prompt("Nickname:") + "&password=" + prompt("Passwort:"));
 webSocket.onmessage = function (msg) { updateChat(msg); };
 webSocket.onclose = function () { alert("WebSocket connection closed") };
 

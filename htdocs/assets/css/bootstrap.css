@@ -901,7 +901,7 @@ body {
   font-size: 14px;
   line-height: 1.42857143;
   color: #333;
-  background-color: #fff;
+  background-color: #e8e8e8;
 }
 input,
 button,
@@ -6201,5 +6201,15 @@ button.close {
   .hidden-print {
     display: none !important;
   }
+}
+
+#popupbox{
+width: 100%;
+height: 100%;
+position: absolute; 
+background: rgba(37, 37, 37, 0.73);
+z-index: 9; 
+font-family: arial; 
+visibility: hidden; 
 }
 /*# sourceMappingURL=bootstrap.css.map */
