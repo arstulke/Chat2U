@@ -1,27 +1,48 @@
 //SETUP VARS
-inizialize();
 var parentGuest = document.getElementById("chat");
 parentGuest.className = 'media-list';
 var childGuest = document.getElementById("li");
 childGuest.className = 'media';
 var audio = new Audio('assets/sound/message.mp3');
 var scrollBar = document.getElementById("scroll");
+var webSocket;
 
-function inizialize() {
-var webSocket = new WebSocket("ws://10.250.25.78:8080/chat?username=" + prompt("Nickname:") + "&password=" + prompt("Passwort:"));
 
-}
-//sel
-//Websocket Events
+
+function login(user, password) {
+	webSocket = new WebSocket("ws://10.250.25.78:8080/chat?username=" + user + "&password=" + password);
+	//Websocket Events
 webSocket.onmessage = function(msg) {
-    var data = JSON.parse(msg.data)
-	updateUserList(data);
-    updateChat(data.userMessage);
+	var data = JSON.parse(msg.data)
+	if(data["type"] == "msg"){
+		updateUserList(data);
+		updateChat(data.userMessage);
+		
+	} else {
+		if(data["exceptionType"] == "AccessDeniedException"){
+			webSocket.close();
+			updateChat(data["msg"], "disconnect");
+		
+		} else if(data["exceptionType"] == "UsernameExistsException"){
+			updateChat(data["msg"]);
+		
+		} else if(data["exceptionType"] == "IllegalArgumentException"){
+			updateChat(data["msg"]);
+		
+		}
+	}
 };
 webSocket.onclose = function() {
-    updateChat("<article><b>Chat2U<\/b><p style='color:#F70505'>THE SERVER WAS CLOSED!<\/p><small class=\"text-muted\">Server<\/small><\/article>");
+    updateChat("<article><b>Chat2U<\/b><p style='color:#F70505'>Client disconnected!<\/p><\/article>");
 	console.log("meh");
 };
+}
+
+
+id("login").addEventListener("click", function() {
+    login(id("user").value,id("password").value);
+});
+
 
 //Tab opend, Closed Events
 window.onblur = function() { window.blurred = true; };
@@ -48,8 +69,8 @@ function sendMessage(message) {
 }
 
 //Update the chat-panel, and the list of connected users
-function updateChat(msg) {
-    childGuest.innerHTML = childGuest.innerHTML + "<div class='media-body'><div class='media'><a class='pull-left' href='#'><img class='media-object img-circle ' src='assets/img/user.png' /></a><div class='media-body' >" + msg + "</div></div></div><hr>";
+function updateChat(msg, type) {
+    childGuest.innerHTML = childGuest.innerHTML + "<div class='media-body'><div class='media'><div class='media-body' >" + msg + "</div></div></div>";
     parentGuest.parentNode.insertBefore(childGuest, parentGuest.nextSibling);
 
     scrollBar.scrollTop = scrollBar.scrollHeight;
