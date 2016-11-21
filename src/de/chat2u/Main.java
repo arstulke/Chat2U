@@ -26,8 +26,7 @@ public class Main {
         ChatServer.initialize(new AuthenticationService(repo));
 
         Spark.webSocket("/chat", ChatWebsocketHandler.class);
-        //Spark.staticFileLocation("/public");
-        externalStaticFileLocation("C:\\Users\\kaabert\\Desktop\\Projekte\\GIT\\Chat2U\\htdocs");
+        Spark.staticFileLocation("/public");
         Spark.port(8080);
         Spark.init();
 

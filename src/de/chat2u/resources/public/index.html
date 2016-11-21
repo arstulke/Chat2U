@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Chat2U</title>
+    <link href="assets/css/bootstrap.css" rel="stylesheet" />
+</head>
+
+<body style="font-family:Verdana">
+    <div id="popupbox" style="visibility: visible;">
+        <form name="login" action="" method="post" style="margin-top: 20%; margin-left: 35%;margin-right: 35%; background: rgba(255, 255, 255, 0);">
+            <div class="panel panel-primary">
+                <div class="panel-heading">LOGIN</div>
+                <div class="panel-body">
+				<div id="alert" style="visibility: visible; padding-left: 15px;">
+				</div>
+                    <div class="col-md-3">
+                        <div style="margin-bottom: 20px">Username:</div>
+                        <div>Password:</div>
+                    </div>
+                    <div class="col-md-9" style="margin-bottom:10px">
+                        <input id="user" name="user" style="margin-bottom:10px; width: 100%"><br>
+                        <input id="password" name="password" type="password" style="width: 100%">
+                    </div>
+                    <div class="col-md-3"></div>
+                    <div class="col-md-9" style="margin-bottom:10px">
+                        <button id="register" class="btn btn-info" type="button">Sign Up
+                        </button id="register">
+                       <button id="login" class="btn btn-info" type="button">Login
+                        </button id="login">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="container">
+        <div class="row " style="padding-top:40px;">
+            <center><img src="header.png" alt="Chat2U" style="height:150px; "></center>
+            <br /><br />
+            <div class="col-md-2">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">Channel</div>
+                    <div class="panel-body">
+                        <ul id="channellist" class="media-list">
+						
+							<li class="media">
+								<div class="media-body">
+									<a href="">
+										<div class="media" style="border-radius: 5px; border: 2px solid #428bca; background:#cce7ff">
+											<div class="media-body" style="padding-left: 5px;">
+												<h5 style="margin-bottom: 0px;margin-top: 5px;">Shout Out</h5>
+												<small class="text-muted">Public</small>
+											</div>
+										</div>
+									</a>
+								</div>
+							</li>
+							
+							<li class="media">
+								<div class="media-body">
+									<a href="">
+										<div class="media" style="border-radius: 5px; border: 2px solid #428bca;">
+											<div class="media-body" style="padding-left: 5px;">
+												<h5 style="margin-bottom: 0px;margin-top: 5px;">Comming Soon</h5>
+												<small class="text-muted">Private</small>
+											</div>
+										</div>
+									</a>
+								</div>
+							</li>
+							
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="panel panel-info">
+                    <div class="panel-heading">CHAT HISTORY</div>
+                    <div id="scroll" class="panel-body" style="overflow-y: scroll; height:500px;">
+                        <ul id="chat" class="media-list">
+
+                            <div id='li' class="media-body">
+                                <div class="media">
+                            
+                                    <div class="media-body">
+                                        <article><b>Chat2U</b>
+                                            <p>Herzlich Willkommen! Vielen Dank, dass du Chat2U benutzt.</p><small></small></article>
+                                    </div>
+                                </div>
+                                <hr>
+                            </div>
+
+                        </ul>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="input-group">
+                            <input type="text" id="message" class="form-control" placeholder="Enter Message" />
+                            <span class="input-group-btn"><button id="send" class="btn btn-info" type="button">SEND</button></span>
+                        </div>
+                    </div>
+                </div>
+					<label class="switch">
+						<input id="checkbox" type="checkbox" checked>
+						<div class="slider"></div>
+					</label> 
+					Use notifications
+					<h6>BTW Thanks to <a href="https://notificationsounds.com/notification-sounds/something-you-dont-mess-with-120">notificationsounds.com</a></h6>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">ONLINE USERS</div>
+                    <div class="panel-body">
+                        <ul id="userlist" class="media-list">
+
+
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script></script>
+    <script src="websocketDemo.js"></script>
+</body>
+
+</html>

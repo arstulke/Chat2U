@@ -1,6 +1,5 @@
 //----------------------------------------SETUP VARS----------------------------------------
 var audio = new Audio('assets/sound/message.mp3');		//notification Sound
-var notifications = true;								//should notificate user?
 var webSocket;											//webSocket
 
 showPopUp("show","");										//show login Dialog
@@ -89,7 +88,7 @@ function updateChat(msg) {
     parentGuest.parentNode.insertBefore(childGuest, parentGuest.nextSibling);
     scrollBar.scrollTop = scrollBar.scrollHeight;
 	
-    if (window.blurred && notifications) {
+    if (window.blurred && id("checkbox").checked) {
         audio.play();
         document.title = "Chat2U ( ! )";
     }
