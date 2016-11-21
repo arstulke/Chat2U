@@ -19,8 +19,9 @@ import java.util.HashMap;
  * Created ChatWebsocketHandler in de.chat2u
  * by ARSTULKE on 18.11.2016.
  */
+@SuppressWarnings("unused") //werden von Spark aufgerufen
 @WebSocket
-public class ChatWebsocketHandler {
+public class ChatWebSocketHandler {
 
     /**
      * Wenn ein Client eine Verbindung aufbaut wird versucht diesen einzuloggen,
@@ -37,6 +38,15 @@ public class ChatWebsocketHandler {
         } catch (Exception exception) {
             String msg = MessageBuilder.buildExceptionMessage(exception);
             System.err.println(exception.getMessage());
+
+            //////////////////////////////////////////////////////////////////////////
+            // ERGEBNISSE MIT CARSTEN 21.11.16                                      //
+            //////////////////////////////////////////////////////////////////////////
+            // Loggen statt System.(out/err)                                        //
+            // Getrenntes Exceptionhandling;                                        //
+            // Sprak testen-> Junit; Mock ->> Einzelne Fehlerbehandlung testen      //
+            //////////////////////////////////////////////////////////////////////////
+
             try {
                 ChatServer.sendMessageToSession(msg, webSocketSession);
             } catch (IOException e) {

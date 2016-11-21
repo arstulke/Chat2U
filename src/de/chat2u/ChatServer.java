@@ -87,8 +87,9 @@ public class ChatServer {
      * AuthenticationUser und Password.
      * <p>
      *
-     * @param username ist der eindeutige Username des Benutzers
-     * @param password ist das Passwort zu dem Username
+     * @param username    ist der eindeutige Username des Benutzers
+     * @param password    ist das Passwort zu dem Username
+     * @param userSession ist die Session des Users zum abspeichern
      * @return die Antwort der Datenbank über erfolg ("Gültige Zugangsdaten")
      * @throws AccessDeniedException wenn der AuthenticationUser nicht mit den gegebenen
      *                               Parametern eingetragen ist. Die Message ist ("Ungültige Zugangsdaten")
@@ -183,7 +184,7 @@ public class ChatServer {
 
     private static void checksIllegalState() {
         if (authenticationService == null)
-            throw new IllegalStateException("You have to use Chatserver.initialize() method first.");
+            throw new IllegalStateException("You have to use ChatServer.initialize() method first.");
     }
 
     public static User getRegisteredUserByName(String username) {
