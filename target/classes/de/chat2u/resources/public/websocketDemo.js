@@ -1,14 +1,13 @@
 //----------------------------------------SETUP VARS----------------------------------------
 var audio = new Audio('assets/sound/message.mp3');		//notification Sound
 var webSocket;											//webSocket
-
-showPopUp("show","");										//show login Dialog
+showLoginDialog("show","");									//show login Dialog
 
 
 //---------------------------------------- Web Socket ----------------------------------------
 function login(user, password) {
     webSocket = new WebSocket("ws://localhost:8080/chat?username=" + user + "&password=" + password);
-    showPopUp("hide","");
+    showLoginDialog("hide","");
 	id("message").focus();
 	
     //Websocket Events
@@ -21,7 +20,7 @@ function login(user, password) {
         } else {
             if (data["exceptionType"] == "AccessDeniedException") {
                 webSocket.close();
-				showPopUp("show",data["msg"]);
+				showLoginDialog("show",data["msg"]);
 
             } else if (data["exceptionType"] == "UsernameExistsException") {
                 updateChat(data["msg"]);
@@ -33,7 +32,7 @@ function login(user, password) {
         }
     };
     webSocket.onclose = function() {
-        updateChat("<article><b>Chat2U<\/b><p style='color:#F70505'>Client disconnected!<\/p><\/article>");
+        updateChat("<article><b>Chat2U</b><p style='color:#F70505'>Client disconnected!</p></article>");
         console.log("meh");
     };
 }
@@ -101,7 +100,7 @@ function updateUserList(data) {
     });
 }
 //show Login Dialog
-function showPopUp(showhide, alert) {
+function showLoginDialog(showhide, alert) {
     if (showhide == "show") {
 		id("user").focus();
         id('popupbox').style.visibility = "visible";
