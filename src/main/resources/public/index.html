@@ -25,15 +25,18 @@
     <meta name="author" content=""/>
     <title>Chat2U</title>
     <link href="assets/css/bootstrap.css" rel="stylesheet"/>
+
+    <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </head>
 
 <body style="font-family:Verdana">
-<div id="popupbox" style="visibility: visible;">
+<div id="popupbox" style="visibility: visible; position:fixed;">
     <form name="login" action="" method="post"
           style="margin-top: 12%; margin-left: 35%; margin-right: 35%; background: rgba(255, 255, 255, 0);">
         <div class="panel panel-primary">
-            <div class="panel-heading">LOGIN</div>
-            <div class="panel-body">
+            <div id="header_logintext" class="panel-heading">LOGIN<p id="header_login" style="float:right;">&#10224;</p></div>
+            <div id="body_login" class="panel-body">
                 <div id="alert" style="visibility: visible; padding-left: 15px;">
                 </div>
                 <div class="col-md-3">
@@ -52,8 +55,8 @@
             </div>
         </div>
         <div class="panel panel-primary">
-            <div class="panel-heading">REGISTER</div>
-            <div class="panel-body">
+            <div id="header_registertext"class="panel-heading" > REGISTER<p id="header_register" style="float:right;">&#10225;</p></div>
+            <div id="body_register" class="panel-body" >
                 <div id="alert_register" style="visibility: visible; padding-left: 15px;">
                 </div>
                 <div class="col-md-3">
@@ -167,6 +170,57 @@
         </div>
     </div>
 </div>
+<script>
+var register = false;
+var login = true;
+
+$( "#header_registertext" ).click(function() {
+  if(register == true){
+        $("#header_register").html("&#10225;");
+        $( "#body_register" ).slideUp();
+        register = false;
+
+        $("#header_login").html("&#10224;");
+         $( "#body_login" ).slideDown();
+        login = true;
+
+  } else {
+        $("#header_register").html("&#10224;");
+        $( "#body_register" ).slideDown();
+        register = true;
+
+         $("#header_login").html("&#10225;");
+        $( "#body_login" ).slideUp();
+        login = false;
+
+  }
+});
+
+$( "#header_logintext" ).click(function() {
+  if(login == true){
+        $("#header_login").html("&#10225;");
+        $( "#body_login" ).slideUp();
+        login = false;
+
+        $("#header_register").html("&#10224;");
+        $( "#body_register" ).slideDown();
+        register = true;
+
+  } else {
+        $("#header_login").html("&#10224;");
+         $( "#body_login" ).slideDown();
+        login = true;
+
+        $("#header_register").html("&#10225;");
+        $( "#body_register" ).slideUp();
+        register = false;
+
+  }
+});
+$( document ).ready(function(){
+        $( "#body_register" ).slideUp();
+ });
+</script>
 <script src="websocketDemo.js"></script>
 </body>
 

@@ -37,6 +37,8 @@ function connect(firstMessage) {
     webSocket.onclose = function() {
         updateChat("<article><b>Chat2U</b><p style='color:#F70505'>Client disconnected!</p></article>");
         console.log("meh");
+        showLoginDialog("show", "alert", "<p style='color:#F70505'>Client disconnected!</p>");							//show login Dialog
+        showLoginDialog("show", "alert_register", "");                  //show login Dialog
     };
 }
 
