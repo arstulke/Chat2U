@@ -1,15 +1,14 @@
 //----------------------------------------SETUP VARS----------------------------------------
-var audio = new Audio('assets/sound/message.mp3');		//notification Sound
-var webSocket;											//webSocket
-showLoginDialog("show","");								//show login Dialog
+var audio = new Audio('assets/sound/message.mp3');	        	//notification Sound
+var webSocket = new WebSocket("ws://"+hostIP+":"+port+"/chat"); //webSocket
+showLoginDialog("show","");								        //show login Dialog
 
-var hostIP = document.location["hostname"];             //aktuelle HostAdresse
-var port = 80;                                          //port
+var hostIP = document.location["hostname"];                     //aktuelle HostAdresse
+var port = 80;                                                  //port
 
 //---------------------------------------- Web Socket ----------------------------------------
-function login(user, password) {
-    webSocket = new WebSocket("ws://"+hostIP+":"+port+"/chat");
-	sendMessage("{\"cmd\":\"login\",\"params\": {\"username\":\""+user+"\",\"passwort\":\""+password+"\"}}");
+function connect(firstMessage) {
+	sendMessage(firstMessage);
 
     //Websocket Events
     webSocket.onmessage = function(msg) {
@@ -25,11 +24,10 @@ function login(user, password) {
             }
         } else {
             if (data["exceptionType"] == "AccessDeniedException") {
-                webSocket.close();
 				showLoginDialog("show",data["msg"]);
 
             } else if (data["exceptionType"] == "UsernameExistsException") {
-                updateChat(data["msg"]);
+                showLoginDialog("show",data["msg"]);
 
             } else if (data["exceptionType"] == "IllegalArgumentException") {
                 updateChat(data["msg"]);
@@ -63,28 +61,32 @@ id("message").addEventListener("keypress", function(e) {
 });
 id("user").addEventListener("keypress", function(e) {
     if (e.keyCode === 13) {
-        login(id("user").value, id("password").value);
+        connect("{\"cmd\":\"login\",\"params\": {\"username\":\""+id("user").value+"\",\"passwort\":\""+id("password").value+"\"}}");
     }
 });
 id("password").addEventListener("keypress", function(e) {
     if (e.keyCode === 13) {
-        login(id("user").value, id("password").value);
+        connect("{\"cmd\":\"login\",\"params\": {\"username\":\""+id("user").value+"\",\"passwort\":\""+id("password").value+"\"}}");
     }
 });
 id("login").addEventListener("click", function() {
-    login(id("user").value, id("password").value);
+    connect("{\"cmd\":\"login\",\"params\": {\"username\":\""+id("user").value+"\",\"passwort\":\""+id("password").value+"\"}}");
+});
+id("register").addEventListener("click", function() {
+     connect("{\"cmd\":\"register\",\"params\": {\"username\":\""+id("user").value+"\",\"passwort\":\""+id("password").value+"\"}}");
 });
 
 //----------------------------------------Helper Methods----------------------------------------
 //Send a message if it's not empty, then clear the input field
 function sendMessage(message) {
-    waitForSocketConnection(function(){
+    wait(function(){
         if (message !== "") {
             webSocket.send(message);
             id("message").value = "";
         }
     });
 }
+
 //Update the chat-panel
 function updateChat(msg) {
 	var parentGuest = id("chat");
@@ -100,6 +102,7 @@ function updateChat(msg) {
         document.title = "Chat2U ( ! )";
     }
 }
+
 //update UserList
 function updateUserList(data) {
     id("userlist").innerHTML = "";
@@ -107,6 +110,7 @@ function updateUserList(data) {
         id("userlist").insertAdjacentHTML("afterbegin","<li class='media'><div class='media-body'><div class='media'><a class='pull-left' href='#'><img class='media-object img-circle' style='max-height:40px;' src='assets/img/newuser.png' /></a><div class='media-body' ><h5>" + user + "</h5><small class='text-muted'>DEIN STATUS</small></div></div></div></li>");
     });
 }
+
 //show Login Dialog
 function showLoginDialog(showhide, alert) {
     if (showhide == "show") {
@@ -123,12 +127,14 @@ function showLoginDialog(showhide, alert) {
 		id('alert').style.visibility = "hidden";
     }
 }
+
 //selecting element by id
 function id(id) {
     return document.getElementById(id);
 }
 
-function waitForSocketConnection(callback){
+//wait for the socket to connect
+function wait(callback){
     setTimeout(
         function () {
             if (webSocket.readyState === 1) {
@@ -140,7 +146,7 @@ function waitForSocketConnection(callback){
 
             } else {
                 console.log("wait for connection...")
-                waitForSocketConnection(callback);
+                wait(callback);
             }
 
         }, 5); // wait 5 milisecond for the connection...
