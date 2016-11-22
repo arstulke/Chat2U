@@ -19,7 +19,7 @@ function login(user, password) {
             updateChat(data.userMessage);
 
         } else if (data["type"] == "server_msg") {
-            if(data.userMessage == "Gültige Zugangsdaten") {
+            if(data.msg == "Gültige Zugangsdaten") {
                 showLoginDialog("hide","");
                 id("message").focus();
             }
@@ -78,21 +78,23 @@ id("login").addEventListener("click", function() {
 //----------------------------------------Helper Methods----------------------------------------
 //Send a message if it's not empty, then clear the input field
 function sendMessage(message) {
-    if (message !== "") {
-        webSocket.send(message);
-        id("message").value = "";
-    }
+    waitForSocketConnection(function(){
+        if (message !== "") {
+            webSocket.send(message);
+            id("message").value = "";
+        }
+    });
 }
 //Update the chat-panel
 function updateChat(msg) {
 	var parentGuest = id("chat");
 	var childGuest = id("li");
 	var scrollBar = id("scroll");
-	
+
     childGuest.innerHTML = childGuest.innerHTML + "<div class='media-body'><div class='media'><div class='media-body' >" + msg + "</div></div></div>";
     parentGuest.parentNode.insertBefore(childGuest, parentGuest.nextSibling);
     scrollBar.scrollTop = scrollBar.scrollHeight;
-	
+
     if (window.blurred && id("checkbox").checked) {
         audio.play();
         document.title = "Chat2U ( ! )";
@@ -124,4 +126,22 @@ function showLoginDialog(showhide, alert) {
 //selecting element by id
 function id(id) {
     return document.getElementById(id);
+}
+
+function waitForSocketConnection(callback){
+    setTimeout(
+        function () {
+            if (webSocket.readyState === 1) {
+                console.log("Connection is made")
+                if(callback != null){
+                    callback();
+                }
+                return;
+
+            } else {
+                console.log("wait for connection...")
+                waitForSocketConnection(callback);
+            }
+
+        }, 5); // wait 5 milisecond for the connection...
 }
