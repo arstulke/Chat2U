@@ -21,7 +21,7 @@ public class Main {
 
         Spark.webSocket("/chat", ChatWebSocketHandler.class);
         Spark.staticFileLocation("/public");
-        Spark.port(8080);
+        Spark.port(80);
         Spark.init();
     }
 }

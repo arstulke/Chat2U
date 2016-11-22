@@ -4,7 +4,7 @@ var webSocket;											//webSocket
 showLoginDialog("show","");								//show login Dialog
 
 var hostIP = document.location["hostname"];             //aktuelle HostAdresse
-var port = 8080;                                        //port
+var port = 80;                                        //port
 
 //---------------------------------------- Web Socket ----------------------------------------
 function login(user, password) {
