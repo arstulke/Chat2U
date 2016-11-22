@@ -1,5 +1,7 @@
 package de.chat2u.junit;
 
+import de.chat2u.ChatServer;
+import de.chat2u.model.Message;
 import de.chat2u.utils.MessageBuilder;
 import de.chat2u.exceptions.AccessDeniedException;
 import org.junit.Test;
@@ -23,10 +25,10 @@ public class MessageBuilderTest {
         Date date = new Date();
 
         //when
-        String builtMessage = MessageBuilder.buildMessage(sender, msg);
+        String builtMessage = MessageBuilder.buildMessage(new Message(sender, msg, ChatServer.GLOBAL));
 
         //then
-        assertThat(builtMessage, is("{\"userMessage\":\"<article><b>User1<\\/b> Hallo, wie geht es dir ?<p><small class=\\\"text-muted\\\">" + MessageBuilder.getTimestamp(new Date()) + "<\\/small><\\/p><\\/article>\",\"userlist\":[],\"sender\":\"User1\",\"type\":\"msg\",\"timestamp\":\"" + MessageBuilder.getTimestamp(new Date()) + "\"}"));
+        assertThat(builtMessage, is("{\"userMessage\":\"<article><b>User1<\\/b> Hallo, wie geht es dir ?<p><small class=\\\"text-muted\\\">" + MessageBuilder.getTimestamp(date) + "<\\/small><\\/p><\\/article>\",\"userlist\":[],\"sender\":\"User1\",\"noHTMLmsg\":\"Hallo, wie geht es dir ?\",\"scope\":\"global\",\"type\":\"msg\",\"timestamp\":\"" + MessageBuilder.getTimestamp(date) + "\"}"));
     }
 
     @Test

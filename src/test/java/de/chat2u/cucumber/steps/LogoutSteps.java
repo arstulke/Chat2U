@@ -1,7 +1,9 @@
 package de.chat2u.cucumber.steps;
 
+import cucumber.api.PendingException;
 import cucumber.api.java.de.Dann;
 import cucumber.api.java.de.Gegebensei;
+import cucumber.api.java.de.Gegebenseien;
 import cucumber.api.java.de.Wenn;
 import de.chat2u.ChatServer;
 import de.chat2u.authentication.AuthenticationService;
