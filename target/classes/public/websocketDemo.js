@@ -1,10 +1,10 @@
 //----------------------------------------SETUP VARS----------------------------------------
 var audio = new Audio('assets/sound/message.mp3');	        	//notification Sound
-var webSocket = new WebSocket("ws://"+hostIP+":"+port+"/chat"); //webSocket
 showLoginDialog("show","");								        //show login Dialog
 
 var hostIP = document.location["hostname"];                     //aktuelle HostAdresse
 var port = 80;                                                  //port
+var webSocket = new WebSocket("ws://"+hostIP+":"+port+"/chat"); //webSocket
 
 //---------------------------------------- Web Socket ----------------------------------------
 function connect(firstMessage) {
