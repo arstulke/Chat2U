@@ -74,9 +74,11 @@ public class ChatWebSocketHandler {
     public void onMessage(Session webSocketSession, String message) {
         try {
             handleCommandFromClient(webSocketSession, message);
-        } catch (Exception e) {
+        } catch (JSONException e) {
             String sender = ChatServer.getUsernameBySession(webSocketSession).getUsername();
             ChatServer.broadcastTextMessage(sender + ":", message);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
