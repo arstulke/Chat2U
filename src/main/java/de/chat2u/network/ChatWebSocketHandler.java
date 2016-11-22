@@ -95,14 +95,14 @@ public class ChatWebSocketHandler {
      */
     private void handleCommandFromClient(Session webSocketSession, String message) throws JSONException, IOException {
         JSONObject object = new JSONObject(message);
-        JSONObject params = (JSONObject) object.get("param");
+        JSONObject params = (JSONObject) object.get("params");
         if (object.get("cmd").equals("login")) {
-            String msg = ChatServer.login((String) params.get("username"), (String) params.get("password"), webSocketSession);
+            String msg = ChatServer.login((String) params.get("username"), (String) params.get("passwort"), webSocketSession);
             ChatServer.sendMessageToSession(msg, webSocketSession);
         } else if (object.get("cmd").equals("logout")) {
             ChatServer.logout((String) params.get("username"));
         } else if (object.get("cmd").equals("register")) {
-            String msg = ChatServer.register((String) params.get("username"), (String) params.get("password"));
+            String msg = ChatServer.register((String) params.get("username"), (String) params.get("passwort"));
             ChatServer.sendMessageToSession(msg, webSocketSession);
         }
     }

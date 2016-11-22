@@ -19,7 +19,7 @@ function login(user, password) {
             updateChat(data.userMessage);
 
         } else if (data["type"] == "server_msg") {
-            if(data.userMessage == "Gültige Zugangsdaten") {
+            if(data.msg == "Gültige Zugangsdaten") {
                 showLoginDialog("hide","");
                 id("message").focus();
             }
@@ -90,11 +90,11 @@ function updateChat(msg) {
 	var parentGuest = id("chat");
 	var childGuest = id("li");
 	var scrollBar = id("scroll");
-	
+
     childGuest.innerHTML = childGuest.innerHTML + "<div class='media-body'><div class='media'><div class='media-body' >" + msg + "</div></div></div>";
     parentGuest.parentNode.insertBefore(childGuest, parentGuest.nextSibling);
     scrollBar.scrollTop = scrollBar.scrollHeight;
-	
+
     if (window.blurred && id("checkbox").checked) {
         audio.play();
         document.title = "Chat2U ( ! )";
