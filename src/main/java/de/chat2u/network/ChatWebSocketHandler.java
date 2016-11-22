@@ -1,7 +1,6 @@
 package de.chat2u.network;
 
 import de.chat2u.ChatServer;
-import de.chat2u.exceptions.AccessDeniedException;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
@@ -45,8 +44,12 @@ public class ChatWebSocketHandler {
         } catch (JSONException e) {
             String sender = ChatServer.getUsernameBySession(webSocketSession).getUsername();
             ChatServer.broadcastTextMessage(sender + ":", message);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            try {
+                ChatServer.sendMessageToSession("{\"type\":\"server_msg\", \"exceptionType\":\"" + exception.getClass().getSimpleName() + "\", \"msg\":\"" + exception.getMessage() + "\"}", webSocketSession);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -71,12 +74,8 @@ public class ChatWebSocketHandler {
             String msg = ChatServer.register((String) params.get("username"), (String) params.get("passwort"));
             ChatServer.sendMessageToSession(msg, webSocketSession);
         } else if (object.get("cmd").equals("login")) {
-            try {
-                String msg = ChatServer.login((String) params.get("username"), (String) params.get("passwort"), webSocketSession);
-                ChatServer.sendMessageToSession(msg, webSocketSession);
-            } catch (AccessDeniedException e) {
-                ChatServer.sendMessageToSession("{\"type\":\"server_msg\", \"msg\":\"" + e.getMessage() + "\"}", webSocketSession);
-            }
+            String msg = ChatServer.login((String) params.get("username"), (String) params.get("passwort"), webSocketSession);
+            ChatServer.sendMessageToSession(msg, webSocketSession);
         } else if (object.get("cmd").equals("logout")) {
             ChatServer.logout((String) params.get("username"));
         }
