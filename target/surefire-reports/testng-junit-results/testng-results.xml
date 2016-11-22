@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="5" passed="5">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Surefire suite" duration-ms="1291" started-at="2016-11-22T07:58:28Z" finished-at="2016-11-22T07:58:29Z">
+    <groups>
+    </groups>
+    <test name="Surefire test" duration-ms="1291" started-at="2016-11-22T07:58:28Z" finished-at="2016-11-22T07:58:29Z">
+      <class name="de.chat2u.junit.TokenGeneratorTest">
+        <test-method status="PASS" signature="generatesTokenWithModeratorPrivileges()" name="generatesTokenWithModeratorPrivileges" duration-ms="0" started-at="2016-11-22T08:58:29Z" finished-at="2016-11-22T08:58:29Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- generatesTokenWithModeratorPrivileges -->
+        <test-method status="PASS" signature="generatesTokenWithAdminPrivileges()" name="generatesTokenWithAdminPrivileges" duration-ms="0" started-at="2016-11-22T08:58:29Z" finished-at="2016-11-22T08:58:29Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- generatesTokenWithAdminPrivileges -->
+        <test-method status="PASS" signature="generatesTokenWith32Chars()" name="generatesTokenWith32Chars" duration-ms="0" started-at="2016-11-22T08:58:29Z" finished-at="2016-11-22T08:58:29Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- generatesTokenWith32Chars -->
+      </class> <!-- de.chat2u.junit.TokenGeneratorTest -->
+      <class name="de.chat2u.junit.MessageBuilderTest">
+        <test-method status="PASS" signature="buildsTextmessage()" name="buildsTextmessage" duration-ms="44" started-at="2016-11-22T08:58:29Z" finished-at="2016-11-22T08:58:29Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- buildsTextmessage -->
+        <test-method status="PASS" signature="buildsExceptionMessage()" name="buildsExceptionMessage" duration-ms="44" started-at="2016-11-22T08:58:29Z" finished-at="2016-11-22T08:58:29Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- buildsExceptionMessage -->
+      </class> <!-- de.chat2u.junit.MessageBuilderTest -->
+    </test> <!-- Surefire test -->
+  </suite> <!-- Surefire suite -->
+</testng-results>
