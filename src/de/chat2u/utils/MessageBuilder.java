@@ -49,10 +49,10 @@ public class MessageBuilder {
      * @param timestamp timestamp when the message where send
      */
     private static String createHTMLMessage(String sender, String message, String timestamp) {
-        return TagCreator.article()
+        return article()
                 .with(
                         b(sender),
-                        unsafeHtml(" "+message),
+                        unsafeHtml(" " + message),
                         p().with(small(timestamp).withClass("text-muted")))
                 .render();
     }
@@ -63,7 +63,7 @@ public class MessageBuilder {
      *
      * @param exception ist die Exception, zu der eine Nachricht gebaut werden soll.
      * @return die gebaute Nachricht
-     * */
+     */
     public static String buildExceptionMessage(Exception exception) {
         try {
             String timestamp = getTimestamp(new Date());
@@ -83,8 +83,9 @@ public class MessageBuilder {
      * Gibt die aktuelle Zeit und das aktuelle Datum aus
      * <p>
      *
+     * @param date
      * @return Zeittempel
-     * @param date*/
+     */
     public static String getTimestamp(Date date) {
         return new SimpleDateFormat("hh:mm dd.MM.yyyy").format(date);
     }

@@ -26,7 +26,7 @@ public class MessageBuilderTest {
         String builtMessage = MessageBuilder.buildMessage(sender, msg);
 
         //then
-        assertThat(builtMessage, is("{\"userMessage\":\"<article><b>User1<\\/b><p>Hallo, wie geht es dir ?<\\/p><small class=\\\"text-muted\\\">" + MessageBuilder.getTimestamp(date) + "<\\/small><\\/article>\",\"userlist\":[],\"sender\":\"User1\",\"type\":\"msg\",\"timestamp\":\"" + MessageBuilder.getTimestamp(date) + "\"}"));
+        assertThat(builtMessage, is("{\"userMessage\":\"<article><b>User1<\\/b> Hallo, wie geht es dir ?<p><small class=\\\"text-muted\\\">" + MessageBuilder.getTimestamp(new Date()) + "<\\/small><\\/p><\\/article>\",\"userlist\":[],\"sender\":\"User1\",\"type\":\"msg\",\"timestamp\":\"" + MessageBuilder.getTimestamp(new Date()) + "\"}"));
     }
 
     @Test
