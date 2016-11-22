@@ -18,6 +18,11 @@ function login(user, password) {
             updateUserList(data);
             updateChat(data.userMessage);
 
+        } else if (data["type"] == "server_msg") {
+            if(data.userMessage == "Gültige Zugangsdaten") {
+                showLoginDialog("hide","");
+                id("message").focus();
+            }
         } else {
             if (data["exceptionType"] == "AccessDeniedException") {
                 webSocket.close();
@@ -29,11 +34,6 @@ function login(user, password) {
             } else if (data["exceptionType"] == "IllegalArgumentException") {
                 updateChat(data["msg"]);
 
-            }
-        } else if (data["type"] == "server_msg") {
-            if(data.userMessage == "Gültige Zugangsdaten"){}
-                showLoginDialog("hide","");
-            	id("message").focus();
             }
         }
     };

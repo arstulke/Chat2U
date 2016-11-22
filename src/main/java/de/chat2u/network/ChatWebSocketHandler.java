@@ -26,39 +26,41 @@ public class ChatWebSocketHandler {
     /**
      * Wenn ein Client eine Verbindung aufbaut wird versucht diesen einzuloggen,
      * wenn dies nicht gelingt passiert nichts.
-     * */
+     */
     @OnWebSocketConnect
     public void onConnect(Session webSocketSession) {
-        HashMap<String, String> params = NetworkUtils.getParams(((WebSocketSession) webSocketSession).getRequestURI().getQuery());
-        try {
-            if (params.containsKey("username") && params.containsKey("password")) {
-                String msg = ChatServer.login(params.get("username"), params.get("password"), webSocketSession);
-                ChatServer.sendMessageToSession(msg, webSocketSession);
-            }
-        } catch (Exception exception) {
-            String msg = MessageBuilder.buildExceptionMessage(exception);
-            System.err.println(exception.getMessage());
-
-            //////////////////////////////////////////////////////////////////////////
-            // ERGEBNISSE MIT CARSTEN 21.11.16                                      //
-            //////////////////////////////////////////////////////////////////////////
-            // Loggen statt System.(out/err)                                        //
-            // Getrenntes Exceptionhandling;                                        //
-            // Sprak testen-> Junit; Mock ->> Einzelne Fehlerbehandlung testen      //
-            //////////////////////////////////////////////////////////////////////////
-
+        if (((WebSocketSession) webSocketSession).getRequestURI().getQuery() != null) {
+            HashMap<String, String> params = NetworkUtils.getParams(((WebSocketSession) webSocketSession).getRequestURI().getQuery());
             try {
-                ChatServer.sendMessageToSession(msg, webSocketSession);
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.err.println(e.getMessage());
+                if (params.containsKey("username") && params.containsKey("password")) {
+                    String msg = ChatServer.login(params.get("username"), params.get("password"), webSocketSession);
+                    ChatServer.sendMessageToSession(msg, webSocketSession);
+                }
+            } catch (Exception exception) {
+                String msg = MessageBuilder.buildExceptionMessage(exception);
+                System.err.println(exception.getMessage());
+
+                //////////////////////////////////////////////////////////////////////////
+                // ERGEBNISSE MIT CARSTEN 21.11.16                                      //
+                //////////////////////////////////////////////////////////////////////////
+                // Loggen statt System.(out/err)                                        //
+                // Getrenntes Exceptionhandling;                                        //
+                // Sprak testen-> Junit; Mock ->> Einzelne Fehlerbehandlung testen      //
+                //////////////////////////////////////////////////////////////////////////
+
+                try {
+                    ChatServer.sendMessageToSession(msg, webSocketSession);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.err.println(e.getMessage());
+                }
             }
         }
     }
 
     /**
      * Wenn der Client die Verbindung schließt wird dieser {@link ChatServer#logout(String) ausgeloggt}
-     * */
+     */
     @OnWebSocketClose
     public void onDisconnect(Session webSocketSession, int statusCode, String reason) {
         String username = ChatServer.getUsernameBySession(webSocketSession).getUsername();
@@ -67,7 +69,7 @@ public class ChatWebSocketHandler {
 
     /**
      * Verwaltet eingehende Nachrichten eines Clients
-     * */
+     */
     @OnWebSocketMessage
     public void onMessage(Session webSocketSession, String message) {
         try {
@@ -81,16 +83,16 @@ public class ChatWebSocketHandler {
     /**
      * List die nachricht des Clients aus und handelt nach dieser.
      * z.B.:
-     *<p>   Login
-     *<p>   Logout
-     *      Register
-     *<p>
+     * <p>   Login
+     * <p>   Logout
+     * Register
+     * <p>
      *
      * @param webSocketSession ist die Session des Clients
-     * @param message ist die Nachricht des Clients
+     * @param message          ist die Nachricht des Clients
      * @throws JSONException wenn die Nachricht kein JSON ist oder ein falsches Format hat
-     * @throws IOException wenn keine Nachricht zurück an den Client gesenet werden kann.
-     * */
+     * @throws IOException   wenn keine Nachricht zurück an den Client gesenet werden kann.
+     */
     private void handleCommandFromClient(Session webSocketSession, String message) throws JSONException, IOException {
         JSONObject object = new JSONObject(message);
         JSONObject params = (JSONObject) object.get("param");
