@@ -23,7 +23,5 @@ public class Main {
         Spark.staticFileLocation("/public");
         Spark.port(8080);
         Spark.init();
-
-
     }
 }

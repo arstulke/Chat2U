@@ -9,7 +9,7 @@ var port = 8080;                                        //port
 //---------------------------------------- Web Socket ----------------------------------------
 function login(user, password) {
     webSocket = new WebSocket("ws://"+hostIP+":"+port+"/chat");
-	sendMessage("{„cmd“:“login“,„params“: {„username“:“"+user+"“,„passwort“:“"+password+"“}}");
+	sendMessage("{\"cmd\":\"login\",\"params\": {\"username\":\""+user+"\",\"passwort\":\""+password+"\"}}");
 
     //Websocket Events
     webSocket.onmessage = function(msg) {

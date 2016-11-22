@@ -1,17 +1,16 @@
 //----------------------------------------SETUP VARS----------------------------------------
 var audio = new Audio('assets/sound/message.mp3');		//notification Sound
 var webSocket;											//webSocket
-showLoginDialog("show","");									//show login Dialog
+showLoginDialog("show","");								//show login Dialog
 
-var hostIP = document.location["hostname"];
-var port = 8080;
+var hostIP = document.location["hostname"];             //aktuelle HostAdresse
+var port = 8080;                                        //port
 
 //---------------------------------------- Web Socket ----------------------------------------
 function login(user, password) {
-    webSocket = new WebSocket("ws://"+hostIP+":"+port+"/chat?username=" + user + "&password=" + password);
-    showLoginDialog("hide","");
-	id("message").focus();
-	
+    webSocket = new WebSocket("ws://"+hostIP+":"+port+"/chat");
+	sendMessage("{\"cmd\":\"login\",\"params\": {\"username\":\""+user+"\",\"passwort\":\""+password+"\"}}");
+
     //Websocket Events
     webSocket.onmessage = function(msg) {
         var data = JSON.parse(msg.data)
@@ -30,6 +29,11 @@ function login(user, password) {
             } else if (data["exceptionType"] == "IllegalArgumentException") {
                 updateChat(data["msg"]);
 
+            }
+        } else if (data["type"] == "server_msg") {
+            if(data.userMessage == "Gültige Zugangsdaten"){}
+                showLoginDialog("hide","");
+            	id("message").focus();
             }
         }
     };
