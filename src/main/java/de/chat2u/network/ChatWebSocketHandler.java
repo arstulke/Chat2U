@@ -1,6 +1,7 @@
 package de.chat2u.network;
 
 import de.chat2u.ChatServer;
+import de.chat2u.utils.MessageBuilder;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
@@ -46,7 +47,7 @@ public class ChatWebSocketHandler {
             ChatServer.broadcastTextMessage(sender + ":", message);
         } catch (Exception exception) {
             try {
-                ChatServer.sendMessageToSession("{\"type\":\"server_msg\", \"exceptionType\":\"" + exception.getClass().getSimpleName() + "\", \"msg\":\"" + exception.getMessage() + "\"}", webSocketSession);
+                ChatServer.sendMessageToSession(MessageBuilder.buildExceptionMessage(exception), webSocketSession);
             } catch (IOException e) {
                 e.printStackTrace();
             }
