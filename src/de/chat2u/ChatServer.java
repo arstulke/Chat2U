@@ -102,7 +102,7 @@ public class ChatServer {
             user.setSession(userSession);
             onlineUsers.addUser(user.getSimpleUser());
             broadcastTextMessage("Server:", user.getUsername() + " joined the Server");
-            return "{\"msg\":\"Gültige Zugangsdaten\"}";
+            return "{\"type\":\"server_msg\",\"msg\":\"Gültige Zugangsdaten\"}";
         }
         throw new AccessDeniedException("Ungültige Zugangsdaten");
     }
