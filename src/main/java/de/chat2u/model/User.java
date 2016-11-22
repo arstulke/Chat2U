@@ -1,10 +1,12 @@
 package de.chat2u.model;
 
 import de.chat2u.authentication.Permissions;
+import de.chat2u.utils.MessageBuilder;
 import org.eclipse.jetty.websocket.api.Session;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created User in de.chat2u.model
@@ -13,7 +15,7 @@ import java.util.List;
 public class User {
     private final String username;
     private Permissions permissions;
-    private List<String> history;
+    private List<Message> history;
     private Session session;
 
     public User(String username, Permissions permissions) {
@@ -22,7 +24,7 @@ public class User {
         this.permissions = permissions;
     }
 
-    public User(String username, Permissions permissions, List<String> history, Session session) {
+    public User(String username, Permissions permissions, List<Message> history, Session session) {
         this.username = username;
         this.permissions = permissions;
         this.history = history;
@@ -44,10 +46,17 @@ public class User {
     }
 
     /**
-     * @return den Chatverlauf
+     * @return den Chatverlauf aus {@link Message Message Objekten}
      */
-    public List<String> getHistory() {
+    public List<Message> getHistory() {
         return history;
+    }
+
+    /**
+     * @return den Chatverlauf als Liste aus Strings
+     */
+    public List<String> getHistoryString() {
+        return this.history.stream().map(MessageBuilder::buildMessage).collect(Collectors.toList());
     }
 
     /**
@@ -67,7 +76,7 @@ public class User {
     /**
      * @param msg fügt eine Nachricht zum Chatverlauf hinzu
      */
-    public void addMessageToHistory(String msg) {
+    public void addMessageToHistory(Message msg) {
         history.add(msg);
     }
 

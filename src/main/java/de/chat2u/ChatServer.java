@@ -6,6 +6,7 @@ import de.chat2u.authentication.UserRepository;
 import de.chat2u.exceptions.AccessDeniedException;
 import de.chat2u.exceptions.UsernameExistException;
 import de.chat2u.model.AuthenticationUser;
+import de.chat2u.model.Message;
 import de.chat2u.model.User;
 import de.chat2u.utils.MessageBuilder;
 import org.eclipse.jetty.websocket.api.Session;
@@ -21,6 +22,8 @@ import java.io.IOException;
 public class ChatServer {
 
     private final static UserRepository<User> onlineUsers = new UserRepository<>();
+    public static final String GLOBAL = "global";
+    public static final String PRIVAT = "privat";
     private static AuthenticationService authenticationService;
 
     /**
@@ -132,13 +135,14 @@ public class ChatServer {
      * @param message ist die zu sendene Nachricht
      */
     public static void broadcastTextMessage(String sender, String message) {
-        String msg = MessageBuilder.buildMessage(sender, message);
+        Message msg = new Message(sender, message, GLOBAL);
+        String messageOutput = MessageBuilder.buildMessage(msg);
         onlineUsers.getUsernameList().forEach(username -> {
             try {
                 User user = onlineUsers.getByUsername(username);
 
                 user.addMessageToHistory(msg);
-                sendMessageToSession(msg, user.getSession());
+                sendMessageToSession(messageOutput, user.getSession());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -194,5 +198,15 @@ public class ChatServer {
     public static User getUsernameBySession(Session webSocketSession) {
         checksIllegalState();
         return onlineUsers.getBySession(webSocketSession);
+    }
+
+    public static void sendPrivateMessage(String msg, String senderName, String receiverName) throws IOException {
+        User sender = getOnlineUsers().getByUsername(senderName);
+        User receiver = getOnlineUsers().getByUsername(receiverName);
+        Message message = new Message(sender.getUsername(), msg, PRIVAT);
+        String messageOutput = MessageBuilder.buildMessage(message);
+
+        receiver.addMessageToHistory(message);
+        ChatServer.sendMessageToSession(messageOutput, receiver.getSession());
     }
 }

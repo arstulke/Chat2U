@@ -7,8 +7,8 @@ import cucumber.api.java.de.Wenn;
 import de.chat2u.ChatServer;
 import de.chat2u.authentication.AuthenticationService;
 import de.chat2u.authentication.Permissions;
-import de.chat2u.model.AuthenticationUser;
 import de.chat2u.authentication.UserRepository;
+import de.chat2u.model.AuthenticationUser;
 import org.junit.Assert;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -32,9 +32,9 @@ public class LoginSteps {
 
     @Wenn("^ich mich als Teilnehmer \"([^\"]*)\" mit dem Passwort \"([^\"]*)\" anmelde,$")
     public void ichMichAlsTeilnehmerMitDemPasswortAnmelde(String username, String password) throws Throwable {
-        try{
+        try {
             response = ChatServer.login(username, password, null);
-        }catch (Exception e){
+        } catch (Exception e) {
             exception = e;
             response = e.getMessage();
         }

@@ -1,6 +1,7 @@
 package de.chat2u.utils;
 
 import de.chat2u.ChatServer;
+import de.chat2u.model.Message;
 import j2html.TagCreator;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,18 +22,12 @@ public class MessageBuilder {
      * <p>- Nachricht
      * <p>
      *
-     * @param message ist die zu sendene Nachricht
-     * @param sender  ist der Absender der Nachricht
+     * @param msg ist die zu sendene Nachricht
      * @return die fertig generierte Nachricht.
      */
-    public static String buildMessage(String sender, String message) {
+    public static String buildMessage(Message msg) {
         try {
-            String timestamp = getTimestamp(new Date());
-            return String.valueOf(new JSONObject()
-                    .put("type", "msg")
-                    .put("sender", sender)
-                    .put("timestamp", timestamp)
-                    .put("userMessage", createHTMLMessage(sender, message, timestamp))
+            return String.valueOf(msg.getJSON()
                     .put("userlist", ChatServer.getOnlineUsers().getUsernameList())
             );
         } catch (JSONException e) {
@@ -48,7 +43,7 @@ public class MessageBuilder {
      * @param message   text message
      * @param timestamp timestamp when the message where send
      */
-    private static String createHTMLMessage(String sender, String message, String timestamp) {
+    public static String createHTMLMessage(String sender, String message, String timestamp) {
         return article()
                 .with(
                         b(sender),
@@ -87,6 +82,6 @@ public class MessageBuilder {
      * @return Zeittempel
      */
     public static String getTimestamp(Date date) {
-        return new SimpleDateFormat("hh:mm dd.MM.yyyy").format(date);
+        return new SimpleDateFormat("HH:mm dd.MM.yyyy").format(date);
     }
 }

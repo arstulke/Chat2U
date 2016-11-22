@@ -39,10 +39,10 @@ public class RegisterSteps {
     }
 
     //region Gegeben sei
-    @Gegebensei("^der registrierte Teilnehmer \"([^\"]*)\" mit dem Passwort \"([^\"]*)\"$")
-    public void derRegistrierteTeilnehmerMitDemPasswort(String username, String password) throws Throwable {
+    @Gegebensei("^der registrierte Teilnehmer \"([^\"]*)\"$")
+    public void derRegistrierteTeilnehmerMitDemPasswort(String username) throws Throwable {
         UserRepository<AuthenticationUser> userRepository = new UserRepository<>();
-        userRepository.addUser(new AuthenticationUser(username, password, USER));
+        userRepository.addUser(new AuthenticationUser(username, "geheim", USER));
         initialize(userRepository);
     }
 
