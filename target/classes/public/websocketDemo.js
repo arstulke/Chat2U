@@ -21,17 +21,12 @@ function connect(firstMessage) {
             if(data.msg == "Gültige Zugangsdaten") {
                 showLoginDialog("hide","");
                 id("message").focus();
-            }
-        } else {
-            if (data["exceptionType"] == "AccessDeniedException") {
-				showLoginDialog("show",data["msg"]);
-
+            } else if (data["exceptionType"] == "AccessDeniedException") {
+                showLoginDialog("show",data["msg"]);
             } else if (data["exceptionType"] == "UsernameExistsException") {
                 showLoginDialog("show",data["msg"]);
-
             } else if (data["exceptionType"] == "IllegalArgumentException") {
                 updateChat(data["msg"]);
-
             }
         }
     };
