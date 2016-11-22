@@ -9,10 +9,10 @@ import spark.Spark;
 import static spark.Spark.get;
 
 /**
- * Created Main in de.chat2u
+ * Created Server in de.chat2u
  * by ARSTULKE on 17.11.2016.
  */
-public class Main {
+public class Server {
     public static void main(String[] args) {
         UserRepository<AuthenticationUser> repo = new UserRepository<>();
         repo.addUser(new AuthenticationUser("Kito", "Test123", null));

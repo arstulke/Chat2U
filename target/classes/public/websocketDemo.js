@@ -20,7 +20,8 @@ function connect(firstMessage) {
 
         } else if (data["type"] == "server_msg") {
             if(data.msg == "Gültige Zugangsdaten") {
-                showLoginDialog("hide", "", "");
+                showLoginDialog("hide", "alert", "");
+                showLoginDialog("hide", "alert_register", "");
                 id("message").focus();
             }
         } else {
