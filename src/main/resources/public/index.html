@@ -11,7 +11,7 @@
     <link rel="apple-touch-icon" sizes="144x144" href="/assets/img/apple-icon-144x144.png">
     <link rel="apple-touch-icon" sizes="152x152" href="/assets/img/apple-icon-152x152.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192"  href="/assets/img/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/img/android-icon-192x192.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16x16.png">
@@ -30,7 +30,7 @@
 <body style="font-family:Verdana">
 <div id="popupbox" style="visibility: visible;">
     <form name="login" action="" method="post"
-          style="margin-top: 20%; margin-left: 35%;margin-right: 35%; background: rgba(255, 255, 255, 0);">
+          style="margin-top: 12%; margin-left: 35%; margin-right: 35%; background: rgba(255, 255, 255, 0);">
         <div class="panel panel-primary">
             <div class="panel-heading">LOGIN</div>
             <div class="panel-body">
@@ -46,9 +46,29 @@
                 </div>
                 <div class="col-md-3"></div>
                 <div class="col-md-9" style="margin-bottom:10px">
-                    <button id="register" class="btn btn-info" type="button">Sign Up
-                    </button>
                     <button id="login" class="btn btn-info" type="button">Login
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">REGISTER</div>
+            <div class="panel-body">
+                <div id="alert_register" style="visibility: visible; padding-left: 15px;">
+                </div>
+                <div class="col-md-3">
+                    <div style="margin-bottom: 20px">Username:</div>
+                    <div>Password:</div>
+                </div>
+                <div class="col-md-9" style="margin-bottom:10px">
+                    <input id="user_register" name="user" style="margin-bottom:10px; width: 100%"><br>
+                    <input id="password_register" name="password" type="password"
+                           style="margin-bottom:10px; width: 100%">
+                    <input id="password2_register" name="password2" type="password" style="width: 100%">
+                </div>
+                <div class="col-md-3"></div>
+                <div class="col-md-9" style="margin-bottom:10px">
+                    <button id="register" class="btn btn-info" type="button">Sign Up
                     </button>
                 </div>
             </div>

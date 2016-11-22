@@ -1,6 +1,7 @@
 //----------------------------------------SETUP VARS----------------------------------------
 var audio = new Audio('assets/sound/message.mp3');	        	//notification Sound
-showLoginDialog("show","");								        //show login Dialog
+showLoginDialog("show", "alert", "");							//show login Dialog
+showLoginDialog("show", "alert_register", "");                  //show login Dialog
 
 var hostIP = document.location["hostname"];                     //aktuelle HostAdresse
 var port = 80;                                                  //port
@@ -19,14 +20,16 @@ function connect(firstMessage) {
 
         } else if (data["type"] == "server_msg") {
             if(data.msg == "Gültige Zugangsdaten") {
-                showLoginDialog("hide","");
+                showLoginDialog("hide", "", "");
                 id("message").focus();
-            } else if (data["exceptionType"] == "AccessDeniedException") {
-                showLoginDialog("show",data["msg"]);
+            }
+        } else {
+            if (data["exceptionType"] == "AccessDeniedException") {
+                showLoginDialog("show","alert", data["msg"]);
             } else if (data["exceptionType"] == "UsernameExistException") {
-                showLoginDialog("show",data["msg"]);
+                showLoginDialog("show","alert_register", data["msg"]);
             } else if (data["exceptionType"] == "IllegalArgumentException") {
-                updateChat(data["msg"]);
+                 updateChat(data["msg"]);
             }
         }
     };
@@ -54,22 +57,61 @@ id("message").addEventListener("keypress", function(e) {
         sendMessage(e.target.value);
     }
 });
+//-----------------LOGIN EVENTS
 id("user").addEventListener("keypress", function(e) {
     if (e.keyCode === 13) {
-        connect("{\"cmd\":\"login\",\"params\": {\"username\":\""+id("user").value+"\",\"passwort\":\""+id("password").value+"\"}}");
+       if(id("user").value !== "" && id("password").value !== ""){
+           connect("{\"cmd\":\"login\",\"params\": {\"username\":\""+id("user").value+"\",\"passwort\":\""+id("password").value+"\"}}");
+       }
     }
 });
 id("password").addEventListener("keypress", function(e) {
     if (e.keyCode === 13) {
-        connect("{\"cmd\":\"login\",\"params\": {\"username\":\""+id("user").value+"\",\"passwort\":\""+id("password").value+"\"}}");
+        if(id("user").value !== "" && id("password").value !== ""){
+            connect("{\"cmd\":\"login\",\"params\": {\"username\":\""+id("user").value+"\",\"passwort\":\""+id("password").value+"\"}}");
+        }
     }
 });
 id("login").addEventListener("click", function() {
-    connect("{\"cmd\":\"login\",\"params\": {\"username\":\""+id("user").value+"\",\"passwort\":\""+id("password").value+"\"}}");
+    if(id("user").value !== "" && id("password").value !== ""){
+        connect("{\"cmd\":\"login\",\"params\": {\"username\":\""+id("user").value+"\",\"passwort\":\""+id("password").value+"\"}}");
+    }
 });
+//------------------REGISTER EVENTS
 id("register").addEventListener("click", function() {
-     connect("{\"cmd\":\"register\",\"params\": {\"username\":\""+id("user").value+"\",\"passwort\":\""+id("password").value+"\"}}");
+    if(id("user_register").value !== "" && id("password_register").value !== ""){
+        register(id("user_register").value,id("password_register").value,id("password2_register").value);
+    }
 });
+id("user_register").addEventListener("keypress", function(e) {
+    if (e.keyCode === 13) {
+        if(id("user_register").value !== "" && id("password_register").value !== ""){
+            register(id("user_register").value,id("password_register").value,id("password2_register").value);
+        }
+    }
+});
+id("password_register").addEventListener("keypress", function(e) {
+    if (e.keyCode === 13) {
+        if(id("user_register").value !== "" && id("password_register").value !== ""){
+            register(id("user_register").value,id("password_register").value,id("password2_register").value);
+        }
+    }
+});
+id("password2_register").addEventListener("keypress", function(e) {
+    if (e.keyCode === 13) {
+        if(id("user_register").value !== "" && id("password_register").value !== ""){
+            register(id("user_register").value,id("password_register").value,id("password2_register").value);
+        }
+    }
+});
+function register(user,password,password2){
+  if(password == password2) {
+        connect("{\"cmd\":\"register\",\"params\": {\"username\":\""+user+"\",\"passwort\":\""+password+"\"}}");
+    } else {
+        showLoginDialog("show", "alert_register", "<p style=\"color: #ff0000\">Passwörter nicht identisch</p>");
+    }
+}
+
 
 //----------------------------------------Helper Methods----------------------------------------
 //Send a message if it's not empty, then clear the input field
@@ -107,19 +149,19 @@ function updateUserList(data) {
 }
 
 //show Login Dialog
-function showLoginDialog(showhide, alert) {
+function showLoginDialog(showhide, alert_type, alert) {
     if (showhide == "show") {
 		id("user").focus();
         id('popupbox').style.visibility = "visible";
 		if(alert != ""){
-		id('alert').style.visibility = "visible";
-		id('alert').innerHTML = ""+alert+"";
+            id(alert_type).style.visibility = "visible";
+            id(alert_type).innerHTML = ""+alert+"";
 		}else{
-		id('alert').style.visibility = "hidden";
+		    id(alert_type).style.visibility = "hidden";
 		}
     } else if (showhide == "hide") {
         id('popupbox').style.visibility = "hidden";
-		id('alert').style.visibility = "hidden";
+		id(alert_type).style.visibility = "hidden";
     }
 }
 
