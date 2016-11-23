@@ -1,7 +1,9 @@
 package de.chat2u.cucumber.steps;
 
+import cucumber.api.PendingException;
 import cucumber.api.java.de.Dann;
 import cucumber.api.java.de.Gegebenseien;
+import cucumber.api.java.de.Und;
 import cucumber.api.java.de.Wenn;
 import de.chat2u.ChatServer;
 import de.chat2u.authentication.AuthenticationService;
@@ -12,13 +14,8 @@ import de.chat2u.model.Message;
 import de.chat2u.utils.MessageBuilder;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
-import org.mockito.stubbing.Answer;
-import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Created de.chat2u.cucumber.steps.PrivatChat in PACKAGE_NAME
@@ -28,35 +25,49 @@ public class PrivatChat {
 
     private AuthenticationUser user1 = new AuthenticationUser("user1", "user1_pass", Permissions.USER);
     private AuthenticationUser user2 = new AuthenticationUser("user2", "user2_pass", Permissions.USER);
-    private String msg;
+    private AuthenticationUser user3 = new AuthenticationUser("user3", "user3_pass", Permissions.USER);
+    private Message msg;
 
-    @Gegebenseien("^zwei angemeldete Benutzer$")
-    public void zweiAngemeldeteBenutzer() throws Throwable {
+    @Gegebenseien("^drei angemeldete Benutzer$")
+    public void dreiAngemeldeteBenutzer() throws Throwable {
         UserRepository<AuthenticationUser> repo = new UserRepository<>();
         repo.addUser(user1);
         repo.addUser(user2);
+        repo.addUser(user3);
         ChatServer.initialize(new AuthenticationService(repo));
 
         Session session1 = mock(Session.class);
         Session session2 = mock(Session.class);
+        Session session3 = mock(Session.class);
         RemoteEndpoint remote1 = mock(RemoteEndpoint.class);
         RemoteEndpoint remote2 = mock(RemoteEndpoint.class);
+        RemoteEndpoint remote3 = mock(RemoteEndpoint.class);
         when(session1.getRemote()).thenReturn(remote1);
         when(session2.getRemote()).thenReturn(remote2);
+        when(session3.getRemote()).thenReturn(remote3);
 
         ChatServer.login(user1.getUsername(), user1.getPassword(), session1);
         ChatServer.login(user2.getUsername(), user2.getPassword(), session2);
+        ChatServer.login(user3.getUsername(), user3.getPassword(), session3);
     }
 
     @Wenn("^der Erste dem Zweiten eine Nachricht im privat Chat sendet$")
     public void derErsteDemZweitenEineNachrichtImPrivatChatSendet() throws Throwable {
-        msg = "Eine Nachricht";
-        ChatServer.sendPrivateMessage(msg, user1.getUsername(), user2.getUsername());
+        String msg = "Eine Nachricht";
+        this.msg = ChatServer.sendPrivateMessage(msg, user1.getUsername(), user2.getUsername());
     }
 
-    @Dann("^wird diese nur im privaten Chat sichtbar$")
-    public void wirdDieseNurImPrivatenChatSichtbar() throws Throwable {
-        RemoteEndpoint remote = ChatServer.getOnlineUsers().getByUsername(user2.getUsername()).getSession().getRemote();
-        verify(remote).sendString(MessageBuilder.buildMessage(new Message(user1.getUsername(), msg, ChatServer.PRIVAT)));
+    @Dann("^wird diese nur im Chat des Ersten und des Zweiten sichtbar$")
+    public void wirdDieseNurImChatDesErstenUndDesZweitenSichtbar() throws Throwable {
+        RemoteEndpoint remote1 = ChatServer.getOnlineUsers().getByUsername(user1.getUsername()).getSession().getRemote();
+        RemoteEndpoint remote2 = ChatServer.getOnlineUsers().getByUsername(user2.getUsername()).getSession().getRemote();
+        verify(remote1).sendString(MessageBuilder.buildMessage(msg));
+        verify(remote2).sendString(MessageBuilder.buildMessage(msg));
+    }
+
+    @Und("^nicht im Chat des Dritten$")
+    public void nichtImChatDesDritten() throws Throwable {
+        RemoteEndpoint remote3 = ChatServer.getOnlineUsers().getByUsername(user3.getUsername()).getSession().getRemote();
+        verify(remote3, never()).sendString(MessageBuilder.buildMessage(msg));
     }
 }

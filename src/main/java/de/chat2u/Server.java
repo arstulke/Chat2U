@@ -15,8 +15,8 @@ import static spark.Spark.get;
 public class Server {
     public static void main(String[] args) {
         UserRepository<AuthenticationUser> repo = new UserRepository<>();
-        repo.addUser(new AuthenticationUser("Kito", "Test123", null));
-        repo.addUser(new AuthenticationUser("Arne", "Test123", null));
+        repo.addUser(new AuthenticationUser("Kito", "Test123"));
+        repo.addUser(new AuthenticationUser("Arne", "Test123"));
         ChatServer.initialize(new AuthenticationService(repo));
 
         Spark.webSocket("/chat", ChatWebSocketHandler.class);

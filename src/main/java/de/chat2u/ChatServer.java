@@ -5,10 +5,7 @@ import de.chat2u.authentication.Permissions;
 import de.chat2u.authentication.UserRepository;
 import de.chat2u.exceptions.AccessDeniedException;
 import de.chat2u.exceptions.UsernameExistException;
-import de.chat2u.model.AuthenticationUser;
-import de.chat2u.model.Message;
-import de.chat2u.model.User;
-import de.chat2u.utils.MessageBuilder;
+import de.chat2u.model.*;
 import org.eclipse.jetty.websocket.api.Session;
 
 import java.io.IOException;
@@ -22,6 +19,7 @@ import java.io.IOException;
 public class ChatServer {
 
     private final static UserRepository<User> onlineUsers = new UserRepository<>();
+    private final static ChatContainer chats = new ChatContainer();
     public static final String GLOBAL = "global";
     public static final String PRIVAT = "privat";
     private static AuthenticationService authenticationService;
@@ -103,7 +101,9 @@ public class ChatServer {
         AuthenticationUser user = authenticationService.authenticate(username, password);
         if (user != null) {
             user.setSession(userSession);
-            onlineUsers.addUser(user.getSimpleUser());
+            User simpleUser = user.getSimpleUser();
+            onlineUsers.addUser(simpleUser);
+            chats.getGlobalChat().addUser(simpleUser);
             broadcastTextMessage("Server:", user.getUsername() + " joined the Server");
             return "{\"type\":\"server_msg\",\"msg\":\"Gültige Zugangsdaten\"}";
         }
@@ -117,7 +117,13 @@ public class ChatServer {
      * @param username ist der eindeutige username des Benutzers.
      */
     public static void logout(String username) {
-        onlineUsers.removeUser(onlineUsers.getByUsername(username));
+        User user = onlineUsers.getByUsername(username);
+        onlineUsers.removeUser(user);
+        chats.forEach(chat -> {
+            if (chat.contains(user)) {
+                chat.removeUser(user);
+            }
+        });
         broadcastTextMessage("Server:", username + " left the Server");
     }
 
@@ -136,17 +142,7 @@ public class ChatServer {
      */
     public static void broadcastTextMessage(String sender, String message) {
         Message msg = new Message(sender, message, GLOBAL);
-        String messageOutput = MessageBuilder.buildMessage(msg);
-        onlineUsers.getUsernameList().forEach(username -> {
-            try {
-                User user = onlineUsers.getByUsername(username);
-
-                user.addMessageToHistory(msg);
-                sendMessageToSession(messageOutput, user.getSession());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        chats.getGlobalChat().sendMessage(msg);
     }
 
     /**
@@ -200,13 +196,15 @@ public class ChatServer {
         return onlineUsers.getBySession(webSocketSession);
     }
 
-    public static void sendPrivateMessage(String msg, String senderName, String receiverName) throws IOException {
+    public static Message sendPrivateMessage(String msg, String senderName, String receiverName) throws IOException {
         User sender = getOnlineUsers().getByUsername(senderName);
         User receiver = getOnlineUsers().getByUsername(receiverName);
-        Message message = new Message(sender.getUsername(), msg, PRIVAT);
-        String messageOutput = MessageBuilder.buildMessage(message);
 
-        receiver.addMessageToHistory(message);
-        ChatServer.sendMessageToSession(messageOutput, receiver.getSession());
+        Chat c = new Chat(sender, receiver);
+        String chatID = chats.createNewChat(c);
+
+        Message message = new Message(sender.getUsername(), msg, chatID);
+        chats.getChat(chatID).sendMessage(message);
+        return message;
     }
 }

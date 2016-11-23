@@ -19,6 +19,14 @@ public class AuthenticationUser extends User {
     }
 
     /**
+     * @see User
+     */
+    public AuthenticationUser(String username, String password) {
+        super(username);
+        this.password = password;
+    }
+
+    /**
      * @return das Password des Users
      */
     public String getPassword() {
