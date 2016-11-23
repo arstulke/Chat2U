@@ -5,7 +5,10 @@ import de.chat2u.authentication.Permissions;
 import de.chat2u.authentication.UserRepository;
 import de.chat2u.exceptions.AccessDeniedException;
 import de.chat2u.exceptions.UsernameExistException;
-import de.chat2u.model.*;
+import de.chat2u.model.AuthenticationUser;
+import de.chat2u.model.ChatContainer;
+import de.chat2u.model.Message;
+import de.chat2u.model.User;
 import org.eclipse.jetty.websocket.api.Session;
 
 import java.io.IOException;
@@ -102,16 +105,19 @@ public class ChatServer {
     public static String login(String username, String password, Session userSession) throws AccessDeniedException {
         checksIllegalState();
 
-        AuthenticationUser user = authenticationService.authenticate(username, password);
-        if (user != null) {
-            user.setSession(userSession);
-            User simpleUser = user.getSimpleUser();
-            onlineUsers.addUser(simpleUser);
-            chats.overwrite(GLOBAL, onlineUsers);
-            sendMessageToGlobalChat("Server:", user.getUsername() + " joined the Server");
-            return "{\"type\":\"server_msg\",\"msg\":\"Gültige Zugangsdaten\"}";
+        if (!onlineUsers.containsUsername(username)) {
+            AuthenticationUser user = authenticationService.authenticate(username, password);
+            if (user != null) {
+                user.setSession(userSession);
+                User simpleUser = user.getSimpleUser();
+                onlineUsers.addUser(simpleUser);
+                chats.overwrite(GLOBAL, onlineUsers);
+                sendMessageToGlobalChat("Server:", user.getUsername() + " joined the Server");
+                return "{\"type\":\"server_msg\",\"msg\":\"Gültige Zugangsdaten\"}";
+            }
+            throw new AccessDeniedException("Ungültige Zugangsdaten");
         }
-        throw new AccessDeniedException("Ungültige Zugangsdaten");
+        throw new AccessDeniedException("Benutzer bereits angemeldet");
     }
 
     /**
@@ -154,6 +160,7 @@ public class ChatServer {
     /**
      * Sendet eine Nachricht an alle Benutzer in einem Chat
      * <p>
+     *
      * @param senderName ist der Benutzername eines Benutzers
      * @param msg        ist die Textnachricht die versendet werden soll
      * @param chatID     ist die ID des Chats, in welchem die Nachricht versandt werden soll
@@ -214,7 +221,7 @@ public class ChatServer {
      *                         <p>
      * @return einen {@link User Benutzer}
      */
-    public static User getUsernameBySession(Session webSocketSession) {
+    public static User getUserBySession(Session webSocketSession) {
         checksIllegalState();
         return onlineUsers.getBySession(webSocketSession);
     }
@@ -224,10 +231,14 @@ public class ChatServer {
      * <p>
      *
      * @param users sind die User, die zu dem neuen Chat hinzugefügt werden sollen
-     * <p>
+     *              <p>
      * @return die ChatID
      */
     public static String createChat(UserRepository<User> users) {
         return chats.createNewChat(users);
+    }
+
+    public static void inviteUser(UserRepository<User> users, String chatID) {
+
     }
 }

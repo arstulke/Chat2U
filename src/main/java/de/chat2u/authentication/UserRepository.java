@@ -78,10 +78,9 @@ public class UserRepository<U extends User> implements Iterable<U> {
      *
      * @param username ist der zu überprüfende Benutzername
      */
-    boolean containsUsername(String username) {
+    public boolean containsUsername(String username) {
         return users.containsKey(username);
     }
-
 
     public User getBySession(Session webSocketSession) {
         for (User user : users.values()) {

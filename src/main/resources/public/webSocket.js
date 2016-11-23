@@ -6,6 +6,7 @@ showLoginDialog("show", "alert_register", "");                  //show login Dia
 var hostIP = document.location["hostname"];                     //aktuelle HostAdresse
 var port = 80;                                                  //port
 var webSocket = new WebSocket("ws://"+hostIP+":"+port+"/chat"); //webSocket
+var username, tmp_user;
 
 //---------------------------------------- Web Socket ----------------------------------------
 function connect(firstMessage) {
@@ -22,6 +23,7 @@ function connect(firstMessage) {
             if(data.msg == "Gültige Zugangsdaten") {
                 showLoginDialog("hide", "alert", "");
                 showLoginDialog("hide", "alert_register", "");
+                username = tmp_user;
                 id("message").focus();
             }
         } else {
@@ -41,7 +43,7 @@ function connect(firstMessage) {
     };
 }
 
-function register(user,password,password2){
+function register(user,password,password2) {
   if(password == password2) {
         connect("{\"cmd\":\"register\",\"params\": {\"username\":\""+user+"\",\"passwort\":\""+password+"\"}}");
     } else {
@@ -92,7 +94,12 @@ function updateChat(msg) {
 function updateUserList(data) {
     id("userlist").innerHTML = "";
     data.userlist.forEach(function(user) {
-        id("userlist").insertAdjacentHTML("afterbegin","<li class='media'><div class='media-body'><div class='media'><a class='pull-left' href='#'><img class='media-object img-circle' style='max-height:40px;' src='assets/img/newuser.png' /></a><div class='media-body' ><h5>" + user + "</h5><small class='text-muted'>DEIN STATUS</small></div></div></div></li>");
+        id("userlist").insertAdjacentHTML("afterbegin","<li id='user_" + user + "' class='media' style='display: block'><div class='media-body'><div class='media'><a class='pull-left' href='#'><img class='media-object img-circle' style='max-height:40px;' src='assets/img/newuser.png' /></a><div class='media-body' ><h5>" + user + "</h5><small class='text-muted'>DEIN STATUS</small></div></div></div></li>");
+        if(username !== user) {
+            $("#user_" + user).click(function() {
+                sendMessage('{"cmd":"openChat","params":{"users":[{"name":"' + username + '"}, {"name":"' + user + '"}]}}');
+            });
+        }
     });
 }
 
