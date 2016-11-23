@@ -42,6 +42,7 @@ function connect(firstMessage) {
     };
 }
 
+/*
 //----------------------------------------Event Listener----------------------------------------
 //Tab opend, Closed Events
 window.onblur = function() {
@@ -106,7 +107,7 @@ id("password2_register").addEventListener("keypress", function(e) {
             register(id("user_register").value,id("password_register").value,id("password2_register").value);
         }
     }
-});
+});*/
 function register(user,password,password2){
   if(password == password2) {
         connect("{\"cmd\":\"register\",\"params\": {\"username\":\""+user+"\",\"passwort\":\""+password+"\"}}");
