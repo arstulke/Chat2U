@@ -2,7 +2,6 @@ package de.chat2u.utils;
 
 import de.chat2u.ChatServer;
 import de.chat2u.model.Message;
-import j2html.TagCreator;
 import org.json.JSONException;
 import org.json.JSONObject;
 

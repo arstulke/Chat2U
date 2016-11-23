@@ -36,7 +36,6 @@ function connect(firstMessage) {
     };
     webSocket.onclose = function() {
         updateChat("<article><b>Chat2U</b><p style='color:#F70505'>Client disconnected!</p></article>");
-        console.log("meh");
         showLoginDialog("show", "alert", "<p style='color:#F70505'>Client disconnected!</p>");							//show login Dialog
         showLoginDialog("show", "alert_register", "");                  //show login Dialog
     };
@@ -75,7 +74,7 @@ function sendMessageToChat(message, chatID) {
 
 //Update the chat-panel
 function updateChat(msg) {
-	var parentGuest = id("chat");
+	var parentGuest = id("chat_" + tab);
 	var childGuest = id("li");
 	var scrollBar = id("scroll");
 
@@ -124,14 +123,13 @@ function wait(callback){
     setTimeout(
         function () {
             if (webSocket.readyState === 1) {
-                console.log("Connection is made")
+
                 if(callback != null){
                     callback();
                 }
                 return;
 
             } else {
-                console.log("wait for connection...")
                 wait(callback);
             }
 

@@ -13,7 +13,7 @@ id("send").addEventListener("click", function() {
 });
 id("message").addEventListener("keypress", function(e) {
     if (e.keyCode === 13) {
-        sendMessage(e.target.value);
+        sendMessageToChat(e.target.value, "global");
     }
 });
 //-----------------LOGIN EVENTS
