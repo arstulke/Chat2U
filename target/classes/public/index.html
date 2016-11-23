@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <link rel="apple-touch-icon" sizes="57x57" href="/assets/img/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/assets/img/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/assets/img/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/assets/img/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/assets/img/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/assets/img/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/assets/img/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/img/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16x16.png">
+    <link rel="manifest" href="/assets/img/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/assets/img/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+    <title>Chat2U</title>
+    <link href="assets/css/bootstrap.css" rel="stylesheet"/>
+
+    <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+
+<body style="font-family:Verdana">
+<div id="popupbox" style="visibility: visible; position:fixed;">
+    <form name="login" action="" method="post"
+          style="margin-top: 12%; margin-left: 35%; margin-right: 35%; background: rgba(255, 255, 255, 0);">
+        <div class="panel panel-primary">
+            <div id="header_logintext" class="panel-heading">LOGIN<p id="header_login" style="float:right;">&#10224;</p></div>
+            <div id="body_login" style="display: block; height: 182px;" class="panel-body">
+                <div id="alert" style="visibility: visible; padding-left: 15px;">
+                </div>
+                <div class="col-md-3">
+                    <div style="margin-bottom: 20px">Username:</div>
+                    <div>Password:</div>
+                </div>
+                <div class="col-md-9" style="margin-bottom:10px">
+                    <input id="user" name="user" style="margin-bottom:10px; width: 100%"><br>
+                    <input id="password" name="password" type="password" style="width: 100%">
+                </div>
+                <div class="col-md-3"></div>
+                <div class="col-md-9" style="margin-bottom:10px">
+                    <button id="login" class="btn btn-info" type="button">Login
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-primary">
+            <div id="header_registertext" class="panel-heading" > REGISTER<p id="header_register" style="float:right;">&#10225;</p></div>
+            <div id="body_register" class="panel-body" >
+                <div id="alert_register" style="visibility: visible; padding-left: 15px;">
+                </div>
+                <div class="col-md-3">
+                    <div style="margin-bottom: 20px">Username:</div>
+                    <div>Password:</div>
+                </div>
+                <div class="col-md-9" style="margin-bottom:10px">
+                    <input id="user_register" name="user" style="margin-bottom:10px; width: 100%"><br>
+                    <input id="password_register" name="password" type="password"
+                           style="margin-bottom:10px; width: 100%">
+                    <input id="password2_register" name="password2" type="password" style="width: 100%">
+                </div>
+                <div class="col-md-3"></div>
+                <div class="col-md-9" style="margin-bottom:10px">
+                    <button id="register" class="btn btn-info" type="button">Sign Up
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="container">
+    <div class="row " style="padding-top:40px;">
+        <center><img src="header.png" alt="Chat2U" style="height:150px; "></center>
+        <br/><br/>
+        <div class="col-md-2">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Channel</div>
+                <div class="panel-body">
+                    <ul id="channellist" class="media-list">
+
+                        <li class="media">
+                            <div class="media-body">
+                                <a href="">
+                                    <div class="media"
+                                         style="border-radius: 5px; border: 2px solid #428bca; background:#cce7ff">
+                                        <div class="media-body" style="padding-left: 5px;">
+                                            <h5 style="margin-bottom: 0px;margin-top: 5px;">Shout Out</h5>
+                                            <small class="text-muted">Public</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="media">
+                            <div class="media-body">
+                                <a href="">
+                                    <div class="media" style="border-radius: 5px; border: 2px solid #428bca;">
+                                        <div class="media-body" style="padding-left: 5px;">
+                                            <h5 style="margin-bottom: 0px;margin-top: 5px;">Comming Soon</h5>
+                                            <small class="text-muted">Private</small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-info">
+                <div class="panel-heading">CHAT HISTORY</div>
+                <div id="scroll" class="panel-body" style="overflow-y: scroll; height:500px;">
+                    <div id="chat" class="media-list">
+
+                        <div id='li' class="media-body">
+                            <div class="media">
+
+                                <div class="media-body">
+                                    <article><b>Chat2U</b>
+                                        <p>Herzlich Willkommen! Vielen Dank, dass du Chat2U benutzt.</p>
+                                        <small></small>
+                                    </article>
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="input-group">
+                        <input type="text" id="message" class="form-control" placeholder="Enter Message"/>
+                        <span class="input-group-btn"><button id="send" class="btn btn-info" type="button">SEND</button></span>
+                    </div>
+                </div>
+            </div>
+            <label class="switch">
+                <input id="checkbox" type="checkbox" checked>
+                <span class="slider"></span>
+            </label>
+            Use notifications
+            <h6>BTW Thanks to
+                <a href="https://notificationsounds.com/notification-sounds/something-you-dont-mess-with-120">notificationsounds.com</a>
+            </h6>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">ONLINE USERS</div>
+                <div class="panel-body">
+                    <ul id="userlist" class="media-list">
+
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="animation.js"></script>
+<script src="webSocket.js"></script>
+<script src="events.js"></script>
+</body>
+
+</html>
