@@ -1,11 +1,14 @@
 package de.chat2u.network;
 
 import de.chat2u.ChatServer;
+import de.chat2u.authentication.UserRepository;
+import de.chat2u.model.User;
 import de.chat2u.utils.MessageBuilder;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,7 +47,7 @@ public class ChatWebSocketHandler {
             handleCommandFromClient(webSocketSession, message);
         } catch (JSONException e) {
             String sender = ChatServer.getUsernameBySession(webSocketSession).getUsername();
-            ChatServer.broadcastTextMessage(sender + ":", message);
+            ChatServer.sendMessageToGlobalChat(sender + ":", message);
         } catch (Exception exception) {
             try {
                 ChatServer.sendMessageToSession(MessageBuilder.buildExceptionMessage(exception), webSocketSession);
@@ -55,11 +58,13 @@ public class ChatWebSocketHandler {
     }
 
     /**
-     * List die nachricht des Clients aus und handelt nach dieser.
+     * Liest die Nachricht des Clients aus und handelt nach dieser.
      * z.B.:
-     * <p>   Login
-     * <p>   Logout
-     * Register
+     * <p> - Login
+     * <p> - Logout
+     * <p> - Register
+     * <p> - Chat öffnen
+     * <p>- Nachrichten senden
      * <p>
      *
      * @param webSocketSession ist die Session des Clients
@@ -71,14 +76,35 @@ public class ChatWebSocketHandler {
         JSONObject object = new JSONObject(message);
         JSONObject params = (JSONObject) object.get("params");
 
-        if (object.get("cmd").equals("register")) {
-            String msg = ChatServer.register((String) params.get("username"), (String) params.get("passwort"));
-            ChatServer.sendMessageToSession(msg, webSocketSession);
-        } else if (object.get("cmd").equals("login")) {
-            String msg = ChatServer.login((String) params.get("username"), (String) params.get("passwort"), webSocketSession);
-            ChatServer.sendMessageToSession(msg, webSocketSession);
-        } else if (object.get("cmd").equals("logout")) {
-            ChatServer.logout((String) params.get("username"));
+        String cmd = (String) object.get("cmd");
+        switch (cmd) {
+            case "register": {
+                String msg = ChatServer.register((String) params.get("username"), (String) params.get("passwort"));
+                ChatServer.sendMessageToSession(msg, webSocketSession);
+                break;
+            }
+            case "login": {
+                String msg = ChatServer.login((String) params.get("username"), (String) params.get("passwort"), webSocketSession);
+                ChatServer.sendMessageToSession(msg, webSocketSession);
+                break;
+            }
+            case "logout":
+                ChatServer.logout((String) params.get("username"));
+                break;
+            case "sendMessage":
+                String sender = ChatServer.getUsernameBySession(webSocketSession).getUsername();
+                ChatServer.sendMessageToChat(sender, (String) params.get("message"), (String) params.get("chatID"));
+                break;
+            case "openChat":
+                UserRepository<User> users = new UserRepository<>();
+                JSONArray userList = (JSONArray) params.get("users");
+                for (int i = 0; i < userList.length(); i++) {
+                    String username = (String) userList.get(i);
+                    if (ChatServer.getOnlineUsers().getUsernameList().contains(username))
+                        users.addUser(ChatServer.getOnlineUsers().getByUsername(username));
+                }
+                ChatServer.createChat(users);
+                break;
         }
     }
 }

@@ -3,16 +3,30 @@ package de.chat2u.authentication;
 import de.chat2u.model.User;
 import org.eclipse.jetty.websocket.api.Session;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Created UserRepository in de.chat2u
  * by ARSTULKE on 16.11.2016.
  */
-public class UserRepository<U extends User> {
+public class UserRepository<U extends User> implements Iterable<U> {
     private final Map<String, U> users = new HashMap<>();
+
+    public UserRepository() {
+    }
+
+    public UserRepository(U... users) {
+        for(U user: users) {
+            this.users.put(user.getUsername(), user);
+        }
+    }
+
+    public UserRepository(Collection<U> users) {
+        for(U user: users) {
+            this.users.put(user.getUsername(), user);
+        }
+    }
 
     /**
      * Fügt einen {@link User} zur Liste hinzu.
@@ -75,5 +89,28 @@ public class UserRepository<U extends User> {
                 return user;
         }
         return null;
+    }
+
+    public boolean contains(U user) {
+        return users.values().contains(user);
+    }
+
+    @Override
+    public Iterator<U> iterator() {
+        return users.values().iterator();
+    }
+
+    @Override
+    public void forEach(Consumer<? super U> action) {
+        users.values().forEach(action);
+    }
+
+    @Override
+    public Spliterator<U> spliterator() {
+        return users.values().spliterator();
+    }
+
+    public int size() {
+        return users.size();
     }
 }

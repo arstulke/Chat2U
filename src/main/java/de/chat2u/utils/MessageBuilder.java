@@ -2,7 +2,6 @@ package de.chat2u.utils;
 
 import de.chat2u.ChatServer;
 import de.chat2u.model.Message;
-import j2html.TagCreator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -75,10 +74,7 @@ public class MessageBuilder {
     }
 
     /**
-     * Gibt die aktuelle Zeit und das aktuelle Datum aus
-     * <p>
-     *
-     * @param date
+     * @param date ist das Datum bzw. die Uhrzeit
      * @return Zeittempel
      */
     public static String getTimestamp(Date date) {

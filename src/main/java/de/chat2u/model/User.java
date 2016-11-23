@@ -24,6 +24,12 @@ public class User {
         this.permissions = permissions;
     }
 
+    public User(String username) {
+        this.history = new ArrayList<>();
+        this.username = username;
+        this.permissions = null;
+    }
+
     public User(String username, Permissions permissions, List<Message> history, Session session) {
         this.username = username;
         this.permissions = permissions;
