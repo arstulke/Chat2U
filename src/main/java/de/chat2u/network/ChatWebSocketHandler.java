@@ -34,7 +34,7 @@ public class ChatWebSocketHandler {
      */
     @OnWebSocketClose
     public void onDisconnect(Session webSocketSession, int statusCode, String reason) {
-        String username = ChatServer.getUsernameBySession(webSocketSession).getUsername();
+        String username = ChatServer.getUserBySession(webSocketSession).getUsername();
         ChatServer.logout(username);
     }
 
@@ -46,7 +46,7 @@ public class ChatWebSocketHandler {
         try {
             handleCommandFromClient(webSocketSession, message);
         } catch (JSONException e) {
-            String sender = ChatServer.getUsernameBySession(webSocketSession).getUsername();
+            String sender = ChatServer.getUserBySession(webSocketSession).getUsername();
             ChatServer.sendMessageToGlobalChat(sender + ":", message);
         } catch (Exception exception) {
             try {
@@ -92,18 +92,19 @@ public class ChatWebSocketHandler {
                 ChatServer.logout((String) params.get("username"));
                 break;
             case "sendMessage":
-                String sender = ChatServer.getUsernameBySession(webSocketSession).getUsername();
+                String sender = ChatServer.getUserBySession(webSocketSession).getUsername();
                 ChatServer.sendMessageToChat(sender, (String) params.get("message"), (String) params.get("chatID"));
                 break;
             case "openChat":
                 UserRepository<User> users = new UserRepository<>();
                 JSONArray userList = (JSONArray) params.get("users");
                 for (int i = 0; i < userList.length(); i++) {
-                    String username = (String) userList.get(i);
+                    String username = (String) ((JSONObject) userList.get(i)).get("name");
                     if (ChatServer.getOnlineUsers().getUsernameList().contains(username))
                         users.addUser(ChatServer.getOnlineUsers().getByUsername(username));
                 }
-                ChatServer.createChat(users);
+                String chatID = ChatServer.createChat(users);
+                ChatServer.inviteUser(users, chatID);
                 break;
         }
     }
