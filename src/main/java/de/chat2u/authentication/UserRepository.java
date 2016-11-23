@@ -13,6 +13,21 @@ import java.util.function.Consumer;
 public class UserRepository<U extends User> implements Iterable<U> {
     private final Map<String, U> users = new HashMap<>();
 
+    public UserRepository() {
+    }
+
+    public UserRepository(U... users) {
+        for(U user: users) {
+            this.users.put(user.getUsername(), user);
+        }
+    }
+
+    public UserRepository(Collection<U> users) {
+        for(U user: users) {
+            this.users.put(user.getUsername(), user);
+        }
+    }
+
     /**
      * Fügt einen {@link User} zur Liste hinzu.
      * <p>
@@ -93,5 +108,9 @@ public class UserRepository<U extends User> implements Iterable<U> {
     @Override
     public Spliterator<U> spliterator() {
         return users.values().spliterator();
+    }
+
+    public int size() {
+        return users.size();
     }
 }

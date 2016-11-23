@@ -75,10 +75,7 @@ public class MessageBuilder {
     }
 
     /**
-     * Gibt die aktuelle Zeit und das aktuelle Datum aus
-     * <p>
-     *
-     * @param date
+     * @param date ist das Datum bzw. die Uhrzeit
      * @return Zeittempel
      */
     public static String getTimestamp(Date date) {
