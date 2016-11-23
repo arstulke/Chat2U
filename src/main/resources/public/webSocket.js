@@ -74,7 +74,7 @@ function sendMessageToChat(message, chatID) {
 
 //Update the chat-panel
 function updateChat(msg) {
-	var parentGuest = id("chat_" + tab);
+	var parentGuest = id("chat");
 	var childGuest = id("li");
 	var scrollBar = id("scroll");
 

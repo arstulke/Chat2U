@@ -124,64 +124,19 @@
         <div class="col-md-6">
             <div class="panel panel-info">
                 <div class="panel-heading">CHAT HISTORY</div>
-                <ul class="nav nav-tabs">
-                    <li role="#global" class="active">
-                        <a href="#global" aria-controls="global" role="tab" data-toggle="tab" aria-expanded="true">Global</a>
-                    </li>
-                    <li role="#karl" class>
-                        <a href="#karl" aria-controls="karl" role="tab" data-toggle="tab" aria-expanded="true">Karl</a>
-                    </li>
-                    <li role="#tim" class>
-                        <a href="#tim" aria-controls="tim" role="tab" data-toggle="tab" aria-expanded="true">Tim</a>
-                    </li>
-                </ul>
                 <div id="scroll" class="panel-body tab-content" style="overflow-y: scroll; height:500px;">
-                    <div role="tabpanel" id="global" class="media-list tab-pane active">
-                        <div id="chat_global">
-                            <div id='li' class="media-body">
-                                <div class="media">
-                                    <div class="media-body">
-                                        <article>
-                                            <b>Chat2U</b>
-                                            <p>Herzlich Willkommen! Vielen Dank, dass du Chat2U benutzt.</p>
-                                            <small></small>
-                                        </article>
-                                    </div>
+                    <div id="chat" class="media-list">
+                        <div id='li' class="media-body">
+                            <div class="media">
+                                <div class="media-body">
+                                    <article>
+                                        <b>Chat2U</b>
+                                        <p>Herzlich Willkommen! Vielen Dank, dass du Chat2U benutzt.</p>
+                                        <small></small>
+                                    </article>
                                 </div>
-                                <hr>
                             </div>
-                        </div>
-                    </div>
-                    <div role="tabpanel" id="karl" class="media-list tab-pane">
-                        <div id="chat_karl">
-                            <div id='li' class="media-body">
-                                <div class="media">
-                                    <div class="media-body">
-                                        <article>
-                                            <b>Karl</b>
-                                            <p>Wie geht's ?</p>
-                                            <small></small>
-                                        </article>
-                                    </div>
-                                </div>
-                                <hr>
-                            </div>
-                        </div>
-                    </div>
-                    <div role="tabpanel" id="tim" class="media-list tab-pane">
-                        <div id="chat_tim">
-                            <div id='li' class="media-body">
-                                <div class="media">
-                                    <div class="media-body">
-                                        <article>
-                                            <b>Tim</b>
-                                            <p>Moin moin</p>
-                                            <small></small>
-                                        </article>
-                                    </div>
-                                </div>
-                                <hr>
-                            </div>
+                            <hr>
                         </div>
                     </div>
                 </div>
@@ -206,8 +161,6 @@
                 <div class="panel-heading">ONLINE USERS</div>
                 <div class="panel-body">
                     <ul id="userlist" class="media-list">
-
-
                     </ul>
                 </div>
             </div>
@@ -217,20 +170,6 @@
 <script src="animation.js"></script>
 <script src="webSocket.js"></script>
 <script src="events.js"></script>
-<script>
-    $(window).bind("hashchange", function(){
-        //var tab = $(window).tab;
-        console.log($(window));
-        /*
-            erst alle deactive und dann das richtige active machen
-
-
-            $("#global").removeClass("active");
-            $("#karl").removeClass("active");
-            $("#tim").addClass("active");
-        */
-    });
-</script>
 </body>
 
 </html>
