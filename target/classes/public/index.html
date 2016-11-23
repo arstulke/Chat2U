@@ -35,10 +35,11 @@
     <form name="login" action="" method="post"
           style="margin-top: 12%; margin-left: 35%; margin-right: 35%; background: rgba(255, 255, 255, 0);">
         <div class="panel panel-primary">
-            <div id="header_logintext" class="panel-heading">LOGIN<p id="header_login" style="float:right;">&#10224;</p></div>
-            <div id="body_login" class="panel-body">
+            <div id="header_logintext" class="panel-heading">LOGIN<p id="header_login" style="float:right;">&#10224;</p>
+            </div>
+            <div id="body_login" class="panel-body" style="display: block; height: 182px;">
                 <div id="alert" style="visibility: visible; padding-left: 15px;">
-                </div>
+                </div><br>
                 <div class="col-md-3">
                     <div style="margin-bottom: 20px">Username:</div>
                     <div>Password:</div>
@@ -55,8 +56,9 @@
             </div>
         </div>
         <div class="panel panel-primary">
-            <div id="header_registertext"class="panel-heading" > REGISTER<p id="header_register" style="float:right;">&#10225;</p></div>
-            <div id="body_register" class="panel-body" >
+            <div id="header_registertext" class="panel-heading"> REGISTER<p id="header_register" style="float:right;">
+                &#10225;</p></div>
+            <div id="body_register" class="panel-body">
                 <div id="alert_register" style="visibility: visible; padding-left: 15px;">
                 </div>
                 <div class="col-md-3">
@@ -170,58 +172,8 @@
         </div>
     </div>
 </div>
-<script>
-var register = false;
-var login = true;
-
-$( "#header_registertext" ).click(function() {
-  if(register == true){
-        $("#header_register").html("&#10225;");
-        $( "#body_register" ).slideUp();
-        register = false;
-
-        $("#header_login").html("&#10224;");
-         $( "#body_login" ).slideDown();
-        login = true;
-
-  } else {
-        $("#header_register").html("&#10224;");
-        $( "#body_register" ).slideDown();
-        register = true;
-
-         $("#header_login").html("&#10225;");
-        $( "#body_login" ).slideUp();
-        login = false;
-
-  }
-});
-
-$( "#header_logintext" ).click(function() {
-  if(login == true){
-        $("#header_login").html("&#10225;");
-        $( "#body_login" ).slideUp();
-        login = false;
-
-        $("#header_register").html("&#10224;");
-        $( "#body_register" ).slideDown();
-        register = true;
-        
-  } else {
-        $("#header_login").html("&#10224;");
-         $( "#body_login" ).slideDown();
-        login = true;
-
-        $("#header_register").html("&#10225;");
-        $( "#body_register" ).slideUp();
-        register = false;
-
-  }
-});
-$( document ).ready(function(){
-        $( "#body_register" ).slideUp();
- });
-</script>
-<script src="websocketDemo.js"></script>
+<script src="animation.js"></script>
+<script src="webSocket.js"></script>
 </body>
 
 </html>
