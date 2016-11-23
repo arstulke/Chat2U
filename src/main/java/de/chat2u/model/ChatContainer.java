@@ -22,7 +22,7 @@ public class ChatContainer implements Iterable<Chat> {
     }
 
     public String createNewChat(Chat chat) {
-        if (chats.containsKey(String.valueOf(chat.hashCode())))
+        if (!chats.containsKey(String.valueOf(chat.hashCode())))
             chats.put(String.valueOf(chat.hashCode()), chat);
         return String.valueOf(chat.hashCode());
     }

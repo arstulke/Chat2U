@@ -1,6 +1,5 @@
 package de.chat2u.cucumber.steps;
 
-import cucumber.api.PendingException;
 import cucumber.api.java.de.Dann;
 import cucumber.api.java.de.Gegebenseien;
 import cucumber.api.java.de.Und;
@@ -10,6 +9,7 @@ import de.chat2u.authentication.AuthenticationService;
 import de.chat2u.authentication.Permissions;
 import de.chat2u.authentication.UserRepository;
 import de.chat2u.model.AuthenticationUser;
+import de.chat2u.model.Chat;
 import de.chat2u.model.Message;
 import de.chat2u.utils.MessageBuilder;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
@@ -54,7 +54,11 @@ public class PrivatChat {
     @Wenn("^der Erste dem Zweiten eine Nachricht im privat Chat sendet$")
     public void derErsteDemZweitenEineNachrichtImPrivatChatSendet() throws Throwable {
         String msg = "Eine Nachricht";
-        this.msg = ChatServer.sendPrivateMessage(msg, user1.getUsername(), user2.getUsername());
+
+        Chat chat = new Chat(user1, user2);
+        String chatID = ChatServer.createChat(chat);
+        this.msg = new Message(user1.getUsername(), msg, chatID);
+        ChatServer.sendMessageToChat(msg, user1.getUsername(), chatID);
     }
 
     @Dann("^wird diese nur im Chat des Ersten und des Zweiten sichtbar$")

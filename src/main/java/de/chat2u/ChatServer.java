@@ -187,6 +187,10 @@ public class ChatServer {
             throw new IllegalStateException("You have to use ChatServer.initialize() method first.");
     }
 
+    /**
+     * @param username ist der Benutzername des zu suchenden Benutzers
+     * @return einen Registrierten Benutzer
+     */
     public static User getRegisteredUserByName(String username) {
         return authenticationService.getUserByName(username);
     }
@@ -196,15 +200,13 @@ public class ChatServer {
         return onlineUsers.getBySession(webSocketSession);
     }
 
-    public static Message sendPrivateMessage(String msg, String senderName, String receiverName) throws IOException {
-        User sender = getOnlineUsers().getByUsername(senderName);
-        User receiver = getOnlineUsers().getByUsername(receiverName);
-
-        Chat c = new Chat(sender, receiver);
-        String chatID = chats.createNewChat(c);
-
-        Message message = new Message(sender.getUsername(), msg, chatID);
+    public static void sendMessageToChat(String msg, String senderName, String chatID) throws IOException {
+        chats.createNewChat(chats.getChat(chatID));
+        Message message = new Message(senderName, msg, chatID);
         chats.getChat(chatID).sendMessage(message);
-        return message;
+    }
+
+    public static String createChat(Chat chat) {
+        return chats.createNewChat(chat);
     }
 }

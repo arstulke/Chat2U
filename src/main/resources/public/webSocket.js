@@ -62,6 +62,17 @@ function sendMessage(message) {
     });
 }
 
+//Send a message if it's not empty, then clear the input field
+function sendMessageToChat(message, chatID) {
+    wait(function() {
+        if (message !== "") {
+            var msg = "{\"cmd\":\"sendMessage\",\"params\":{\"message\":\"" + message + "\",\"chatID\":\"" + chatID  + "\"}}"
+            webSocket.send(msg);
+            id("message").value = "";
+        }
+    });
+}
+
 //Update the chat-panel
 function updateChat(msg) {
 	var parentGuest = id("chat");

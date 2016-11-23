@@ -1,11 +1,15 @@
 package de.chat2u.network;
 
 import de.chat2u.ChatServer;
+import de.chat2u.authentication.UserRepository;
+import de.chat2u.model.Chat;
+import de.chat2u.model.User;
 import de.chat2u.utils.MessageBuilder;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -71,14 +75,27 @@ public class ChatWebSocketHandler {
         JSONObject object = new JSONObject(message);
         JSONObject params = (JSONObject) object.get("params");
 
-        if (object.get("cmd").equals("register")) {
+        String cmd = (String) object.get("cmd");
+        if (cmd.equals("register")) {
             String msg = ChatServer.register((String) params.get("username"), (String) params.get("passwort"));
             ChatServer.sendMessageToSession(msg, webSocketSession);
-        } else if (object.get("cmd").equals("login")) {
+        } else if (cmd.equals("login")) {
             String msg = ChatServer.login((String) params.get("username"), (String) params.get("passwort"), webSocketSession);
             ChatServer.sendMessageToSession(msg, webSocketSession);
-        } else if (object.get("cmd").equals("logout")) {
+        } else if (cmd.equals("logout")) {
             ChatServer.logout((String) params.get("username"));
+        } else if (cmd.equals("sendMessage")) {
+            String sender = ChatServer.getUsernameBySession(webSocketSession).getUsername();
+            ChatServer.sendMessageToChat((String) params.get("message"), sender, (String) params.get("chatID"));
+        } else if (cmd.equals("openChat")) {
+            UserRepository<User> users = new UserRepository<>();
+            JSONArray userList = (JSONArray) params.get("users");
+            for (int i = 0; i < userList.length(); i++) {
+                String username = (String) userList.get(i);
+                if (ChatServer.getOnlineUsers().getUsernameList().contains(username))
+                    users.addUser(ChatServer.getOnlineUsers().getByUsername(username));
+            }
+            ChatServer.createChat(new Chat(users));
         }
     }
 }
