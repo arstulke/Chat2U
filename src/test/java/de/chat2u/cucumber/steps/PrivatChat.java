@@ -55,10 +55,13 @@ public class PrivatChat {
     public void derErsteDemZweitenEineNachrichtImPrivatChatSendet() throws Throwable {
         String msg = "Eine Nachricht";
 
+        //chat erstellen
         Chat chat = new Chat(user1, user2);
-        String chatID = ChatServer.createChat(chat);
+        String chatID = ChatServer.createChat(chat.getUsers());
+
+        //nachricht senden
         this.msg = new Message(user1.getUsername(), msg, chatID);
-        ChatServer.sendMessageToChat(msg, user1.getUsername(), chatID);
+        ChatServer.sendMessageToChat(user1.getUsername(), msg, chatID);
     }
 
     @Dann("^wird diese nur im Chat des Ersten und des Zweiten sichtbar$")

@@ -13,29 +13,32 @@ import java.util.Date;
 public class Message {
     private final String sender;
     private final String message;
-    private final String scope;
+    private final String chatID;
     private final Date timestamp;
 
-    public Message(String sender, String message, String scope, Date timestamp) {
+    public Message(String sender, String message, String chatID, Date timestamp) {
         this.sender = sender;
         this.message = message;
-        this.scope = scope;
+        this.chatID = chatID;
         this.timestamp = timestamp;
     }
 
-    public Message(String sender, String message, String scope) {
+    public Message(String sender, String message, String chatID) {
         this.sender = sender;
         this.message = message;
-        this.scope = scope;
+        this.chatID = chatID;
         this.timestamp = new Date();
     }
 
+    /**
+     * @return ein {@link JSONObject JSON Objekt} mit dem Zeitstempel, dem Absender, der ChatID und der Text-Nachricht
+     * */
     public JSONObject getJSON() throws JSONException {
         return new JSONObject()
                 .put("type", "msg")
                 .put("sender", sender)
                 .put("timestamp", MessageBuilder.getTimestamp(timestamp))
-                .put("scope", scope)
+                .put("chatID", chatID)
                 .put("userMessage", MessageBuilder.createHTMLMessage(sender, message, MessageBuilder.getTimestamp(timestamp)))
                 .put("noHTMLmsg", message);
     }
@@ -45,7 +48,7 @@ public class Message {
         return "Message{" +
                 "sender='" + sender + '\'' +
                 ", message='" + message + '\'' +
-                ", scope='" + scope + '\'' +
+                ", chatID='" + chatID + '\'' +
                 ", timestamp=" + timestamp +
                 '}';
     }

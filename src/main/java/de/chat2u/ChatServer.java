@@ -21,7 +21,6 @@ public class ChatServer {
     private final static UserRepository<User> onlineUsers = new UserRepository<>();
     private final static ChatContainer chats = new ChatContainer();
     public static final String GLOBAL = "global";
-    public static final String PRIVAT = "privat";
     private static AuthenticationService authenticationService;
 
     /**
@@ -33,6 +32,11 @@ public class ChatServer {
      */
     public static void initialize(AuthenticationService authenticationService) {
         ChatServer.authenticationService = authenticationService;
+    }
+
+    private static void checksIllegalState() {
+        if (authenticationService == null)
+            throw new IllegalStateException("You have to use ChatServer.initialize() method first.");
     }
 
     //region  Register, Login, Logout
@@ -103,8 +107,8 @@ public class ChatServer {
             user.setSession(userSession);
             User simpleUser = user.getSimpleUser();
             onlineUsers.addUser(simpleUser);
-            chats.getGlobalChat().addUser(simpleUser);
-            broadcastTextMessage("Server:", user.getUsername() + " joined the Server");
+            chats.overwrite(GLOBAL, onlineUsers);
+            sendMessageToGlobalChat("Server:", user.getUsername() + " joined the Server");
             return "{\"type\":\"server_msg\",\"msg\":\"Gültige Zugangsdaten\"}";
         }
         throw new AccessDeniedException("Ungültige Zugangsdaten");
@@ -122,9 +126,12 @@ public class ChatServer {
         chats.forEach(chat -> {
             if (chat.contains(user)) {
                 chat.removeUser(user);
+                if (chat.size() == 0) {
+                    chats.removeChat(String.valueOf(chat.hashCode()));
+                }
             }
         });
-        broadcastTextMessage("Server:", username + " left the Server");
+        sendMessageToGlobalChat("Server:", username + " left the Server");
     }
 
     //endregion
@@ -140,9 +147,20 @@ public class ChatServer {
      * @param sender  ist der Absender der Nachricht
      * @param message ist die zu sendene Nachricht
      */
-    public static void broadcastTextMessage(String sender, String message) {
-        Message msg = new Message(sender, message, GLOBAL);
-        chats.getGlobalChat().sendMessage(msg);
+    public static void sendMessageToGlobalChat(String sender, String message) {
+        sendMessageToChat(sender, message, GLOBAL);
+    }
+
+    /**
+     * Sendet eine Nachricht an alle Benutzer in einem Chat
+     * <p>
+     * @param senderName ist der Benutzername eines Benutzers
+     * @param msg        ist die Textnachricht die versendet werden soll
+     * @param chatID     ist die ID des Chats, in welchem die Nachricht versandt werden soll
+     */
+    public static void sendMessageToChat(String senderName, String msg, String chatID) {
+        Message message = new Message(senderName, msg, chatID);
+        chats.getChat(chatID).sendMessage(message);
     }
 
     /**
@@ -182,31 +200,34 @@ public class ChatServer {
         return authenticationService.generateToken(permissions);
     }
 
-    private static void checksIllegalState() {
-        if (authenticationService == null)
-            throw new IllegalStateException("You have to use ChatServer.initialize() method first.");
-    }
-
     /**
      * @param username ist der Benutzername des zu suchenden Benutzers
-     * @return einen Registrierten Benutzer
+     *                 <p>
+     * @return einen Registrierten {@link User Benutzer}
      */
     public static User getRegisteredUserByName(String username) {
         return authenticationService.getUserByName(username);
     }
 
+    /**
+     * @param webSocketSession ist die Jetty Session des Benutzers
+     *                         <p>
+     * @return einen {@link User Benutzer}
+     */
     public static User getUsernameBySession(Session webSocketSession) {
         checksIllegalState();
         return onlineUsers.getBySession(webSocketSession);
     }
 
-    public static void sendMessageToChat(String msg, String senderName, String chatID) throws IOException {
-        chats.createNewChat(chats.getChat(chatID));
-        Message message = new Message(senderName, msg, chatID);
-        chats.getChat(chatID).sendMessage(message);
-    }
-
-    public static String createChat(Chat chat) {
-        return chats.createNewChat(chat);
+    /**
+     * Erstellt einen neuen Chat
+     * <p>
+     *
+     * @param users sind die User, die zu dem neuen Chat hinzugefügt werden sollen
+     * <p>
+     * @return die ChatID
+     */
+    public static String createChat(UserRepository<User> users) {
+        return chats.createNewChat(users);
     }
 }
