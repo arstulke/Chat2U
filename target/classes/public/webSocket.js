@@ -98,12 +98,17 @@ function sendMessageToChat(message, chatID) {
 
 //Update the chat-panel
 function updateChat(msg, chatID) {
-	//var parentGuest = id(chat).childNodes[1];
-	var childGuest = id(chatID).childNodes[1];
+    var parent = id(chatID);
+
+    var i = 0;
+    while(parent.childNodes[i].nodeType !== 1){
+        i++;
+    }
+    var chat = parent.childNodes[i];
+
 	var scrollBar = id("scroll");
 
-    childGuest.innerHTML += "\n" + msg;
-    //parentGuest.parentNode.insertBefore(childGuest, parentGuest.nextSibling);
+    chat.innerHTML += "\n" + msg;
     scrollBar.scrollTop = scrollBar.scrollHeight;
 
     if (window.blurred && id("checkbox").checked) {
@@ -163,10 +168,10 @@ function wait(callback){
 function getCurrentChatID() {
     var chats = id("chat_contents");
     for(var i = 1; i < chats.childNodes.length; i += 2) {
-        var child = chats.childNodes[i].childNodes[0];
-        if(child.style.includes("block"))
+        var child = chats.childNodes[i];
+        if(child.style.display === "block")
         {
-            console.log(child);
+            return child.id;
         }
     }
     return "global";
