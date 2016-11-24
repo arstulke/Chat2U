@@ -28,7 +28,7 @@ public class MessageBuilderTest {
         String builtMessage = MessageBuilder.buildMessage(new Message(sender, msg, ChatServer.GLOBAL), "msg").toString();
 
         //then
-        assertThat(builtMessage, is("{\"userMessage\":\"<article><b>User1<\\/b> Hallo, wie geht es dir ?<p><small class=\\\"text-muted\\\">" + MessageBuilder.getTimestamp(date) + "<\\/small><\\/p><\\/article>\",\"userlist\":[],\"chatID\":\"" + ChatServer.GLOBAL + "\",\"sender\":\"User1\",\"noHTMLmsg\":\"Hallo, wie geht es dir ?\",\"type\":\"msg\",\"timestamp\":\"" + MessageBuilder.getTimestamp(date) + "\"}"));
+        assertThat(builtMessage, is("{\"msg\":\"<article><b>User1<\\/b> Hallo, wie geht es dir ?<p><small class=\\\"text-muted\\\">" + MessageBuilder.getTimestamp(date) + "<\\/small><\\/p><\\/article>\",\"userlist\":[],\"chatID\":\"" + ChatServer.GLOBAL + "\",\"sender\":\"User1\",\"noHTMLmsg\":\"Hallo, wie geht es dir ?\",\"type\":\"msg\",\"timestamp\":\"" + MessageBuilder.getTimestamp(date) + "\"}"));
     }
 
     @Test

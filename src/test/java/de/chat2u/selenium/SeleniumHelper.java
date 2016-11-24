@@ -1,4 +1,4 @@
-package de.chat2u.junit.selenium;
+package de.chat2u.selenium;
 
 import de.chat2u.model.AuthenticationUser;
 import org.openqa.selenium.By;

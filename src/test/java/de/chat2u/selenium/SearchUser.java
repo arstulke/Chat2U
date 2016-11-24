@@ -1,6 +1,5 @@
-package de.chat2u.junit.selenium;
+package de.chat2u.selenium;
 
-import de.chat2u.Server;
 import de.chat2u.TestServer;
 import org.junit.After;
 import org.junit.Assert;

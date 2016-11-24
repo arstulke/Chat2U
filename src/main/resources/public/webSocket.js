@@ -5,11 +5,16 @@ showLoginDialog("show", "alert_register", "");                  //show login Dia
 
 var hostIP = document.location["hostname"];                     //aktuelle HostAdresse
 var port = 80;                                                  //port
-var webSocket = new WebSocket("ws://"+hostIP+":"+port+"/chat"); //webSocket
+var webSocket = null; //webSocket
 var username, tmp_user;
 
 //---------------------------------------- Web Socket ----------------------------------------
 function connect(firstMessage) {
+    if(webSocket != null)
+    {
+        webSocket.close();
+        console.log("Closed Websocket");
+    }
     webSocket = new WebSocket("ws://"+hostIP+":"+port+"/chat");
 	sendMessage(firstMessage);
 
@@ -18,9 +23,15 @@ function connect(firstMessage) {
         var data = JSON.parse(msg.data)
         if (data["type"] == "msg") {
             updateUserList(data);
-            updateChat(data.msg);
+            updateChat(data.msg, data.chatID);
         } else if (data["type"] == "server_msg") {
-            if(data.msg == "Gültige Zugangsdaten") {
+            if(data.invite != undefined) {
+                addChat(data.invite, data.name);
+            } else if(data.msg == "Registrieren erfolgreich") {
+                showLoginDialog("hide", "alert", "");
+                showLoginDialog("hide", "alert_register", "");
+                loginUser(id("user_register").value, id("password_register").value);
+            } else if(data.msg == "Gültige Zugangsdaten") {
                 showLoginDialog("hide", "alert", "");
                 showLoginDialog("hide", "alert_register", "");
                 username = tmp_user;
@@ -30,25 +41,36 @@ function connect(firstMessage) {
             if (data["exceptionType"] == "AccessDeniedException") {
                 showLoginDialog("show","alert", data["msg"]);
             } else if (data["exceptionType"] == "UsernameExistException") {
+                id("user_register").disabled = false;
+                id("password_register").disabled = false;
+                id("password2_register").disabled = false;
+
                 showLoginDialog("show","alert_register", data["msg"]);
             } else if (data["exceptionType"] == "IllegalArgumentException") {
-                 updateChat(data["msg"]);
+                 updateChat(data.msg, data.chatID);
             }
         }
     };
     webSocket.onclose = function() {
-        updateChat("<article><b>Chat2U</b><p style='color:#F70505'>Client disconnected!</p></article>");
+        updateChat("<article><b>Chat2U</b><p style='color:#F70505'>Client disconnected!</p></article>", "global");
         showLoginDialog("show", "alert", "<p style='color:#F70505'>Client disconnected!</p>");							//show login Dialog
         showLoginDialog("show", "alert_register", "");                  //show login Dialog
     };
 }
 
-function register(user,password,password2) {
-  if(password == password2) {
-        connect("{\"cmd\":\"register\",\"params\": {\"username\":\""+user+"\",\"passwort\":\""+password+"\"}}");
+function registerUser(user, password, password2) {
+    id("user_register").disabled = true;
+    id("password_register").disabled = true;
+    id("password2_register").disabled = true;
+    if(password == password2) {
+        connect("{\"cmd\":\"register\",\"params\": {\"username\":\"" + user+"\",\"passwort\":\"" + password + "\"}}");
     } else {
         showLoginDialog("show", "alert_register", "<p style=\"color: #ff0000\">Passwörter nicht identisch</p>");
     }
+}
+
+function loginUser(username, password) {
+    connect("{\"cmd\":\"login\",\"params\": {\"username\":\""+username+"\",\"passwort\":\""+password+"\"}}");
 }
 
 
@@ -75,13 +97,13 @@ function sendMessageToChat(message, chatID) {
 }
 
 //Update the chat-panel
-function updateChat(msg) {
-	var parentGuest = id("chat");
-	var childGuest = id("li");
+function updateChat(msg, chat) {
+	//var parentGuest = id(chat).childNodes[1];
+	var childGuest = id(chat).childNodes[1];
 	var scrollBar = id("scroll");
 
-    childGuest.innerHTML = childGuest.innerHTML + "<div class='media-body'><div class='media'><div class='media-body' >" + msg + "</div></div></div>";
-    parentGuest.parentNode.insertBefore(childGuest, parentGuest.nextSibling);
+    childGuest.innerHTML = childGuest.innerHTML + msg;
+    //parentGuest.parentNode.insertBefore(childGuest, parentGuest.nextSibling);
     scrollBar.scrollTop = scrollBar.scrollHeight;
 
     if (window.blurred && id("checkbox").checked) {
@@ -118,11 +140,6 @@ function showLoginDialog(showhide, alert_type, alert) {
         id('popupbox').style.visibility = "hidden";
 		id(alert_type).style.visibility = "hidden";
     }
-}
-
-//selecting element by id
-function id(id) {
-    return document.getElementById(id);
 }
 
 //wait for the socket to connect

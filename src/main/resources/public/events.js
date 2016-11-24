@@ -21,7 +21,7 @@ id("user").addEventListener("keypress", function(e) {
     if (e.keyCode === 13) {
         if(id("user").value !== "" && id("password").value !== ""){
             tmp_user = id("user").value;
-            connect("{\"cmd\":\"login\",\"params\": {\"username\":\""+id("user").value+"\",\"passwort\":\""+id("password").value+"\"}}");
+            loginUser(id("user").value, id("password").value);
        }
     }
 });
@@ -29,43 +29,44 @@ id("password").addEventListener("keypress", function(e) {
     if (e.keyCode === 13) {
         if(id("user").value !== "" && id("password").value !== ""){
             tmp_user = id("user").value;
-            connect("{\"cmd\":\"login\",\"params\": {\"username\":\""+id("user").value+"\",\"passwort\":\""+id("password").value+"\"}}");
+            loginUser(id("user").value, id("password").value);
         }
     }
 });
 id("login").addEventListener("click", function() {
     if(id("user").value !== "" && id("password").value !== ""){
         tmp_user = id("user").value;
-        connect("{\"cmd\":\"login\",\"params\": {\"username\":\""+id("user").value+"\",\"passwort\":\""+id("password").value+"\"}}");
+        loginUser(id("user").value, id("password").value);
     }
 });
 //------------------REGISTER EVENTS
 id("register").addEventListener("click", function() {
     if(id("user_register").value !== "" && id("password_register").value !== ""){
-        register(id("user_register").value,id("password_register").value,id("password2_register").value);
+        registerUser(id("user_register").value, id("password_register").value, id("password2_register").value);
     }
 });
 id("user_register").addEventListener("keypress", function(e) {
     if (e.keyCode === 13) {
         if(id("user_register").value !== "" && id("password_register").value !== ""){
-            register(id("user_register").value,id("password_register").value,id("password2_register").value);
+            registerUser(id("user_register").value, id("password_register").value, id("password2_register").value);
         }
     }
 });
 id("password_register").addEventListener("keypress", function(e) {
     if (e.keyCode === 13) {
         if(id("user_register").value !== "" && id("password_register").value !== ""){
-            register(id("user_register").value,id("password_register").value,id("password2_register").value);
+            registerUser(id("user_register").value, id("password_register").value, id("password2_register").value);
         }
     }
 });
 id("password2_register").addEventListener("keypress", function(e) {
     if (e.keyCode === 13) {
         if(id("user_register").value !== "" && id("password_register").value !== ""){
-            register(id("user_register").value,id("password_register").value,id("password2_register").value);
+            registerUser(id("user_register").value, id("password_register").value, id("password2_register").value);
         }
     }
 });
+
 
 //Search User in Userlist
 $("#search").on('input', function() {

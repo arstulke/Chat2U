@@ -36,7 +36,7 @@ public class TestServer {
         return session;
     }
 
-    public static void start(){
+    public static void start() {
         Spark.webSocket("/chat", ChatWebSocketHandler.class);
         Spark.staticFileLocation("/public");
         Spark.port(80);
