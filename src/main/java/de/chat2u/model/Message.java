@@ -35,11 +35,10 @@ public class Message {
      * */
     public JSONObject getJSON() throws JSONException {
         return new JSONObject()
-                .put("type", "msg")
                 .put("sender", sender)
                 .put("timestamp", MessageBuilder.getTimestamp(timestamp))
                 .put("chatID", chatID)
-                .put("userMessage", MessageBuilder.createHTMLMessage(sender, message, MessageBuilder.getTimestamp(timestamp)))
+                .put("msg", MessageBuilder.createHTMLMessage(sender, message, MessageBuilder.getTimestamp(timestamp)))
                 .put("noHTMLmsg", message);
     }
 

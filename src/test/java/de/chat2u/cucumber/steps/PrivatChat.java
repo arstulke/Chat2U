@@ -68,13 +68,13 @@ public class PrivatChat {
     public void wirdDieseNurImChatDesErstenUndDesZweitenSichtbar() throws Throwable {
         RemoteEndpoint remote1 = ChatServer.getOnlineUsers().getByUsername(user1.getUsername()).getSession().getRemote();
         RemoteEndpoint remote2 = ChatServer.getOnlineUsers().getByUsername(user2.getUsername()).getSession().getRemote();
-        verify(remote1).sendString(MessageBuilder.buildMessage(msg));
-        verify(remote2).sendString(MessageBuilder.buildMessage(msg));
+        verify(remote1).sendString(MessageBuilder.buildMessage(msg, "msg").toString());
+        verify(remote2).sendString(MessageBuilder.buildMessage(msg, "msg").toString());
     }
 
     @Und("^nicht im Chat des Dritten$")
     public void nichtImChatDesDritten() throws Throwable {
         RemoteEndpoint remote3 = ChatServer.getOnlineUsers().getByUsername(user3.getUsername()).getSession().getRemote();
-        verify(remote3, never()).sendString(MessageBuilder.buildMessage(msg));
+        verify(remote3, never()).sendString(MessageBuilder.buildMessage(msg, "msg").toString());
     }
 }

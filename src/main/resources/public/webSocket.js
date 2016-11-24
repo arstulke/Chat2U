@@ -10,6 +10,7 @@ var username, tmp_user;
 
 //---------------------------------------- Web Socket ----------------------------------------
 function connect(firstMessage) {
+    webSocket = new WebSocket("ws://"+hostIP+":"+port+"/chat");
 	sendMessage(firstMessage);
 
     //Websocket Events
@@ -17,8 +18,7 @@ function connect(firstMessage) {
         var data = JSON.parse(msg.data)
         if (data["type"] == "msg") {
             updateUserList(data);
-            updateChat(data.userMessage);
-
+            updateChat(data.msg);
         } else if (data["type"] == "server_msg") {
             if(data.msg == "Gültige Zugangsdaten") {
                 showLoginDialog("hide", "alert", "");

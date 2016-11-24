@@ -42,11 +42,11 @@ public class SearchUser extends SeleniumTest {
         marianne = loginUser(user2);
         thorsten = loginUser(user3);
 
-
         WebElement userlist = carsten.findElement(By.id("userlist"));
         userlist_user_carsten = userlist.findElement(By.id("user_" + user1.getUsername()));
         userlist_user_marianne = userlist.findElement(By.id("user_" + user2.getUsername()));
         userlist_user_thorsten = userlist.findElement(By.id("user_" + user3.getUsername()));
+
         //when/then
         assertDisplay(true, true, true);
         fillInput(carsten, "search", "T");

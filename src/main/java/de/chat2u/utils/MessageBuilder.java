@@ -22,13 +22,14 @@ public class MessageBuilder {
      * <p>
      *
      * @param msg ist die zu sendene Nachricht
+     * @param type is the message type (e.g.: msg, server_msg)
      * @return die fertig generierte Nachricht.
      */
-    public static String buildMessage(Message msg) {
+    public static JSONObject buildMessage(Message msg, String type) {
         try {
-            return String.valueOf(msg.getJSON()
-                    .put("userlist", ChatServer.getOnlineUsers().getUsernameList())
-            );
+            return msg.getJSON()
+                    .put("type", type)
+                    .put("userlist", ChatServer.getOnlineUsers().getUsernameList());
         } catch (JSONException e) {
             e.printStackTrace();
             return null;

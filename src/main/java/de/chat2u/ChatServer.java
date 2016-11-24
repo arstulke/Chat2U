@@ -9,9 +9,14 @@ import de.chat2u.model.AuthenticationUser;
 import de.chat2u.model.ChatContainer;
 import de.chat2u.model.Message;
 import de.chat2u.model.User;
+import de.chat2u.utils.MessageBuilder;
 import org.eclipse.jetty.websocket.api.Session;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+
+import static org.apache.logging.log4j.message.MapMessage.MapFormat.JSON;
 
 /**
  * Bevor der {@link ChatServer} benutzt werden kann, muss die {@link ChatServer#initialize(AuthenticationService)}
@@ -239,6 +244,14 @@ public class ChatServer {
     }
 
     public static void inviteUser(UserRepository<User> users, String chatID) {
-
+        String msg = "You were invited to a new Chat.<br>The users are " + users.getUsernameList().toString().replace("[", "{").replace("]", "}");
+        String message = MessageBuilder.buildMessage(new Message("Server", msg, chatID), "server_msg").toString();
+        users.forEach(user -> {
+            try {
+                sendMessageToSession(message, user.getSession());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

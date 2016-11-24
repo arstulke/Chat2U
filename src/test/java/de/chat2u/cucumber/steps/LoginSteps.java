@@ -43,6 +43,7 @@ public class LoginSteps {
     @Dann("^sehe ich \"([^\"]*)\" in der Liste der Teilnehmer, die gerade Online sind$")
     public void seheIchInDerListeDerTeilnehmerDieGeradeOnlineSind(String username) throws Throwable {
         assertThat(ChatServer.getOnlineUsers().getUsernameList(), contains(username));
+        ChatServer.logout(username);
     }
 
     @Dann("^wird der Zugriff verweigert$")

@@ -41,14 +41,14 @@ public class SendMessageSteps {
 
     @Wenn("^\"([^\"]*)\" die Nachricht \"([^\"]*)\" sendet$")
     public void dieNachrichtSendet(String username, String message) throws Throwable {
-        this.message = MessageBuilder.buildMessage(new Message(username, message, ChatServer.GLOBAL));
+        this.message = MessageBuilder.buildMessage(new Message(username, message, ChatServer.GLOBAL), "msg").toString();
         ChatServer.sendMessageToGlobalChat(username, message);
     }
 
     @Dann("^soll diese im Chat angezeigt werden.$")
     public void sollDieseImChatAngezeigtWerden() throws Throwable {
         UserRepository<User> users = ChatServer.getOnlineUsers();
-        assertTrue(users.getByUsername(user1).getHistoryString().contains(message));
-        assertTrue(users.getByUsername(user2).getHistoryString().contains(message));
+        assertTrue(users.getByUsername(user1).getStringHistory().contains(message));
+        assertTrue(users.getByUsername(user2).getStringHistory().contains(message));
     }
 }

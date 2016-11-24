@@ -61,8 +61,8 @@ public class User {
     /**
      * @return den Chatverlauf als Liste aus Strings
      */
-    public List<String> getHistoryString() {
-        return this.history.stream().map(MessageBuilder::buildMessage).collect(Collectors.toList());
+    public List<String> getStringHistory() {
+        return this.history.stream().map((msg) -> MessageBuilder.buildMessage(msg, "msg").toString()).collect(Collectors.toList());
     }
 
     /**

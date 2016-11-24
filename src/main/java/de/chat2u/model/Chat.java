@@ -35,7 +35,7 @@ public class Chat {
      * @param msg ist die zu sendende Nachricht
      */
     public void sendMessage(Message msg) {
-        String message = MessageBuilder.buildMessage(msg);
+        String message = MessageBuilder.buildMessage(msg, "msg").toString();
         users.forEach(user -> {
             try {
                 user.addMessageToHistory(msg);
