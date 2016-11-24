@@ -16,8 +16,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import static org.apache.logging.log4j.message.MapMessage.MapFormat.JSON;
-
 /**
  * Bevor der {@link ChatServer} benutzt werden kann, muss die {@link ChatServer#initialize(AuthenticationService)}
  * aufgerufen werden. Sonst wird eine {@link IllegalStateException} geschmissen. Als Beispielcode:
@@ -107,7 +105,7 @@ public class ChatServer {
      * @throws AccessDeniedException wenn der AuthenticationUser nicht mit den gegebenen
      *                               Parametern eingetragen ist. Die Message ist ("Ungültige Zugangsdaten")
      */
-    public static String login(String username, String password, Session userSession) throws AccessDeniedException {
+    public static String login(String username, String password, Session userSession) throws AccessDeniedException, IOException {
         checksIllegalState();
 
         if (!onlineUsers.containsUsername(username)) {
@@ -117,8 +115,10 @@ public class ChatServer {
                 User simpleUser = user.getSimpleUser();
                 onlineUsers.addUser(simpleUser);
                 chats.overwrite(GLOBAL, onlineUsers);
-                sendMessageToGlobalChat("Server:", user.getUsername() + " joined the Server");
-                return "{\"type\":\"server_msg\",\"msg\":\"Gültige Zugangsdaten\"}";
+                String msg = "{\"type\":\"server_msg\",\"msg\":\"Gültige Zugangsdaten\"}";
+                sendMessageToSession(msg, userSession);
+                sendMessageToGlobalChat("Server:", user.getUsername() + " joined the Server", "msg");
+                return msg;
             }
             throw new AccessDeniedException("Ungültige Zugangsdaten");
         }
@@ -137,12 +137,13 @@ public class ChatServer {
         chats.forEach(chat -> {
             if (chat.contains(user)) {
                 chat.removeUser(user);
-                if (chat.size() == 0) {
+                sendMessageToChat("Server", username, chat.getID(), "server_msg closeChat");
+                if (chat.size() == 1) {
                     chats.removeChat(String.valueOf(chat.hashCode()));
                 }
             }
         });
-        sendMessageToGlobalChat("Server:", username + " left the Server");
+        sendMessageToGlobalChat("Server:", username + " left the Server", "msg");
     }
 
     //endregion
@@ -157,9 +158,10 @@ public class ChatServer {
      *
      * @param sender  ist der Absender der Nachricht
      * @param message ist die zu sendene Nachricht
+     * @param type    ist der Nachrichtentyp
      */
-    public static void sendMessageToGlobalChat(String sender, String message) {
-        sendMessageToChat(sender, message, GLOBAL);
+    public static void sendMessageToGlobalChat(String sender, String message, String type) {
+        sendMessageToChat(sender, message, GLOBAL, type);
     }
 
     /**
@@ -167,12 +169,22 @@ public class ChatServer {
      * <p>
      *
      * @param senderName ist der Benutzername eines Benutzers
-     * @param msg        ist die Textnachricht die versendet werden soll
+     * @param message    ist die Textnachricht die versendet werden soll
      * @param chatID     ist die ID des Chats, in welchem die Nachricht versandt werden soll
+     * @param type       ist der Nachrichtentyp
      */
-    public static void sendMessageToChat(String senderName, String msg, String chatID) {
-        Message message = new Message(senderName, msg, chatID);
-        chats.getChat(chatID).sendMessage(message);
+    public static void sendMessageToChat(String senderName, String message, String chatID, String type) {
+        Message msg = new Message(senderName, message, chatID);
+        message = MessageBuilder.buildMessage(msg, type).toString();
+        String finalMessage = message;
+        chats.getChat(chatID).forEach(user -> {
+            try {
+                user.addMessageToHistory(msg);
+                ChatServer.sendMessageToSession(finalMessage, user.getSession());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     /**

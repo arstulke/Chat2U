@@ -1,16 +1,16 @@
 package de.chat2u.model;
 
-import de.chat2u.ChatServer;
 import de.chat2u.authentication.UserRepository;
-import de.chat2u.utils.MessageBuilder;
 
-import java.io.IOException;
+import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 
 /**
  * Created Chat in de.chat2u.model
  * by ARSTULKE on 23.11.2016.
  */
-public class Chat {
+public class Chat implements Iterable<User> {
     private UserRepository<User> users;
 
     public Chat(User... users) {
@@ -26,24 +26,6 @@ public class Chat {
 
     public Chat() {
         users = new UserRepository<>();
-    }
-
-    /**
-     * Sendet eine {@link Message Nachricht} an alle User des Chats
-     * <p>
-     *
-     * @param msg ist die zu sendende Nachricht
-     */
-    public void sendMessage(Message msg) {
-        String message = MessageBuilder.buildMessage(msg, "msg").toString();
-        users.forEach(user -> {
-            try {
-                user.addMessageToHistory(msg);
-                ChatServer.sendMessageToSession(message, user.getSession());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
     }
 
     /**
@@ -82,9 +64,31 @@ public class Chat {
     }
 
     /**
-     * @return eine Lite aller Benutzer
+     * @return eine Liste aller Benutzer
      * */
     public UserRepository<User> getUsers() {
         return users;
+    }
+
+    /**
+     * @return den HashCode des Chats als {@link String}
+     * */
+    public String getID() {
+        return String.valueOf(hashCode());
+    }
+
+    @Override
+    public Iterator<User> iterator() {
+        return users.iterator();
+    }
+
+    @Override
+    public void forEach(Consumer<? super User> action) {
+        users.forEach(action);
+    }
+
+    @Override
+    public Spliterator<User> spliterator() {
+        return users.spliterator();
     }
 }

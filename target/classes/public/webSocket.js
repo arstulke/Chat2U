@@ -21,12 +21,16 @@ function connect(firstMessage) {
     //Websocket Events
     webSocket.onmessage = function(msg) {
         var data = JSON.parse(msg.data)
-        if (data["type"] == "msg") {
+        var type = data["type"];
+        if (type === "msg") {
+            username = tmp_user;
             updateUserList(data);
             updateChat(data.msg, data.chatID);
-        } else if (data["type"] == "server_msg") {
+        } else if (type.includes("server_msg")) {
             if(data.invite != undefined) {
                 addChat(data.invite, data.name);
+            } else if(type.includes("closeChat")){
+                closeChat(data.chatID);
             } else if(data.msg == "Registrieren erfolgreich") {
                 showLoginDialog("hide", "alert", "");
                 showLoginDialog("hide", "alert_register", "");

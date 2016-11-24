@@ -1,6 +1,5 @@
 package de.chat2u.cucumber.steps;
 
-import cucumber.api.PendingException;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.de.Dann;
@@ -19,13 +18,11 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
 
+import static de.chat2u.cucumber.selenium.SeleniumHelper.registerUser;
 import static de.chat2u.cucumber.selenium.TestServer.getMockSession;
 import static de.chat2u.cucumber.selenium.TestServer.user1;
-import static de.chat2u.cucumber.selenium.SeleniumHelper.registerUser;
 import static org.hamcrest.CoreMatchers.is;
 
 /**
@@ -34,9 +31,6 @@ import static org.hamcrest.CoreMatchers.is;
  * * * Created by KAABERT on 24.11.2016.
  */
 public class FrontEndSteps {
-
-
-    private WebDriver mainUser;
 
     @Before("@startSzenario")
     public void beforeScenario() {

@@ -33,13 +33,17 @@ public class Message {
     /**
      * @return ein {@link JSONObject JSON Objekt} mit dem Zeitstempel, dem Absender, der ChatID und der Text-Nachricht
      * */
-    public JSONObject getJSON() throws JSONException {
-        return new JSONObject()
-                .put("sender", sender)
-                .put("timestamp", MessageBuilder.getTimestamp(timestamp))
-                .put("chatID", chatID)
-                .put("msg", MessageBuilder.createHTMLMessage(sender, message, MessageBuilder.getTimestamp(timestamp)))
-                .put("noHTMLmsg", message);
+    public JSONObject getJSON() {
+        try {
+            return new JSONObject()
+                    .put("sender", sender)
+                    .put("timestamp", MessageBuilder.getTimestamp(timestamp))
+                    .put("chatID", chatID)
+                    .put("msg", MessageBuilder.createHTMLMessage(sender, message, MessageBuilder.getTimestamp(timestamp)))
+                    .put("noHTMLmsg", message);
+        } catch (JSONException e) {
+            return new JSONObject();
+        }
     }
 
     @Override
