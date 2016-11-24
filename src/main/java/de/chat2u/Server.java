@@ -18,14 +18,14 @@ public class Server {
         start();
     }
 
-    private static void initialize() {
+    public static void initialize() {
         UserRepository<AuthenticationUser> repo = new UserRepository<>();
         repo.addUser(new AuthenticationUser("Kito", "Test123"));
         repo.addUser(new AuthenticationUser("Arne", "Test123"));
         ChatServer.initialize(new AuthenticationService(repo));
     }
 
-    public static void start() {
+    private static void start() {
         Spark.webSocket("/chat", ChatWebSocketHandler.class);
         Spark.staticFileLocation("/public");
         Spark.port(80);

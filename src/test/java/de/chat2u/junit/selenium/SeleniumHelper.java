@@ -11,7 +11,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
  * Created SeleniumTest in de.chat2u.junit
  * by ARSTULKE on 23.11.2016.
  */
-class SeleniumTest {
+class SeleniumHelper {
     WebDriver loginUser(AuthenticationUser user) {
         WebDriver driver = new ChromeDriver();
         driver.get("http://localhost/");

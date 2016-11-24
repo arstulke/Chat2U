@@ -4,8 +4,10 @@ import de.chat2u.authentication.AuthenticationService;
 import de.chat2u.authentication.Permissions;
 import de.chat2u.authentication.UserRepository;
 import de.chat2u.model.AuthenticationUser;
+import de.chat2u.network.ChatWebSocketHandler;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
+import spark.Spark;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -32,5 +34,12 @@ public class TestServer {
         RemoteEndpoint remote = mock(RemoteEndpoint.class);
         when(session.getRemote()).thenReturn(remote);
         return session;
+    }
+
+    public static void start(){
+        Spark.webSocket("/chat", ChatWebSocketHandler.class);
+        Spark.staticFileLocation("/public");
+        Spark.port(80);
+        Spark.init();
     }
 }
