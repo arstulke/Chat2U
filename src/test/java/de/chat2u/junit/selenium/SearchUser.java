@@ -18,7 +18,7 @@ import static org.hamcrest.CoreMatchers.is;
  * Created SearchUser in de.chat2u.junit
  * by ARSTULKE on 23.11.2016.
  */
-public class SearchUser extends SeleniumTest {
+public class SearchUser extends SeleniumHelper {
 
     private WebDriver carsten;
     private WebDriver marianne;
@@ -31,7 +31,7 @@ public class SearchUser extends SeleniumTest {
     @Before
     public void initialize() {
         TestServer.initialize();
-        Server.start();
+        TestServer.start();
         System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
     }
 
@@ -65,8 +65,8 @@ public class SearchUser extends SeleniumTest {
 
     @After
     public void close() {
-        carsten.quit();
-        marianne.quit();
-        thorsten.quit();
+        carsten.close();
+        marianne.close();
+        thorsten.close();
     }
 }
