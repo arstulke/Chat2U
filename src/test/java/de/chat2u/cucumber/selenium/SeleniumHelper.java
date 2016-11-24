@@ -1,17 +1,19 @@
-package de.chat2u.cucumber;
+package de.chat2u.cucumber.selenium;
 
 import de.chat2u.model.AuthenticationUser;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created SeleniumTest in de.chat2u.junit
  * by ARSTULKE on 23.11.2016.
  */
 public class SeleniumHelper {
-    public static WebDriver loginUser(AuthenticationUser user) {
-        WebDriver driver = new ChromeDriver();
-        driver.get("http://localhost/");
+    public static WebDriver loginUser(AuthenticationUser user, WebDriver driver) {
 
         fillInput(driver, "user", user.getUsername());
         fillInput(driver, "password", user.getPassword());
@@ -22,11 +24,12 @@ public class SeleniumHelper {
     public static WebDriver registerUser(AuthenticationUser user) throws InterruptedException {
         WebDriver driver = new ChromeDriver();
         driver.get("http://localhost/");
+        driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
         clickButton(driver,"header_logintext");
-        while (!isAccessable(driver, By.id("user_register")) && !isAccessable(driver, By.id("password_register")) && !isAccessable(driver, By.id("password2_register")))
-        {
 
-        }
+        WebDriverWait wait = new WebDriverWait(driver, 2);
+        wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("register"))));
+
         fillInput(driver, "user_register", user.getUsername());
         fillInput(driver, "password_register", user.getPassword());
         fillInput(driver, "password2_register", user.getPassword());

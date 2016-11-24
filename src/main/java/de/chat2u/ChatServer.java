@@ -92,7 +92,7 @@ public class ChatServer {
             throw new UsernameExistException("Benutzername bereits vergeben");
         AuthenticationUser authUser = new AuthenticationUser(username, password, permissions);
         authenticationService.addUser(authUser);
-        return "Registrierung erfolgreich; '" + authUser.getUsername() + "' ist " + authUser.getPermissions();
+        return "{\"type\":\"server_msg\",\"msg\":\"Registrieren erfolgreich\"}";
     }
 
     /**
@@ -243,9 +243,14 @@ public class ChatServer {
         return chats.createNewChat(users);
     }
 
-    public static void inviteUser(UserRepository<User> users, String chatID) {
-        String msg = "You were invited to a new Chat.<br>The users are " + users.getUsernameList().toString().replace("[", "{").replace("]", "}");
-        String message = MessageBuilder.buildMessage(new Message("Server", msg, chatID), "server_msg").toString();
+    public static void inviteUser(UserRepository<User> users, String chatID) throws JSONException {
+        String userList = users.getUsernameList().toString().replace("[", "{").replace("]", "}");
+        String msg = "You were invited to a new Chat.<br>The users are " + userList;
+        JSONObject json = MessageBuilder.buildMessage(new Message("Server", msg, chatID), "server_msg");
+        json.put("invite", chatID);
+        json.remove("chatID");
+        json.put("name", userList.replace("{", "").replace("}", ""));
+        String message = json.toString();
         users.forEach(user -> {
             try {
                 sendMessageToSession(message, user.getSession());

@@ -1,5 +1,6 @@
-package de.chat2u;
+package de.chat2u.cucumber.selenium;
 
+import de.chat2u.ChatServer;
 import de.chat2u.authentication.AuthenticationService;
 import de.chat2u.authentication.Permissions;
 import de.chat2u.authentication.UserRepository;
@@ -7,7 +8,10 @@ import de.chat2u.model.AuthenticationUser;
 import de.chat2u.network.ChatWebSocketHandler;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
+import org.openqa.selenium.WebDriver;
 import spark.Spark;
+
+import java.util.TreeMap;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -20,6 +24,8 @@ public class TestServer {
     public static final AuthenticationUser user1 = new AuthenticationUser("Carsten", "pw1", Permissions.USER);
     public static final AuthenticationUser user2 = new AuthenticationUser("Marianne", "pw2", Permissions.USER);
     public static final AuthenticationUser user3 = new AuthenticationUser("Thorsten", "pw3", Permissions.USER);
+
+    public static final TreeMap<String, WebDriver> client = new TreeMap<>();
 
     public static void initialize() {
         UserRepository<AuthenticationUser> repo = new UserRepository<>();
@@ -36,7 +42,7 @@ public class TestServer {
         return session;
     }
 
-    public static void start(){
+    public static void start() {
         Spark.webSocket("/chat", ChatWebSocketHandler.class);
         Spark.staticFileLocation("/public");
         Spark.port(80);

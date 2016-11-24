@@ -26,8 +26,9 @@
     <title>Chat2U</title>
     <link href="assets/css/bootstrap.css" rel="stylesheet"/>
 
-    <script src="//code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="assets/js/jquery-1.12.4.js"></script>
+    <script src="assets/js/jquery-ui.js"></script>
+    <script src="utils.js"></script>
 </head>
 
 <body style="font-family:Verdana">
@@ -121,25 +122,22 @@
         <div class="col-md-6">
             <div class="panel panel-info">
                 <div class="panel-heading">CHAT HISTORY</div>
-                <div class="panel-body">
+                <div class="panel-body" style=" padding-bottom: 0px;">
                     <ul class="nav nav-tabs tab" id="chats">
-                        <li><a href="javascript:void(0)" class="tablinks active" onclick="openTab(event, 'Global')" id="defaultOpen">Global</a>
+                        <li><a href="javascript:void(0)" class="tablinks active" onclick="openTab(event, 'global')"
+                               id="defaultOpen">Global</a>
                         </li>
                     </ul>
                 </div>
                 <div id="scroll" class="panel-body" style="overflow-y: scroll; height:500px;">
                     <div id="chat_contents">
-                        <div id="chat" class="media-list">
-                            <div id='li' class="media-body">
-                                <div class="media">
-                                    <div id="Global" class="media-body tabcontent">
-                                        <article>
-                                            <b>Chat2U</b>
-                                            <p>Herzlich Willkommen! Vielen Dank, dass du Chat2U benutzt.</p>
-                                            <small></small>
-                                        </article>
-                                    </div>
-                                </div>
+                        <div id="global" class="tabcontent">
+                            <div class="media-body">
+                                <article>
+                                    <b>Chat2U</b>
+                                    <p>Herzlich Willkommen! Vielen Dank, dass du Chat2U benutzt.</p>
+                                    <small></small>
+                                </article>
                                 <hr>
                             </div>
                         </div>
@@ -175,9 +173,6 @@
         </div>
     </div>
 </div>
-<script src="animation.js"></script>
-<script src="webSocket.js"></script>
-<script src="events.js"></script>
 <script>
     function openTab(evt, tab) {
         var i, tabcontent, tablinks;
@@ -196,11 +191,18 @@
     }
     document.getElementById("defaultOpen").click();
 
-    function addChat(name) {
-        id("chats").innerHTML = id("chats").innerHTML + "<li><a href=\"javascript:void(0)\" class=\"tablinks\" onclick=\"openTab(event, '" + name + "')\">" + name + "</a></li>";
-        id("chat_contents").innerHTML = id("chat_contents").innerHTML + "<div id=\"" + name + "\" class=\"tabcontent\" style=\"display: none;\"><h3>" + name + "</h3><p>" + name + " is a <u>city<u>.</p></div>";
+    function addChat(chatID, name) {
+        id("chats").innerHTML = id("chats").innerHTML + "<li><a href=\"javascript:void(0)\" class=\"tablinks\" onclick=\"openTab(event, '" + chatID + "')\">" + name + "</a></li>";
+        id("chat_contents").innerHTML = id("chat_contents").innerHTML + "<div id=\"" + chatID + "\" class=\"tabcontent\" style=\"display: none;\"><div class=\"media-body\">Du wurdest zum Chat <b>" + name + "</b> hinzugefügt.<hr></div></div>";
     }
+
+
+
+
 </script>
+<script src="animation.js"></script>
+<script src="webSocket.js"></script>
+<script src="events.js"></script>
 </body>
 
 </html>

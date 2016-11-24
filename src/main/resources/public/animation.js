@@ -10,7 +10,6 @@ $( "#header_registertext" ).click(function() {
         $("#header_login").html("&#10224;");
          $( "#body_login" ).slideDown();
         login = true;
-
   } else {
         $("#header_register").html("&#10224;");
         $( "#body_register" ).slideDown();
@@ -19,7 +18,6 @@ $( "#header_registertext" ).click(function() {
          $("#header_login").html("&#10225;");
         $( "#body_login" ).slideUp();
         login = false;
-
   }
 });
 

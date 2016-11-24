@@ -6,7 +6,6 @@ Funktionalität: Registrieren
 		Wenn ich mich als Teilnehmer "Carsten" und dem Passwort "geheim" registriere,
 		Dann wird das Registrieren abgeschlossen mit der Nachricht "Registrierung erfolgreich; 'Carsten' ist Teilnehmer"
 
-  #kürzen password
 	Szenario: Als Teilnehmer mit belegten Benutzernamen registrieren
 		Gegeben sei der registrierte Teilnehmer "Carsten"
 		Wenn ich mich als Teilnehmer "Carsten" und dem Passwort "geheim2" registriere,
