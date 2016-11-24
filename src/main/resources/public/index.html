@@ -129,9 +129,9 @@
                         </li>
                     </ul>
                 </div>
-                <div id="scroll" class="panel-body" style="overflow-y: scroll; height:500px; padding-top: 0px;">
+                <div id="scroll" class="panel-body" style="overflow-y: scroll; height:500px;">
                     <div id="chat_contents">
-                        <div id="global" class="media-body tabcontent">
+                        <div id="global" class="tabcontent">
                             <div class="media-body">
                                 <article>
                                     <b>Chat2U</b>
@@ -193,7 +193,7 @@
 
     function addChat(chatID, name) {
         id("chats").innerHTML = id("chats").innerHTML + "<li><a href=\"javascript:void(0)\" class=\"tablinks\" onclick=\"openTab(event, '" + chatID + "')\">" + name + "</a></li>";
-        id("chat_contents").innerHTML = id("chat_contents").innerHTML + "<div id=\"" + chatID + "\" class=\"tabcontent\" style=\"display: none;\">Content</div>";
+        id("chat_contents").innerHTML = id("chat_contents").innerHTML + "<div id=\"" + chatID + "\" class=\"tabcontent\" style=\"display: none;\"><div class=\"media-body\">Du wurdest zum Chat <b>" + name + "</b> hinzugefügt.<hr></div></div>";
     }
 
 

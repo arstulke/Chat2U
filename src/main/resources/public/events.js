@@ -13,7 +13,8 @@ id("send").addEventListener("click", function() {
 });
 id("message").addEventListener("keypress", function(e) {
     if (e.keyCode === 13) {
-        sendMessageToChat(e.target.value, "global");
+        var chatID = getCurrentChatID();
+        sendMessageToChat(e.target.value, chatID);
     }
 });
 //-----------------LOGIN EVENTS

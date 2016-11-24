@@ -97,12 +97,12 @@ function sendMessageToChat(message, chatID) {
 }
 
 //Update the chat-panel
-function updateChat(msg, chat) {
+function updateChat(msg, chatID) {
 	//var parentGuest = id(chat).childNodes[1];
-	var childGuest = id(chat).childNodes[1];
+	var childGuest = id(chatID).childNodes[1];
 	var scrollBar = id("scroll");
 
-    childGuest.innerHTML = childGuest.innerHTML + msg;
+    childGuest.innerHTML += "\n" + msg;
     //parentGuest.parentNode.insertBefore(childGuest, parentGuest.nextSibling);
     scrollBar.scrollTop = scrollBar.scrollHeight;
 
@@ -158,4 +158,16 @@ function wait(callback){
             }
 
         }, 5); // wait 5 milisecond for the connection...
+}
+
+function getCurrentChatID() {
+    var chats = id("chat_contents");
+    for(var i = 1; i < chats.childNodes.length; i += 2) {
+        var child = chats.childNodes[i].childNodes[0];
+        if(child.style.includes("block"))
+        {
+            console.log(child);
+        }
+    }
+    return "global";
 }
