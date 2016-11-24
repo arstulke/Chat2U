@@ -16,6 +16,7 @@ public class UserRepository<U extends User> implements Iterable<U> {
     public UserRepository() {
     }
 
+    @SafeVarargs
     public UserRepository(U... users) {
         for(U user: users) {
             this.users.put(user.getUsername(), user);

@@ -61,7 +61,7 @@ public class PrivatChat {
 
         //nachricht senden
         this.msg = new Message(user1.getUsername(), msg, chatID);
-        ChatServer.sendMessageToChat(user1.getUsername(), msg, chatID);
+        ChatServer.sendMessageToChat(user1.getUsername(), msg, chatID, "msg");
     }
 
     @Dann("^wird diese nur im Chat des Ersten und des Zweiten sichtbar$")

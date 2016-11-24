@@ -47,7 +47,7 @@ public class ChatWebSocketHandler {
             handleCommandFromClient(webSocketSession, message);
         } catch (JSONException e) {
             String sender = ChatServer.getUserBySession(webSocketSession).getUsername();
-            ChatServer.sendMessageToGlobalChat(sender + ":", message);
+            ChatServer.sendMessageToGlobalChat(sender + ":", message, "msg");
         } catch (Exception exception) {
             try {
                 ChatServer.sendMessageToSession(MessageBuilder.buildExceptionMessage(exception), webSocketSession);
@@ -84,8 +84,7 @@ public class ChatWebSocketHandler {
                 break;
             }
             case "login": {
-                String msg = ChatServer.login((String) params.get("username"), (String) params.get("passwort"), webSocketSession);
-                ChatServer.sendMessageToSession(msg, webSocketSession);
+                ChatServer.login((String) params.get("username"), (String) params.get("passwort"), webSocketSession);
                 break;
             }
             case "logout":
@@ -93,7 +92,7 @@ public class ChatWebSocketHandler {
                 break;
             case "sendMessage":
                 String sender = ChatServer.getUserBySession(webSocketSession).getUsername();
-                ChatServer.sendMessageToChat(sender, (String) params.get("message"), (String) params.get("chatID"));
+                ChatServer.sendMessageToChat(sender, (String) params.get("message"), (String) params.get("chatID"), "msg");
                 break;
             case "openChat":
                 UserRepository<User> users = new UserRepository<>();

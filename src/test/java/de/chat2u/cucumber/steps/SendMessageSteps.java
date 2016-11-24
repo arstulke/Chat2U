@@ -42,7 +42,7 @@ public class SendMessageSteps {
     @Wenn("^\"([^\"]*)\" die Nachricht \"([^\"]*)\" sendet$")
     public void dieNachrichtSendet(String username, String message) throws Throwable {
         this.message = MessageBuilder.buildMessage(new Message(username, message, ChatServer.GLOBAL), "msg").toString();
-        ChatServer.sendMessageToGlobalChat(username, message);
+        ChatServer.sendMessageToGlobalChat(username, message, "msg");
     }
 
     @Dann("^soll diese im Chat angezeigt werden.$")
