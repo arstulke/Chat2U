@@ -25,8 +25,6 @@ import static org.junit.Assert.assertThat;
  * Created RegisterSteps in de.chat2u.server.cucumber.steps
  * by ARSTULKE on 15.11.2016.
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ChatServer.class})
 public class RegisterSteps {
 
     private String response;

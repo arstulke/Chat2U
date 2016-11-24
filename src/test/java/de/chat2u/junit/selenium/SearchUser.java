@@ -1,7 +1,7 @@
 package de.chat2u.junit.selenium;
 
-import de.chat2u.Server;
 import de.chat2u.TestServer;
+import de.chat2u.cucumber.SeleniumHelper;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -35,10 +35,20 @@ public class SearchUser extends SeleniumHelper {
         System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
     }
 
+    /**
+     * - Registriert Carsten manuell
+     * - Registriert Marianne & Thorsten automatisch
+     *
+     * - loggt die User Manuell ein
+     * - Sucht User mit "T"
+     * - Sucht keinen User
+     * - Sucht User mit "P"
+     *
+     * */
     @Test
     public void searchUserInBar() throws InterruptedException {
         //given
-        carsten = loginUser(user1);
+        carsten = registerUser(user1);
         marianne = loginUser(user2);
         thorsten = loginUser(user3);
 

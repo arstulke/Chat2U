@@ -23,9 +23,9 @@ public class TestServer {
 
     public static void initialize() {
         UserRepository<AuthenticationUser> repo = new UserRepository<>();
-        repo.addUser(user1);
-        repo.addUser(user2);
-        repo.addUser(user3);
+        //repo.addUser(user1);
+        //repo.addUser(user2);
+        //repo.addUser(user3);
         ChatServer.initialize(new AuthenticationService(repo));
     }
 
