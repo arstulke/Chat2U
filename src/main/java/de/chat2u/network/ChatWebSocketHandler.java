@@ -103,7 +103,7 @@ public class ChatWebSocketHandler {
                         users.addUser(ChatServer.getOnlineUsers().getByUsername(username));
                 }
                 String chatID = ChatServer.createChat(users);
-                ChatServer.inviteUser(users, chatID);
+                if (chatID != null) ChatServer.inviteUser(users, chatID);
                 break;
         }
     }

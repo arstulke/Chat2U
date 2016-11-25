@@ -136,7 +136,8 @@ public class ChatServer {
         onlineUsers.removeUser(user);
         chats.forEach(chat -> {
             if (chat.contains(user)) {
-                chat.removeUser(user);
+                if (!chat.getID().equals(GLOBAL))
+                    chat.removeUser(user);
                 sendMessageToChat("Server", username, chat.getID(), "server_msg closeChat");
                 if (chat.size() == 1) {
                     chats.removeChat(String.valueOf(chat.hashCode()));

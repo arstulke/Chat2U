@@ -38,7 +38,6 @@ function connect(firstMessage) {
             } else if(data.msg == "Gültige Zugangsdaten") {
                 showLoginDialog("hide", "alert", "");
                 showLoginDialog("hide", "alert_register", "");
-                username = tmp_user;
                 id("message").focus();
             }
         } else {

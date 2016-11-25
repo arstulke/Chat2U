@@ -95,6 +95,10 @@ public class UserRepository<U extends User> implements Iterable<U> {
         return users.values().contains(user);
     }
 
+    public int size() {
+        return users.size();
+    }
+
     @Override
     public Iterator<U> iterator() {
         return users.values().iterator();
@@ -110,7 +114,19 @@ public class UserRepository<U extends User> implements Iterable<U> {
         return users.values().spliterator();
     }
 
-    public int size() {
-        return users.size();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UserRepository<?> that = (UserRepository<?>) o;
+
+        return users != null ? users.equals(that.users) : that.users == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return users != null ? users.hashCode() : 0;
     }
 }

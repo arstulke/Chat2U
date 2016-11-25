@@ -91,4 +91,20 @@ public class Chat implements Iterable<User> {
     public Spliterator<User> spliterator() {
         return users.spliterator();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Chat users1 = (Chat) o;
+
+        return users != null ? users.equals(users1.users) : users1.users == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return users != null ? users.hashCode() : 0;
+    }
 }
