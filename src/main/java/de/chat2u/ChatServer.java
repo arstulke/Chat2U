@@ -114,7 +114,7 @@ public class ChatServer {
                 user.setSession(userSession);
                 User simpleUser = user.getSimpleUser();
                 onlineUsers.addUser(simpleUser);
-                chats.overwrite(GLOBAL, onlineUsers);
+                chats.overwrite(GLOBAL, onlineUsers, true);
                 String msg = "{\"type\":\"server_msg\",\"msg\":\"Gültige Zugangsdaten\"}";
                 sendMessageToSession(msg, userSession);
                 sendMessageToGlobalChat("Server:", user.getUsername() + " joined the Server", "msg");
@@ -136,11 +136,12 @@ public class ChatServer {
         onlineUsers.removeUser(user);
         chats.forEach(chat -> {
             if (chat.contains(user)) {
-                if (!chat.getID().equals(GLOBAL))
-                    chat.removeUser(user);
-                sendMessageToChat("Server", username, chat.getID(), "server_msg closeChat");
-                if (chat.size() == 1) {
-                    chats.removeChat(String.valueOf(chat.hashCode()));
+                String chatID = chat.getID();
+                chat.removeUser(user);
+
+                if (!chatID.equals(GLOBAL) && chat.size() == 1) {
+                    sendMessageToChat("Server", username, chatID, "server_msg closeChat");
+                    chats.removeChat(chatID);
                 }
             }
         });

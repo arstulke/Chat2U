@@ -56,7 +56,7 @@ public class PrivatChat {
         String msg = "Eine Nachricht";
 
         //chat erstellen
-        Chat chat = new Chat(user1, user2);
+        Chat chat = new Chat(false, user1, user2);
         String chatID = ChatServer.createChat(chat.getUsers());
 
         //nachricht senden

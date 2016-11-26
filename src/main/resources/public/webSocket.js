@@ -7,6 +7,7 @@ var hostIP = document.location["hostname"];                     //aktuelle HostA
 var port = 80;                                                  //port
 var webSocket = null; //webSocket
 var username, tmp_user;
+var tabManager = new TabManager();
 
 //---------------------------------------- Web Socket ----------------------------------------
 function connect(firstMessage) {
@@ -28,9 +29,11 @@ function connect(firstMessage) {
             updateChat(data.msg, data.chatID);
         } else if (type.includes("server_msg")) {
             if(data.invite != undefined) {
-                addChat(data.invite, data.name);
+                notify();
+                tabManager.addChat(data.invite, data.name);
             } else if(type.includes("closeChat")){
-                closeChat(data.chatID);
+                notify();
+                tabManager.closeChat(data.chatID);
             } else if(data.msg == "Registrieren erfolgreich") {
                 showLoginDialog("hide", "alert", "");
                 showLoginDialog("hide", "alert_register", "");
@@ -39,6 +42,9 @@ function connect(firstMessage) {
                 showLoginDialog("hide", "alert", "");
                 showLoginDialog("hide", "alert_register", "");
                 id("message").focus();
+                id("chats").innerHTML = "<li><a href='javascript:void(0)' class='tablinks' onclick=\"openTab(event.currentTarget, 'global')\" id='defaultOpen'>Global</a></li>";
+                id("chat_contents").innerHTML = "<div id='global' class='tabcontent'><div class='media-body'><article><b>Chat2U</b><p>Herzlich Willkommen! Vielen Dank, dass du Chat2U benutzt.</p><small></small></article><hr></div></div>";
+                document.getElementById("defaultOpen").click();
             }
         } else {
             if (data["exceptionType"] == "AccessDeniedException") {
@@ -68,7 +74,7 @@ function registerUser(user, password, password2) {
     if(password == password2) {
         connect("{\"cmd\":\"register\",\"params\": {\"username\":\"" + user+"\",\"passwort\":\"" + password + "\"}}");
     } else {
-        showLoginDialog("show", "alert_register", "<p style=\"color: #ff0000\">Passwörter nicht identisch</p>");
+        showLoginDialog("show", "alert_register", "<p style=\"color: #ff0000; margin-bottom: 0px;\">Passwörter nicht identisch</p>");
     }
 }
 
@@ -114,6 +120,10 @@ function updateChat(msg, chatID) {
     chat.innerHTML += "\n" + msg;
     scrollBar.scrollTop = scrollBar.scrollHeight;
 
+    notify();
+}
+
+function notify(){
     if (window.blurred && id("checkbox").checked) {
         audio.play();
         document.title = "Chat2U ( ! )";

@@ -67,7 +67,7 @@ public class MessageBuilder {
                     .put("exceptionType", exception.getClass().getSimpleName())
                     .put("exceptionMessage", exception.getMessage())
                     .put("timestamp", timestamp)
-                    .put("msg", "<p style=\"color:#F70505\">" + exception.getMessage() + "</p>"));
+                    .put("msg", "<p style=\"color: #ff0000; margin-bottom: 0px;\">" + exception.getMessage() + "</p>"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
