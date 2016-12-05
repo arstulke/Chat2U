@@ -1,5 +1,6 @@
 package de.chat2u.model;
 
+import de.chat2u.ChatServer;
 import de.chat2u.authentication.UserRepository;
 
 import java.util.Iterator;
@@ -12,20 +13,33 @@ import java.util.function.Consumer;
  */
 public class Chat implements Iterable<User> {
     private UserRepository<User> users;
+    private boolean global = false;
+    private String id;
 
-    public Chat(User... users) {
-        this();
-        for (User user : users) {
-            this.users.addUser(user);
+    public Chat(boolean global, User... users){
+        this(global);
+        for(User user : users){
+            convertUser(user);
         }
     }
 
-    public Chat(UserRepository<User> users) {
-        this.users = users;
+    Chat(UserRepository<User> users, boolean global) {
+        this.users = new UserRepository<>();
+        for(User user : users){
+            convertUser(user);
+        }
+        this.id = global ? ChatServer.GLOBAL : String.valueOf(hashCode());
     }
 
-    public Chat() {
-        users = new UserRepository<>();
+    private void convertUser(User user) {
+        if(user instanceof AuthenticationUser){
+            user = ((AuthenticationUser) user).getSimpleUser();
+        }
+        this.users.addUser(user);
+    }
+
+    Chat(boolean global) {
+        this(new UserRepository<>(), global);
     }
 
     /**
@@ -36,15 +50,18 @@ public class Chat implements Iterable<User> {
      */
     public void addUser(User user) {
         users.addUser(user);
+        this.id = global ? ChatServer.GLOBAL : String.valueOf(hashCode());
     }
 
     /**
      * Entfernt einen Benutzer aus dem Chat (z.B. wenn dieser sich ausloggt)
      * <p>
+     *
      * @param user ist der zu entfernende Benutzer
      */
     public void removeUser(User user) {
         users.removeUser(user);
+        this.id = global ? ChatServer.GLOBAL : String.valueOf(hashCode());
     }
 
     /**
@@ -58,23 +75,23 @@ public class Chat implements Iterable<User> {
 
     /**
      * @return die Anzahl an Benutzern diese Chats
-     * */
+     */
     public int size() {
         return users.size();
     }
 
     /**
      * @return eine Liste aller Benutzer
-     * */
+     */
     public UserRepository<User> getUsers() {
         return users;
     }
 
     /**
      * @return den HashCode des Chats als {@link String}
-     * */
+     */
     public String getID() {
-        return String.valueOf(hashCode());
+        return id;
     }
 
     @Override
@@ -90,5 +107,21 @@ public class Chat implements Iterable<User> {
     @Override
     public Spliterator<User> spliterator() {
         return users.spliterator();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Chat users1 = (Chat) o;
+
+        return users != null ? users.equals(users1.users) : users1.users == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return users != null ? users.hashCode() : 0;
     }
 }

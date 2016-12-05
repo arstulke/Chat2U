@@ -17,34 +17,39 @@ public class ChatContainer implements Iterable<Chat> {
     private Map<String, Chat> chats = new HashMap<>();
 
     public ChatContainer() {
-        chats.put(ChatServer.GLOBAL, new Chat());
+        chats.put(ChatServer.GLOBAL, new Chat(true));
     }
 
     /**
      * @see ChatServer#createChat(UserRepository)
-     * */
+     */
     public String createNewChat(UserRepository<User> users) {
-        Chat chat = new Chat(users);
-        if (!chats.containsKey(String.valueOf(chat.hashCode())))
+        Chat chat = new Chat(users, false);
+        if (!chats.containsKey(String.valueOf(chat.hashCode()))) {
             chats.put(String.valueOf(chat.hashCode()), chat);
-        return String.valueOf(chat.hashCode());
+            return String.valueOf(chat.hashCode());
+        }
+        return null;
     }
 
     /**
      * Überschreibt einen Chat
      * <p>
+     *
      * @param chatID ist die zu überschreibende ChatID
-     * @param users ist die neue benutzerliste des Chats
-     * */
-    public void overwrite(String chatID, UserRepository<User> users) {
-        chats.put(chatID, new Chat(users));
+     * @param users  ist die neue benutzerliste des Chats
+     * @param global zeigt an ob der Chat der Globale Chat ist
+     */
+    public void overwrite(String chatID, UserRepository<User> users, boolean global) {
+        chats.put(chatID, new Chat(users ,global));
     }
 
     /**
      * Entfernt einen Chat aus der Liste der Chats
      * <p>
+     *
      * @param chatID ist die ID des zu löschenden Chats
-     * */
+     */
     public void removeChat(String chatID) {
         chats.remove(chatID);
     }
@@ -52,11 +57,12 @@ public class ChatContainer implements Iterable<Chat> {
     /**
      * Gibt den Chat zur gegebenen ChatID zurück.
      * <p>
+     *
      * @param chatID ist die ID des zu suchenden Chats
-     * <p>
+     *               <p>
      * @return das Chat Objekt zur dazugehörigen ChatID
      * <p>
-     * */
+     */
     public Chat getChat(String chatID) {
         return chats.get(chatID);
     }

@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  * by ARSTULKE on 16.11.2016.
  */
 public class UserRepository<U extends User> implements Iterable<U> {
-    private final Map<String, U> users = new HashMap<>();
+    private final HashMap<String, U> users = new HashMap<>();
 
     public UserRepository() {
     }
@@ -95,6 +95,10 @@ public class UserRepository<U extends User> implements Iterable<U> {
         return users.values().contains(user);
     }
 
+    public int size() {
+        return users.size();
+    }
+
     @Override
     public Iterator<U> iterator() {
         return users.values().iterator();
@@ -110,7 +114,19 @@ public class UserRepository<U extends User> implements Iterable<U> {
         return users.values().spliterator();
     }
 
-    public int size() {
-        return users.size();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UserRepository<?> that = (UserRepository<?>) o;
+
+        return users != null ? users.equals(that.users) : that.users == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return users != null ? users.keySet().hashCode() : 0;
     }
 }

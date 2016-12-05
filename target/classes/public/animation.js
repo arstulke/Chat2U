@@ -1,47 +1,21 @@
-var register = false;
-var login = true;
+(function(){
+    $("#header_registertext").click(function(){   handleClick()   });
+    $("#header_logintext").click(function(){   handleClick()   });
+    function handleClick() {
+        if(document.getElementById("body_login").style.display != "block"){
+            //show login
+            $("#header_register").html("&#10225;");
+            $("#header_login").html("&#10224;");
 
-$( "#header_registertext" ).click(function() {
-  if(register == true){
-        $("#header_register").html("&#10225;");
-        $( "#body_register" ).slideUp();
-        register = false;
+            $("#body_register").slideUp();
+            $("#body_login").slideDown();
+        } else {
+            //show register
+            $("#header_register").html("&#10224;");
+            $("#header_login").html("&#10225;");
 
-        $("#header_login").html("&#10224;");
-         $( "#body_login" ).slideDown();
-        login = true;
-  } else {
-        $("#header_register").html("&#10224;");
-        $( "#body_register" ).slideDown();
-        register = true;
-
-         $("#header_login").html("&#10225;");
-        $( "#body_login" ).slideUp();
-        login = false;
-  }
-});
-
-$( "#header_logintext" ).click(function() {
-  if(login == true){
-        $("#header_login").html("&#10225;");
-        $( "#body_login" ).slideUp();
-        login = false;
-
-        $("#header_register").html("&#10224;");
-        $( "#body_register" ).slideDown();
-        register = true;
-
-  } else {
-        $("#header_login").html("&#10224;");
-         $( "#body_login" ).slideDown();
-        login = true;
-
-        $("#header_register").html("&#10225;");
-        $( "#body_register" ).slideUp();
-        register = false;
-
-  }
-});
-$( document ).ready(function(){
-        $( "#body_register" ).slideUp();
- });
+            $("#body_register").slideDown();
+            $("#body_login").slideUp();
+        }
+    }
+}());
