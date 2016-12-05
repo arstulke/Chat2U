@@ -25,7 +25,7 @@ public class SeleniumHelper {
         WebDriver driver = new ChromeDriver();
         driver.get("http://localhost/");
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-        clickButton(driver,"header_logintext");
+        clickButton(driver, "header_logintext");
 
         WebDriverWait wait = new WebDriverWait(driver, 2);
         wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("register"))));

@@ -106,13 +106,10 @@ function sendMessageToChat(message, chatID) {
 
 //Update the chat-panel
 function updateChat(msg, chatID) {
-    var parent = $("#"+chatID);
-
-    var chat = parent.children();
-
-	var scrollBar = $("#scroll");
-
+    var chat = $("#" + chatID).children();
     chat.innerHTML += "\n" + msg;
+
+    var scrollBar = $("#chat_contents").parent();
     scrollBar.scrollTop = scrollBar.scrollHeight;
 
     notify();
