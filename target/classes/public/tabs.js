@@ -17,13 +17,13 @@ var tabManager = {
         }
 
         //hide all chat contents
-        var chatContents = $("#chat_contents")[0].children;
+        var chatContents = $("#chat_contents").children();
         for(i = 0; i < chatContents.length; i++) {
             chatContents[i].style.display = "none";
         }
 
         //display chat box
-        $("#" + tabID)[0].style.display = "block";
+        $("#" + tabID).css("display", "block");
 
         //set link active
         if(eventTarget != null && eventTarget != undefined) {

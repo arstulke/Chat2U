@@ -1,6 +1,6 @@
 (function(){
-    $("#header_registertext").click(function(){   handleClick()   });
-    $("#header_logintext").click(function(){   handleClick()   });
+    $("#header_registertext").click(handleClick);
+    $("#header_logintext").click(handleClick);
     function handleClick() {
         if(document.getElementById("body_login").style.display != "block"){
             //show login

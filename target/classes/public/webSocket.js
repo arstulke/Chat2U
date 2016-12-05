@@ -16,6 +16,7 @@ function connect(firstMessage) {
 		webSocket = new WebSocket("ws://" + hostIP + ":" + port + "/chat");
         //Websocket Events
         webSocket.onmessage = function(msg) {
+            //dispatching
             disconnected = false;
             var data = JSON.parse(msg.data)
             var type = data["type"];
@@ -33,14 +34,14 @@ function connect(firstMessage) {
                 } else if(data.msg == "Registrieren erfolgreich") {
                     showLoginDialog("hide", "alert", "");
                     showLoginDialog("hide", "alert_register", "");
-                    loginUser($("#user_register")[0].value, $("#password_register")[0].value);
+                    loginUser($("#user_register").val(), $("#password_register").val());
                 } else if(data.msg == "Gültige Zugangsdaten") {
                     showLoginDialog("hide", "alert", "");
                     showLoginDialog("hide", "alert_register", "");
                     $("#message").focus();
                     $("#chats").html("<li><a href='javascript:void(0)' class='tablinks' onclick=\"tabManager.openTab(event.currentTarget, 'global')\" id='defaultOpen'>Global</a></li>");
                     $("#chat_contents").html("<div id='global' class='tabcontent'><div class='media-body'><article><b>Chat2U</b><p>Herzlich Willkommen! Vielen Dank, dass du Chat2U benutzt.</p><small></small></article><hr></div></div>");
-                    $("#defaultOpen")[0].click();
+                    $("#defaultOpen").trigger("click");
                 }
             } else {
                 if (data["exceptionType"] == "AccessDeniedException") {
@@ -87,7 +88,7 @@ function sendMessage(message) {
     wait(function(){
         if (message !== "") {
             webSocket.send(message);
-            $("#message").value = "";
+            $("#message").val("");
         }
     });
 }
@@ -98,7 +99,7 @@ function sendMessageToChat(message, chatID) {
         if (message !== "") {
             var msg = "{\"cmd\":\"sendMessage\",\"params\":{\"message\":\"" + message + "\",\"chatID\":\"" + chatID  + "\"}}"
             webSocket.send(msg);
-            $("#message").value = "";
+            $("#message").val("");
         }
     });
 }
@@ -107,7 +108,7 @@ function sendMessageToChat(message, chatID) {
 function updateChat(msg, chatID) {
     var parent = $("#"+chatID);
 
-    var chat = parent[0].children[0];
+    var chat = parent.children();
 
 	var scrollBar = $("#scroll");
 
@@ -142,16 +143,16 @@ function updateUserList(data) {
 function showLoginDialog(showhide, alert_type, alert) {
     if (showhide == "show") {
 		$("#user").focus();
-        $('#LoginBox')[0].style.visibility = "visible";
+        $('#LoginBox').css("visibility", "visible");
 		if(alert != ""){
-            $("#" + alert_type)[0].style.visibility = "visible";
-            $("#" + alert_type)[0].innerHTML = ""+alert+"";
+            $("#" + alert_type).css("visibility", "visible");
+            $("#" + alert_type).html(alert);
 		}else{
-		    $("#" + alert_type)[0].style.visibility = "hidden";
+		    $("#" + alert_type).css("visibility", "hidden");
 		}
     } else if (showhide == "hide") {
-        $('#LoginBox')[0].style.visibility = "hidden";
-		$("#"+alert_type)[0].style.visibility = "hidden";
+        $('#LoginBox').css("visibility", "hidden");
+		$("#"+alert_type).css("visibility", "hidden");
     }
 }
 
@@ -174,9 +175,9 @@ function wait(callback){
 }
 
 function getCurrentChatID() {
-    var chats = $("#chat_contents");
-    for(var i = 1; i < chats.childNodes.length; i += 2) {
-        var child = chats.childNodes[i];
+    var chats = $("#chat_contents").children();
+    for(var i = 0; i < chats.length; i++) {
+        var child = chats[i];
         if(child.style.display === "block")
         {
             return child.id;
