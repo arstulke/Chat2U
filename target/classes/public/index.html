@@ -29,10 +29,11 @@
     <script src="assets/js/jquery-1.12.4.js"></script>
     <script src="assets/js/jquery-ui.js"></script>
     <script src="utils.js"></script>
+    <script src="tabs.js"></script>
 </head>
 
 <body style="font-family:Verdana">
-<div id="popupbox" style="visibility: visible; position:fixed;">
+<div id="LoginBox" style="visibility: visible; position:fixed;">
     <div class="row " style="padding-top:40px;">
         <div class="col-md-4"></div>
         <form class="col-md-4" name="login" action="" method="post"
@@ -124,7 +125,7 @@
                 <div class="panel-heading">CHAT HISTORY</div>
                 <div class="panel-body" style=" padding-bottom: 0px;">
                     <ul class="nav nav-tabs tab" id="chats">
-                        <li><a href="javascript:void(0)" class="tablinks" onclick="openTab(event.currentTarget, 'global')"
+                        <li><a href="javascript:void(0)" class="tablinks" onclick="tabManager.openTab(event.currentTarget, 'global')"
                                id="defaultOpen">Global</a>
                         </li>
                     </ul>
@@ -176,7 +177,6 @@
 <script>
 
 </script>
-<script src="tabs.js"></script>
 <script src="animation.js"></script>
 <script src="webSocket.js"></script>
 <script src="events.js"></script>

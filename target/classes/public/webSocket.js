@@ -7,7 +7,6 @@ var hostIP = document.location["hostname"];                     //aktuelle HostA
 var port = 80;                                                  //port
 var webSocket = null; //webSocket
 var username, tmp_user;
-var tabManager = new TabManager();
 
 //---------------------------------------- Web Socket ----------------------------------------
 function connect(firstMessage) {
@@ -30,29 +29,29 @@ function connect(firstMessage) {
         } else if (type.includes("server_msg")) {
             if(data.invite != undefined) {
                 notify();
-                tabManager.addChat(data.invite, data.name);
+                tabManager.createTab(data.invite, data.name);
             } else if(type.includes("closeChat")){
                 notify();
-                tabManager.closeChat(data.chatID);
+                tabManager.closeTab(data.chatID);
             } else if(data.msg == "Registrieren erfolgreich") {
                 showLoginDialog("hide", "alert", "");
                 showLoginDialog("hide", "alert_register", "");
-                loginUser(id("user_register").value, id("password_register").value);
+                loginUser($("#user_register").value, $("#password_register").value);
             } else if(data.msg == "Gültige Zugangsdaten") {
                 showLoginDialog("hide", "alert", "");
                 showLoginDialog("hide", "alert_register", "");
-                id("message").focus();
-                id("chats").innerHTML = "<li><a href='javascript:void(0)' class='tablinks' onclick=\"openTab(event.currentTarget, 'global')\" id='defaultOpen'>Global</a></li>";
-                id("chat_contents").innerHTML = "<div id='global' class='tabcontent'><div class='media-body'><article><b>Chat2U</b><p>Herzlich Willkommen! Vielen Dank, dass du Chat2U benutzt.</p><small></small></article><hr></div></div>";
-                document.getElementById("defaultOpen").click();
+                $("#message").focus();
+                $("#chats").innerHTML = "<li><a href='javascript:void(0)' class='tablinks' onclick=\"openTab(event.currentTarget, 'global')\" id='defaultOpen'>Global</a></li>";
+                $("#chat_contents").innerHTML = "<div id='global' class='tabcontent'><div class='media-body'><article><b>Chat2U</b><p>Herzlich Willkommen! Vielen Dank, dass du Chat2U benutzt.</p><small></small></article><hr></div></div>";
+                document.getElementBy$("#defaultOpen").click();
             }
         } else {
             if (data["exceptionType"] == "AccessDeniedException") {
                 showLoginDialog("show","alert", data["msg"]);
             } else if (data["exceptionType"] == "UsernameExistException") {
-                id("user_register").disabled = false;
-                id("password_register").disabled = false;
-                id("password2_register").disabled = false;
+                $("#user_register").disabled = false;
+                $("#password_register").disabled = false;
+                $("#password2_register").disabled = false;
 
                 showLoginDialog("show","alert_register", data["msg"]);
             } else if (data["exceptionType"] == "IllegalArgumentException") {
@@ -68,9 +67,9 @@ function connect(firstMessage) {
 }
 
 function registerUser(user, password, password2) {
-    id("user_register").disabled = true;
-    id("password_register").disabled = true;
-    id("password2_register").disabled = true;
+    $("#user_register").disabled = true;
+    $("#password_register").disabled = true;
+    $("#password2_register").disabled = true;
     if(password == password2) {
         connect("{\"cmd\":\"register\",\"params\": {\"username\":\"" + user+"\",\"passwort\":\"" + password + "\"}}");
     } else {
@@ -89,7 +88,7 @@ function sendMessage(message) {
     wait(function(){
         if (message !== "") {
             webSocket.send(message);
-            id("message").value = "";
+            $("#message").value = "";
         }
     });
 }
@@ -100,7 +99,7 @@ function sendMessageToChat(message, chatID) {
         if (message !== "") {
             var msg = "{\"cmd\":\"sendMessage\",\"params\":{\"message\":\"" + message + "\",\"chatID\":\"" + chatID  + "\"}}"
             webSocket.send(msg);
-            id("message").value = "";
+            $("#message").value = "";
         }
     });
 }
@@ -115,7 +114,7 @@ function updateChat(msg, chatID) {
     }
     var chat = parent.childNodes[i];
 
-	var scrollBar = id("scroll");
+	var scrollBar = $("#scroll");
 
     chat.innerHTML += "\n" + msg;
     scrollBar.scrollTop = scrollBar.scrollHeight;
@@ -124,7 +123,7 @@ function updateChat(msg, chatID) {
 }
 
 function notify(){
-    if (window.blurred && id("checkbox").checked) {
+    if (window.blurred && $("#checkbox").checked) {
         audio.play();
         document.title = "Chat2U ( ! )";
     }
@@ -132,9 +131,9 @@ function notify(){
 
 //update UserList
 function updateUserList(data) {
-    id("userlist").innerHTML = "";
+    $("#userlist").innerHTML = "";
     data.userlist.forEach(function(user) {
-        id("userlist").insertAdjacentHTML("afterbegin","<li id='user_" + user + "' class='media' style='display: block'><div class='media-body'><div class='media'><a class='pull-left' href='#'><img class='media-object img-circle' style='max-height:40px;' src='assets/img/newuser.png' /></a><div class='media-body' ><h5>" + user + "</h5><small class='text-muted'>DEIN STATUS</small></div></div></div></li>");
+        $("#userlist").insertAdjacentHTML("afterbegin","<li id='user_" + user + "' class='media' style='display: block'><div class='media-body'><div class='media'><a class='pull-left' href='#'><img class='media-object img-circle' style='max-height:40px;' src='assets/img/newuser.png' /></a><div class='media-body' ><h5>" + user + "</h5><small class='text-muted'>DEIN STATUS</small></div></div></div></li>");
         if(username !== user) {
             $("#user_" + user).click(function() {
                 sendMessage('{"cmd":"openChat","params":{"users":[{"name":"' + username + '"}, {"name":"' + user + '"}]}}');
@@ -146,8 +145,8 @@ function updateUserList(data) {
 //show Login Dialog
 function showLoginDialog(showhide, alert_type, alert) {
     if (showhide == "show") {
-		id("user").focus();
-        id('popupbox').style.visibility = "visible";
+		$("#user").focus();
+        $('#LoginBox').style.visibility = "visible";
 		if(alert != ""){
             id(alert_type).style.visibility = "visible";
             id(alert_type).innerHTML = ""+alert+"";
@@ -155,7 +154,7 @@ function showLoginDialog(showhide, alert_type, alert) {
 		    id(alert_type).style.visibility = "hidden";
 		}
     } else if (showhide == "hide") {
-        id('popupbox').style.visibility = "hidden";
+        $('#LoginBox').style.visibility = "hidden";
 		id(alert_type).style.visibility = "hidden";
     }
 }
@@ -179,7 +178,7 @@ function wait(callback){
 }
 
 function getCurrentChatID() {
-    var chats = id("chat_contents");
+    var chats = $("#chat_contents");
     for(var i = 1; i < chats.childNodes.length; i += 2) {
         var child = chats.childNodes[i];
         if(child.style.display === "block")
