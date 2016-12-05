@@ -116,7 +116,7 @@ function updateChat(msg, chatID) {
 }
 
 function notify(){
-    if (window.blurred && $("#checkbox").checked) {
+    if (window.blurred && $("#checkbox")[0].checked) {
         audio.play();
         document.title = "Chat2U ( ! )";
     }
