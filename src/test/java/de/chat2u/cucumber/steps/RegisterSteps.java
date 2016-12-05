@@ -91,6 +91,7 @@ public class RegisterSteps {
 
     @Dann("^wird das Registrieren abgeschlossen mit der Nachricht \"([^\"]*)\"$")
     public void wirdDasRegistrierenGenehmigtMitDerNachricht(String message) throws Throwable {
+        message = message.replace("'", "\"");
         assertThat(response, is(message));
         if (exception != null)
             Assert.assertTrue(exception.getClass().getSuperclass().equals(IllegalArgumentException.class));

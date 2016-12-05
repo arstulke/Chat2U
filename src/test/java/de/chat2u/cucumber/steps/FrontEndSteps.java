@@ -42,7 +42,7 @@ public class FrontEndSteps {
 
     @Wenn("^\"([^\"]*)\" sich mit dem Passwort \"([^\"]*)\" registriert und einlogggt$")
     public void sichMitDemPasswortRegistriertUndEinlogggt(String username, String password) throws Throwable {
-        TestServer.client.put(username,registerUser(new AuthenticationUser(username, password)));
+        TestServer.client.put(username, registerUser(new AuthenticationUser(username, password)));
     }
 
     @Dann("^ist die Anmeldeaufforderung für \"([^\"]*)\" verschwunden$")

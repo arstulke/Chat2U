@@ -1,4 +1,4 @@
-(function(){
+$(document).ready(function(){
     //----------------------------------------Event Listener----------------------------------------
     //Tab opend, Closed Events
     window.onblur = function() {
@@ -9,76 +9,72 @@
         window.blurred = false;
     };
     //BUTTON EVENT LISTENER
-    $("#send").click(function() {
-        sendMessage($("#message").val());
+    docIDs.btn_chatSendMessage().click(function() {
+        sendMessageToChat(docIDs.in_chatMessage().val());
     });
-    $("#message").keypress(function(e) {
+    docIDs.in_chatMessage().keypress(function(e) {
         if (e.keyCode === 13) {
-            var chatID = getCurrentChatID();
-            sendMessageToChat(e.target.value, chatID);
+            sendMessageToChat(e.target.value);
         }
     });
     //-----------------LOGIN EVENTS
-    $("#user").keypress(function(e) {
+    docIDs.in_loginUsername().keypress(function(e) {
         if (e.keyCode === 13) {
-            if($("#user").val() !== "" && $("#password").val() !== ""){
-                tmp_user = $("#user").val();
-                loginUser($("#user").val(), $("#password").val());
+            if(docIDs.in_loginUsername().val() !== "" && docIDs.in_loginPassword().val() !== ""){
+                loginUser(docIDs.in_loginUsername().val(), docIDs.in_loginPassword().val());
            }
         }
     });
-    $("#password").keypress(function(e) {
+    docIDs.in_loginPassword().keypress(function(e) {
         if (e.keyCode === 13) {
-            if($("#user").val() !== "" && $("#password").val() !== ""){
-                tmp_user = $("#user").val();
-                loginUser($("#user").val(), $("#password").val());
+            if(docIDs.in_loginUsername().val() !== "" && docIDs.in_loginPassword().val() !== "") {
+                loginUser(docIDs.in_loginUsername().val(), docIDs.in_loginPassword().val());
             }
         }
     });
-    $("#login").click(function() {
-        if($("#user").val() !== "" && $("#password").val() !== ""){
-            tmp_user = $("#user").val();
-            loginUser($("#user").val(), $("#password").val());
+    docIDs.btn_login().click(function() {
+        if(docIDs.in_loginUsername().val() !== "" && docIDs.in_loginPassword().val() !== "") {
+            loginUser(docIDs.in_loginUsername().val(), docIDs.in_loginPassword().val());
         }
     });
     //------------------REGISTER EVENTS
-    $("#register").click(function() {
-        if($("#user_register").val() !== "" && $("#password_register").val() !== ""){
-            registerUser($("#user_register").val(), $("#password_register").val(), $("#password2_register").val());
+    docIDs.btn_register().click(function() {
+        if(docIDs.in_registerUsername().val() !== "" && docIDs.in_registerPassword().val() !== ""){
+            registerUser(docIDs.in_registerUsername().val(), docIDs.in_registerPassword().val(), docIDs.in_registerSecPassword().val());
         }
     });
-    $("#user_register").keypress(function(e) {
+    docIDs.in_registerUsername().keypress(function(e) {
         if (e.keyCode === 13) {
-            if($("#user_register").val() !== "" && $("#password_register").val() !== ""){
-                registerUser($("#user_register").val(), $("#password_register").val(), $("#password2_register").val());
+            if(docIDs.in_registerUsername().val() !== "" && docIDs.in_registerPassword().val() !== ""){
+                registerUser(docIDs.in_registerUsername().val(), docIDs.in_registerPassword().val(), docIDs.in_registerSecPassword().val());
             }
         }
     });
-    $("#password_register").keypress(function(e) {
+    docIDs.in_registerPassword().keypress(function(e) {
         if (e.keyCode === 13) {
-            if($("#user_register").val() !== "" && $("#password_register").val() !== ""){
-                registerUser($("#user_register").val(), $("#password_register").val(), $("#password2_register").val());
+            if(docIDs.in_registerUsername().val() !== "" && docIDs.in_registerPassword().val() !== ""){
+                registerUser(docIDs.in_registerUsername().val(), docIDs.in_registerPassword().val(), docIDs.in_registerSecPassword().val());
             }
         }
     });
-    $("#password2_register").keypress(function(e) {
+    docIDs.in_registerSecPassword().keypress(function(e) {
         if (e.keyCode === 13) {
-            if($("#user_register").val() !== "" && $("#password_register").val() !== ""){
-                registerUser($("#user_register").val(), $("#password_register").val(), $("#password2_register").val());
+            if(docIDs.in_registerUsername().val() !== "" && docIDs.in_registerPassword().val() !== ""){
+                registerUser(docIDs.in_registerUsername().val(), docIDs.in_registerPassword().val(), docIDs.in_registerSecPassword().val());
             }
         }
     });
 
 
     //Search User in Userlist
-    $("#search").on('input', function() {
-        var searchEles = $("#userlist").children();
+    docIDs.in_searchUser().on('input', function() {
+        var searchEles = docIDs.ul_userList().children();
         for(var i = 0; i < searchEles.length; i++) {
-            if(searchEles[i].id.indexOf('user_' + $("#search").val()) !== 0) {
+            if(searchEles[i].id.indexOf('user_' + docIDs.in_searchUser().val()) !== 0) {
                 searchEles[i].style.display  = "none";
             } else {
                 searchEles[i].style.display = "block";
             }
         }
     });
-}());
+});

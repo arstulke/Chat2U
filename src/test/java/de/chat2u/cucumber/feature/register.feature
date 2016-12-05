@@ -4,7 +4,7 @@ Funktionalität: Registrieren
 	Szenario: Als Teilnehmer mit einzigartigem Benutzernamen registrieren
 		Gegeben seien keine registrierten Benutzer
 		Wenn ich mich als Teilnehmer "Carsten" und dem Passwort "geheim" registriere,
-		Dann wird das Registrieren abgeschlossen mit der Nachricht "Registrierung erfolgreich; 'Carsten' ist Teilnehmer"
+		Dann wird das Registrieren abgeschlossen mit der Nachricht "{'type':'server_msg','msg':'Registrieren erfolgreich'}"
 
 	Szenario: Als Teilnehmer mit belegten Benutzernamen registrieren
 		Gegeben sei der registrierte Teilnehmer "Carsten"

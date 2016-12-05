@@ -8,6 +8,7 @@ import de.chat2u.model.AuthenticationUser;
 import de.chat2u.network.ChatWebSocketHandler;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.common.WebSocketSession;
 import org.openqa.selenium.WebDriver;
 import spark.Spark;
 
@@ -35,8 +36,8 @@ public class TestServer {
         ChatServer.initialize(new AuthenticationService(repo));
     }
 
-    public static Session getMockSession() {
-        Session session = mock(Session.class);
+    public static WebSocketSession getMockSession() {
+        WebSocketSession session = mock(WebSocketSession.class);
         RemoteEndpoint remote = mock(RemoteEndpoint.class);
         when(session.getRemote()).thenReturn(remote);
         return session;

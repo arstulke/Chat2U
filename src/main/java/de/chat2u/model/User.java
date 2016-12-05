@@ -3,6 +3,7 @@ package de.chat2u.model;
 import de.chat2u.authentication.Permissions;
 import de.chat2u.utils.MessageBuilder;
 import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.common.WebSocketSession;
 
 import java.util.ArrayList;
 import java.util.List;

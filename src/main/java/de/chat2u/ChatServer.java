@@ -5,16 +5,15 @@ import de.chat2u.authentication.Permissions;
 import de.chat2u.authentication.UserRepository;
 import de.chat2u.exceptions.AccessDeniedException;
 import de.chat2u.exceptions.UsernameExistException;
-import de.chat2u.model.AuthenticationUser;
-import de.chat2u.model.ChatContainer;
-import de.chat2u.model.Message;
-import de.chat2u.model.User;
+import de.chat2u.model.*;
 import de.chat2u.utils.MessageBuilder;
 import org.eclipse.jetty.websocket.api.Session;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Bevor der {@link ChatServer} benutzt werden kann, muss die {@link ChatServer#initialize(AuthenticationService)}
@@ -134,17 +133,24 @@ public class ChatServer {
     public static void logout(String username) {
         User user = onlineUsers.getByUsername(username);
         onlineUsers.removeUser(user);
+
+        Map<String, Chat> containedChats = new HashMap<>();
         chats.forEach(chat -> {
             if (chat.contains(user)) {
                 String chatID = chat.getID();
                 chat.removeUser(user);
-
-                if (!chatID.equals(GLOBAL) && chat.size() == 1) {
-                    sendMessageToChat("Server", username, chatID, "server_msg closeChat");
-                    chats.removeChat(chatID);
-                }
+                containedChats.put(chatID, chat);
             }
         });
+
+        containedChats.entrySet().forEach(chat -> {
+            String chatID = chat.getKey();
+            if (!chatID.equals(GLOBAL) && chat.getValue().size() == 1) {
+                sendMessageToChat("Server", username, chatID, "server_msg closeChat");
+                chats.removeChat(chatID);
+            }
+        });
+
         sendMessageToGlobalChat("Server:", username + " left the Server", "msg");
     }
 
