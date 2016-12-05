@@ -7,7 +7,6 @@ var hostIP = document.location["hostname"];                     //aktuelle HostA
 var port = 80;                                                  //port
 var webSocket = null; //webSocket
 var username, tmp_user;
-var tabManager = new TabManager();
 
 //---------------------------------------- Web Socket ----------------------------------------
 function connect(firstMessage) {
@@ -30,10 +29,10 @@ function connect(firstMessage) {
         } else if (type.includes("server_msg")) {
             if(data.invite != undefined) {
                 notify();
-                tabManager.addChat(data.invite, data.name);
+                tabManager.addTab(data.invite, data.name);
             } else if(type.includes("closeChat")){
                 notify();
-                tabManager.closeChat(data.chatID);
+                tabManager.closeTab(data.chatID);
             } else if(data.msg == "Registrieren erfolgreich") {
                 showLoginDialog("hide", "alert", "");
                 showLoginDialog("hide", "alert_register", "");
