@@ -27,7 +27,6 @@
 
     <script src="assets/js/jquery-1.12.4.js"></script>
     <script src="assets/js/jquery-ui.js"></script>
-    <script src="utils.js"></script>
     <script src="tabs.js"></script>
 </head>
 
@@ -126,7 +125,7 @@
                 <div class="panel-body" style=" padding-bottom: 0px;">
                     <ul class="nav nav-tabs tab" id="chats">
                         <li><a href="javascript:void(0)" class="tablinks"
-                               onclick="openTab(event.currentTarget, 'global')"
+                               onclick="tabManager.openTab(event.currentTarget, 'global')"
                                id="defaultOpen">Global</a>
                         </li>
                     </ul>

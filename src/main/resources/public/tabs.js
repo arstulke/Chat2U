@@ -8,7 +8,7 @@ var tabManager = {
             var classAttr = element.getAttribute("class");
             if(classAttr == null)
                 classAttr = "";
-            classAttr += " active";
+            classAttr = classAttr.replace(" active", "");
             element.setAttribute("class", classAttr);
         }
         for(i = 0; i < chatLinks.length; i++) {
@@ -26,9 +26,17 @@ var tabManager = {
         $("#" + tabID)[0].style.display = "block";
 
         //set link active
-        if(eventTarget !== null) {
+        if(eventTarget != null && eventTarget != undefined) {
             var activeChatLink = eventTarget.parentElement;
             activeChatLink.setAttribute("class", activeChatLink.getAttribute("class") + " active");
         }
+    },
+
+    createTab: function(chatID, chatName){
+        var tabLink = "<li><a href='javascript:void(0)' class='tablinks' onclick=\"tabManager.openTab(event.currentTarget, '" + chatID + "')\" id='defaultOpen'>" + chatName + "</a></li>";
+        $("#chats").html($("#chats").html() + tabLink);
+
+        var chatContent = "<div id=\"" + chatID + "\" class=\"tabcontent\" style=\"display: none;\"><div class=\"media-body\">Du wurdest zum Chat <b>" + chatName + "</b> hinzugefügt.<hr></div></div>";
+        $("#chat_contents").html($("#chat_contents").html() + chatContent);
     }
 };
