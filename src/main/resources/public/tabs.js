@@ -3,7 +3,8 @@ var tabManager = {
         var chatLinks = $(".tablinks");
         var i;
 
-        function setInactive(element){
+        //set all tabLinks inactive
+        function setInactive(element) {
             var classAttr = element.getAttribute("class");
             if(classAttr == null)
                 classAttr = "";
@@ -15,19 +16,19 @@ var tabManager = {
             setInactive(chatLink);
         }
 
+        //hide all chat contents
         var chatContents = $("#chat_contents")[0].children;
         for(i = 0; i < chatContents.length; i++) {
             chatContents[i].style.display = "none";
         }
 
-        $("#" + tabID).style.display = "block";
+        //display chat box
+        $("#" + tabID)[0].style.display = "block";
+
+        //set link active
         if(eventTarget !== null) {
             var activeChatLink = eventTarget.parentElement;
             activeChatLink.setAttribute("class", activeChatLink.getAttribute("class") + " active");
         }
     }
 };
-
-function openTab(eventTarget, tabID) {
-    tabManager.openTab(eventTarget, tabID);
-}
