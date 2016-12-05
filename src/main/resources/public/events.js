@@ -9,62 +9,62 @@
         window.blurred = false;
     };
     //BUTTON EVENT LISTENER
-    id("send").addEventListener("click", function() {
-        sendMessage(id("message").value);
+    $("send").addEventListener("click", function() {
+        sendMessage($("message").value);
     });
-    id("message").addEventListener("keypress", function(e) {
+    $("message").addEventListener("keypress", function(e) {
         if (e.keyCode === 13) {
             var chatID = getCurrentChatID();
             sendMessageToChat(e.target.value, chatID);
         }
     });
     //-----------------LOGIN EVENTS
-    id("user").addEventListener("keypress", function(e) {
+    $("user").addEventListener("keypress", function(e) {
         if (e.keyCode === 13) {
-            if(id("user").value !== "" && id("password").value !== ""){
-                tmp_user = id("user").value;
-                loginUser(id("user").value, id("password").value);
+            if($("user").value !== "" && $("password").value !== ""){
+                tmp_user = $("user").value;
+                loginUser($("user").value, $("password").value);
            }
         }
     });
-    id("password").addEventListener("keypress", function(e) {
+    $("password").addEventListener("keypress", function(e) {
         if (e.keyCode === 13) {
-            if(id("user").value !== "" && id("password").value !== ""){
-                tmp_user = id("user").value;
-                loginUser(id("user").value, id("password").value);
+            if($("user").value !== "" && $("password").value !== ""){
+                tmp_user = $("user").value;
+                loginUser($("user").value, $("password").value);
             }
         }
     });
-    id("login").addEventListener("click", function() {
-        if(id("user").value !== "" && id("password").value !== ""){
-            tmp_user = id("user").value;
-            loginUser(id("user").value, id("password").value);
+    $("login").addEventListener("click", function() {
+        if($("user").value !== "" && $("password").value !== ""){
+            tmp_user = $("user").value;
+            loginUser($("user").value, $("password").value);
         }
     });
     //------------------REGISTER EVENTS
-    id("register").addEventListener("click", function() {
-        if(id("user_register").value !== "" && id("password_register").value !== ""){
-            registerUser(id("user_register").value, id("password_register").value, id("password2_register").value);
+    $("register").addEventListener("click", function() {
+        if($("user_register").value !== "" && $("password_register").value !== ""){
+            registerUser($("user_register").value, $("password_register").value, $("password2_register").value);
         }
     });
-    id("user_register").addEventListener("keypress", function(e) {
+    $("user_register").addEventListener("keypress", function(e) {
         if (e.keyCode === 13) {
-            if(id("user_register").value !== "" && id("password_register").value !== ""){
-                registerUser(id("user_register").value, id("password_register").value, id("password2_register").value);
+            if($("user_register").value !== "" && $("password_register").value !== ""){
+                registerUser($("user_register").value, $("password_register").value, $("password2_register").value);
             }
         }
     });
-    id("password_register").addEventListener("keypress", function(e) {
+    $("password_register").addEventListener("keypress", function(e) {
         if (e.keyCode === 13) {
-            if(id("user_register").value !== "" && id("password_register").value !== ""){
-                registerUser(id("user_register").value, id("password_register").value, id("password2_register").value);
+            if($("user_register").value !== "" && $("password_register").value !== ""){
+                registerUser($("user_register").value, $("password_register").value, $("password2_register").value);
             }
         }
     });
-    id("password2_register").addEventListener("keypress", function(e) {
+    $("password2_register").addEventListener("keypress", function(e) {
         if (e.keyCode === 13) {
-            if(id("user_register").value !== "" && id("password_register").value !== ""){
-                registerUser(id("user_register").value, id("password_register").value, id("password2_register").value);
+            if($("user_register").value !== "" && $("password_register").value !== ""){
+                registerUser($("user_register").value, $("password_register").value, $("password2_register").value);
             }
         }
     });
@@ -74,7 +74,7 @@
     $("#search").on('input', function() {
         var searchEles = document.getElementById("userlist").children;
         for(var i = 0; i < searchEles.length; i++) {
-            if(searchEles[i].id.indexOf('user_' + id("search").value) !== 0) {
+            if(searchEles[i].id.indexOf('user_' + $("search").value) !== 0) {
                 searchEles[i].style.display  = "none";
             } else {
                 searchEles[i].style.display = "block";

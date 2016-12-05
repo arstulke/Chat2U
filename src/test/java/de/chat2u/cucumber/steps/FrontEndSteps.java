@@ -48,8 +48,8 @@ public class FrontEndSteps {
     @Dann("^ist die Anmeldeaufforderung für \"([^\"]*)\" verschwunden$")
     public void istDieAnmeldeaufforderungVerschwunden(String client) throws Throwable {
         WebDriverWait wait = new WebDriverWait(TestServer.client.get(client), 2);
-        wait.until(ExpectedConditions.invisibilityOfElementLocated((By.id("popupbox"))));
-        Assert.assertThat(TestServer.client.get(client).findElement(By.id("popupbox")).getAttribute("style"), is("visibility: hidden; position: fixed;"));
+        wait.until(ExpectedConditions.invisibilityOfElementLocated((By.id("LoginBox"))));
+        Assert.assertThat(TestServer.client.get(client).findElement(By.id("LoginBox")).getAttribute("style"), is("visibility: hidden; position: fixed;"));
     }
 
     @Und("^er erscheint in der Liste der Benutzer, welche online sind$")
@@ -61,8 +61,8 @@ public class FrontEndSteps {
     public void dieAngemeldetenBenutzer(List<String> loggedInUsers) throws Throwable {
         for (String username : loggedInUsers) {
             try {
-                ChatServer.register(username, "geheim");
-                ChatServer.login(username, "geheim", getMockSession());
+                ChatServer.register(username, "secret");
+                ChatServer.login(username, "secret", getMockSession());
             } catch (Exception ignore){
 
             }
@@ -76,9 +76,9 @@ public class FrontEndSteps {
     }
 
     @Dann("^werden bei \"([^\"]*)\" die Benutzer angezeigt:$")
-    public void werdenBeiDieBenutzerAngezeigt(String webdriver, List<String> onlineUsers) throws Throwable {
+    public void werdenBeiDieBenutzerAngezeigt(String webDriver, List<String> onlineUsers) throws Throwable {
         for(User user : ChatServer.getOnlineUsers()) {
-            Assert.assertThat(TestServer.client.get(webdriver).findElement(By.id("user_" + user.getUsername())).getAttribute("style"), CoreMatchers.is((onlineUsers.contains(user.getUsername()))?"display: block;":"display: none;"));
+            Assert.assertThat(TestServer.client.get(webDriver).findElement(By.id("user_" + user.getUsername())).getAttribute("style"), CoreMatchers.is((onlineUsers.contains(user.getUsername()))?"display: block;":"display: none;"));
         }
     }
 

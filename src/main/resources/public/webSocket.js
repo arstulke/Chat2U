@@ -147,7 +147,7 @@ function updateUserList(data) {
 function showLoginDialog(showhide, alert_type, alert) {
     if (showhide == "show") {
 		id("user").focus();
-        id('popupbox').style.visibility = "visible";
+        id('LoginBox').style.visibility = "visible";
 		if(alert != ""){
             id(alert_type).style.visibility = "visible";
             id(alert_type).innerHTML = ""+alert+"";
@@ -155,7 +155,7 @@ function showLoginDialog(showhide, alert_type, alert) {
 		    id(alert_type).style.visibility = "hidden";
 		}
     } else if (showhide == "hide") {
-        id('popupbox').style.visibility = "hidden";
+        id('LoginBox').style.visibility = "hidden";
 		id(alert_type).style.visibility = "hidden";
     }
 }
