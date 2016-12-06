@@ -26,27 +26,27 @@
     <link href="assets/css/bootstrap.css" rel="stylesheet"/>
 
     <script src="assets/js/jquery-1.12.4.js"></script>
-    <script src="docIDs.js"></script>
+    <script src="doc.js"></script>
     <script src="tabs.js"></script>
 </head>
 
 <body style="font-family:Verdana">
 
-<div id="LoginBox">
+<div id="loginBox">
     <div class="row " style="padding-top:40px;">
         <div class="col-md-4"></div>
         <form class="col-md-4" name="login" action="" method="post"
               style="margin-top: 12%;background: rgba(255, 255, 255, 0);margin-left: 5px;margin-right: 5px;">
             <div class="panel panel-primary">
-                <div id="header_logintext" class="panel-heading">LOGIN<p style="float:right;">&#10224;</p></div>
-                <div id="body_login" style="display: block; height: 222px;" class="panel-body">
+                <div id="loginPanelHead" class="panel-heading">LOGIN<p style="float:right;">&#10224;</p></div>
+                <div id="loginPanelBody" style="display: block; height: 222px;" class="panel-body">
                     <div id="alert" style="visibility: visible; padding-left: 15px;">
                     </div>
                     <div class="col-md-12" style="margin-bottom:10px">
                         Username:
-                        <input id="user" name="user" style="margin-bottom:10px; width: 100%"><br>
+                        <input id="loginUsername" name="user" style="margin-bottom:10px; width: 100%"><br>
                         Password:
-                        <input id="password" name="password" type="password" style="width: 100%">
+                        <input id="loginPassword" name="password" type="password" style="width: 100%">
                     </div>
                     <div class="col-md-9" style="margin-bottom:10px">
                         <button id="login" class="btn btn-info" type="button">Login
@@ -55,15 +55,15 @@
                 </div>
             </div>
             <div class="panel panel-primary">
-                <div id="header_registertext" class="panel-heading">REGISTER<p style="float:right;">&#10225;</p></div>
-                <div id="body_register" class="panel-body" style="height: 222px; padding-top: 10px; display: none;">
+                <div id="registerPanelHead" class="panel-heading">REGISTER<p style="float:right;">&#10225;</p></div>
+                <div id="registerPanelBody" class="panel-body" style="height: 222px; padding-top: 10px; display: none;">
                     <div id="alert_register" style="visibility: visible; padding-left: 15px;">
                     </div>
                     <div class="col-md-12" style="margin-bottom:10px">
-                        Username: <input id="user_register" name="user" style="margin-bottom:10px; width: 100%"><br>
-                        Password: <input id="password_register" name="password" type="password"
+                        Username: <input id="registerUsername" name="user" style="margin-bottom:10px; width: 100%"><br>
+                        Password: <input id="registerPassword" name="password" type="password"
                                          style="margin-bottom:10px; width: 100%">
-                        <input id="password2_register" name="password2" type="password" style="width: 100%">
+                        <input id="registerSecPassword" name="password2" type="password" style="width: 100%">
                     </div>
 
                     <div class="col-md-9" style="margin-bottom:10px">
@@ -119,15 +119,15 @@
             <div class="panel panel-info">
                 <div class="panel-heading">CHAT HISTORY</div>
                 <div class="panel-body" style=" padding-bottom: 0px;">
-                    <ul class="nav nav-tabs tab" id="chats">
+                    <ul class="nav nav-tabs tab" id="tabContainer">
                         <li><a href="javascript:void(0)" class="tablinks"
                                onclick="tabManager.openTab(event.currentTarget, 'global')"
-                               id="defaultOpen">Global</a>
+                               id="a_defaultTab">Global</a>
                         </li>
                     </ul>
                 </div>
                 <div class="panel-body" style="overflow-y: scroll; height:500px;">
-                    <div id="chat_contents">
+                    <div id="chatContainer">
                         <div id="global" class="tabcontent">
                             <div class="media-body">
                                 <article>
@@ -142,14 +142,14 @@
                 </div>
                 <div class="panel-footer">
                     <div class="input-group">
-                        <input type="text" id="message" class="form-control" placeholder="Enter Message"/>
-                        <span class="input-group-btn"><button id="send" class="btn btn-info"
+                        <input type="text" id="chatMessage" class="form-control" placeholder="Enter Message"/>
+                        <span class="input-group-btn"><button id="chatSendMessage" class="btn btn-info"
                                                               type="button">SEND</button></span>
                     </div>
                 </div>
             </div>
             <label class="switch">
-                <input id="checkbox" type="checkbox" checked>
+                <input id="checkBox_notifications" type="checkbox" checked>
                 <span class="slider"></span>
             </label>
             Use notifications
@@ -161,9 +161,9 @@
             <div class="panel panel-primary">
                 <div class="panel-heading">ONLINE USERS</div>
                 <div class="panel-body">
-                    <input type="text" id="search" class="form-control" placeholder="Search User"
+                    <input type="text" id="searchUser" class="form-control" placeholder="Search User"
                            style=" margin-bottom: 16px;">
-                    <ul id="userlist" class="media-list">
+                    <ul id="ul_userList" class="media-list">
                     </ul>
                 </div>
             </div>

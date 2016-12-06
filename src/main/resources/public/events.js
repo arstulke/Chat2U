@@ -1,76 +1,76 @@
 $(document).ready(function(){
     //----------------------------------------Event Listener----------------------------------------
     //Tab opend, Closed Events
-    window.onblur = function() {
+    $(window).blur(function() {
         window.blurred = true;
-    };
+    });
     window.onfocus = function() {
         document.title = "Chat2U";
         window.blurred = false;
     };
     //BUTTON EVENT LISTENER
-    docIDs.btn_chatSendMessage().click(function() {
-        sendMessageToChat(docIDs.in_chatMessage().val());
+    doc.btn.chatSendMessage().click(function() {
+        sendMessageToChat(doc.input.chatMessage().val());
     });
-    docIDs.in_chatMessage().keypress(function(e) {
+    doc.input.chatMessage().keypress(function(e) {
         if (e.keyCode === 13) {
             sendMessageToChat(e.target.value);
         }
     });
     //-----------------LOGIN EVENTS
-    docIDs.in_loginUsername().keypress(function(e) {
+    doc.input.loginUsername().keypress(function(e) {
         if (e.keyCode === 13) {
-            if(docIDs.in_loginUsername().val() !== "" && docIDs.in_loginPassword().val() !== ""){
-                loginUser(docIDs.in_loginUsername().val(), docIDs.in_loginPassword().val());
+            if(doc.input.loginUsername().val() !== "" && doc.input.loginPassword().val() !== ""){
+                loginUser(doc.input.loginUsername().val(), doc.input.loginPassword().val());
            }
         }
     });
-    docIDs.in_loginPassword().keypress(function(e) {
+    doc.input.loginPassword().keypress(function(e) {
         if (e.keyCode === 13) {
-            if(docIDs.in_loginUsername().val() !== "" && docIDs.in_loginPassword().val() !== "") {
-                loginUser(docIDs.in_loginUsername().val(), docIDs.in_loginPassword().val());
+            if(doc.input.loginUsername().val() !== "" && doc.input.loginPassword().val() !== "") {
+                loginUser(doc.input.loginUsername().val(), doc.input.loginPassword().val());
             }
         }
     });
-    docIDs.btn_login().click(function() {
-        if(docIDs.in_loginUsername().val() !== "" && docIDs.in_loginPassword().val() !== "") {
-            loginUser(docIDs.in_loginUsername().val(), docIDs.in_loginPassword().val());
+    doc.btn.login().click(function() {
+        if(doc.input.loginUsername().val() !== "" && doc.input.loginPassword().val() !== "") {
+            loginUser(doc.input.loginUsername().val(), doc.input.loginPassword().val());
         }
     });
     //------------------REGISTER EVENTS
-    docIDs.btn_register().click(function() {
-        if(docIDs.in_registerUsername().val() !== "" && docIDs.in_registerPassword().val() !== ""){
-            registerUser(docIDs.in_registerUsername().val(), docIDs.in_registerPassword().val(), docIDs.in_registerSecPassword().val());
+    doc.btn.register().click(function() {
+        if(doc.input.registerUsername().val() !== "" && doc.input.registerPassword().val() !== ""){
+            registerUser(doc.input.registerUsername().val(), doc.input.registerPassword().val(), doc.input.registerSecPassword().val());
         }
     });
-    docIDs.in_registerUsername().keypress(function(e) {
+    doc.input.registerUsername().keypress(function(e) {
         if (e.keyCode === 13) {
-            if(docIDs.in_registerUsername().val() !== "" && docIDs.in_registerPassword().val() !== ""){
-                registerUser(docIDs.in_registerUsername().val(), docIDs.in_registerPassword().val(), docIDs.in_registerSecPassword().val());
+            if(doc.input.registerUsername().val() !== "" && doc.input.registerPassword().val() !== ""){
+                registerUser(doc.input.registerUsername().val(), doc.input.registerPassword().val(), doc.input.registerSecPassword().val());
             }
         }
     });
-    docIDs.in_registerPassword().keypress(function(e) {
+    doc.input.registerPassword().keypress(function(e) {
         if (e.keyCode === 13) {
-            if(docIDs.in_registerUsername().val() !== "" && docIDs.in_registerPassword().val() !== ""){
-                registerUser(docIDs.in_registerUsername().val(), docIDs.in_registerPassword().val(), docIDs.in_registerSecPassword().val());
+            if(doc.input.registerUsername().val() !== "" && doc.input.registerPassword().val() !== ""){
+                registerUser(doc.input.registerUsername().val(), doc.input.registerPassword().val(), doc.input.registerSecPassword().val());
             }
         }
     });
-    docIDs.in_registerSecPassword().keypress(function(e) {
+    doc.input.registerSecPassword().keypress(function(e) {
         if (e.keyCode === 13) {
-            if(docIDs.in_registerUsername().val() !== "" && docIDs.in_registerPassword().val() !== ""){
-                registerUser(docIDs.in_registerUsername().val(), docIDs.in_registerPassword().val(), docIDs.in_registerSecPassword().val());
+            if(doc.input.registerUsername().val() !== "" && doc.input.registerPassword().val() !== ""){
+                registerUser(doc.input.registerUsername().val(), doc.input.registerPassword().val(), doc.input.registerSecPassword().val());
             }
         }
     });
 
 
     //Search User in Userlist
-    docIDs.in_searchUser().on('input', function() {
-        var searchEles = docIDs.ul_userList().children();
+    doc.input.searchUser().on('input', function() {
+        var searchEles = doc.ul_userList().children();
         for(var i = 0; i < searchEles.length; i++) {
-            if(searchEles[i].id.indexOf('user_' + docIDs.in_searchUser().val()) !== 0) {
+            if(searchEles[i].id.indexOf('user_' + doc.input.searchUser().val()) !== 0) {
                 searchEles[i].style.display  = "none";
             } else {
                 searchEles[i].style.display = "block";

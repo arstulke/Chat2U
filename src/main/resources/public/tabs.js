@@ -14,7 +14,7 @@ var tabManager = {
         }
 
         //hide all chat contents
-        var chatContents = docIDs.div_chatContainer().children();
+        var chatContents = doc.div.chatContainer().children();
         for(i = 0; i < chatContents.length; i++) {
             chatContents[i].style.display = "none";
         }
@@ -35,15 +35,15 @@ var tabManager = {
 
     createTab: function(chatID, chatName){
         var tabLink = "<li><a href='javascript:void(0)' class='tablinks' onclick=\"tabManager.openTab(event.currentTarget, '" + chatID + "')\">" + chatName + "</a></li>";
-        docIDs.div_tabContainer().html(docIDs.div_tabContainer().html() + tabLink);
+        doc.div.tabContainer().html(doc.div.tabContainer().html() + tabLink);
 
         var chatContent = "<div id=\"" + chatID + "\" class=\"tabcontent\" style=\"display: none;\"><div class=\"media-body\">Du wurdest zum Chat <b>" + chatName + "</b> hinzugefügt.<hr></div></div>";
-        docIDs.div_chatContainer().html(docIDs.div_chatContainer().html() + chatContent);
+        doc.div.chatContainer().html(doc.div.chatContainer().html() + chatContent);
     },
 
     closeTab: function(chatID) {
         if(getCurrentChatID() === chatID)
-            this.openTab(docIDs.a_defaultTab()[0], "global");
+            this.openTab(doc.a_defaultTab()[0], "global");
 
         var chatLinks = $(".tablinks");
         for(i = 0; i < chatLinks.length; i++) {

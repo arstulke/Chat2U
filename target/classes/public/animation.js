@@ -1,21 +1,21 @@
 $(document).ready(function(){
-    docIDs.div_registerPanelHead().click(handleClick);
-    docIDs.div_loginPanelHead().click(handleClick);
+    doc.div.registerPanelHead().click(handleClick);
+    doc.div.loginPanelHead().click(handleClick);
     function handleClick() {
-        if(docIDs.div_loginPanelBody().css("display") != "block"){
+        if(doc.div.loginPanelBody().css("display") != "block"){
             //show login
-            $("#header_registertext").html("REGISTER<p style='float: right;'>&#10225;</p>");
-            $("#header_logintext").html("LOGIN<p style='float: right;'>&#10224;</p>");
+            doc.div.registerPanelHead().html("REGISTER<p style='float: right;'>&#10225;</p>");
+            doc.div.loginPanelHead().html("LOGIN<p style='float: right;'>&#10224;</p>");
 
-            docIDs.div_registerPanelBody().slideUp();
-            docIDs.div_loginPanelBody().slideDown();
+            doc.div.registerPanelBody().slideUp();
+            doc.div.loginPanelBody().slideDown();
         } else {
             //show register
-            $("#header_registertext").html("REGISTER<p style='float: right;'>&#10224;</p>");
-            $("#header_logintext").html("LOGIN<p style='float: right;'>&#10225;</p>");
+            doc.div.registerPanelHead().html("REGISTER<p style='float: right;'>&#10224;</p>");
+            doc.div.loginPanelHead().html("LOGIN<p style='float: right;'>&#10225;</p>");
 
-            docIDs.div_registerPanelBody().slideDown();
-            docIDs.div_loginPanelBody().slideUp();
+            doc.div.registerPanelBody().slideDown();
+            doc.div.loginPanelBody().slideUp();
         }
     }
 }());
