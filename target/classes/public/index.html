@@ -1,23 +1,22 @@
 ﻿<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-
+<html>
 <head>
-    <link rel="apple-touch-icon" sizes="57x57" href="/assets/img/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="/assets/img/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="/assets/img/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="/assets/img/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="/assets/img/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="/assets/img/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="/assets/img/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/assets/img/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon-16x16.png">
-    <link rel="manifest" href="/assets/img/manifest.json">
+    <link rel="apple-touch-icon" sizes="57x57" href="/assets/img/favicon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/assets/img/favicon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/assets/img/favicon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/favicon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/assets/img/favicon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/assets/img/favicon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/assets/img/favicon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/assets/img/favicon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/img/favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/assets/img/favicon/manifest.json">
     <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="/assets/img/ms-icon-144x144.png">
+    <meta name="msapplication-TileImage" content="/assets/img/favicon/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
@@ -33,7 +32,8 @@
 </head>
 
 <body style="font-family:Verdana">
-<div id="LoginBox" style="visibility: visible; position:fixed;">
+
+<div id="LoginBox">
     <div class="row " style="padding-top:40px;">
         <div class="col-md-4"></div>
         <form class="col-md-4" name="login" action="" method="post"
@@ -84,7 +84,7 @@
 
 <div class="container">
     <div class="row " style="padding-top:40px;">
-        <center><img src="header.png" alt="Chat2U" style="height:150px; "></center>
+        <center><img src="assets/img/header.png" alt="Chat2U" style="height:150px; "></center>
         <br/><br/>
         <div class="col-md-2">
             <div class="panel panel-primary">
@@ -125,7 +125,8 @@
                 <div class="panel-heading">CHAT HISTORY</div>
                 <div class="panel-body" style=" padding-bottom: 0px;">
                     <ul class="nav nav-tabs tab" id="chats">
-                        <li><a href="javascript:void(0)" class="tablinks" onclick="tabManager.openTab(event.currentTarget, 'global')"
+                        <li><a href="javascript:void(0)" class="tablinks"
+                               onclick="openTab(event.currentTarget, 'global')"
                                id="defaultOpen">Global</a>
                         </li>
                     </ul>
@@ -174,12 +175,9 @@
         </div>
     </div>
 </div>
-<script>
 
-</script>
 <script src="animation.js"></script>
 <script src="webSocket.js"></script>
 <script src="events.js"></script>
 </body>
-
 </html>

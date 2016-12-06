@@ -31,6 +31,7 @@ public class ChatWebSocketHandler {
 
     /**
      * Wenn der Client die Verbindung schließt wird dieser {@link ChatServer#logout(String) ausgeloggt}
+     * @param reason ist ein Grund
      */
     @OnWebSocketClose
     public void onDisconnect(Session webSocketSession, int statusCode, String reason) {
