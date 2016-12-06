@@ -25,14 +25,14 @@ public class SeleniumHelper {
         WebDriver driver = new ChromeDriver();
         driver.get("http://localhost/");
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-        clickButton(driver, "header_logintext");
+        clickButton(driver, "loginPanelHead");
 
         WebDriverWait wait = new WebDriverWait(driver, 2);
         wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("register"))));
 
-        fillInput(driver, "user_register", user.getUsername());
-        fillInput(driver, "password_register", user.getPassword());
-        fillInput(driver, "password2_register", user.getPassword());
+        fillInput(driver, "registerUsername", user.getUsername());
+        fillInput(driver, "registerPassword", user.getPassword());
+        fillInput(driver, "registerSecPassword", user.getPassword());
         clickButton(driver, "register");
 
         return driver;
@@ -48,7 +48,7 @@ public class SeleniumHelper {
     }
 
 
-    public static void fillInput(WebDriver driver, String id, CharSequence value) {
+    private static void fillInput(WebDriver driver, String id, CharSequence value) {
         WebElement input = driver.findElement(By.id(id));
         input.sendKeys(value);
     }

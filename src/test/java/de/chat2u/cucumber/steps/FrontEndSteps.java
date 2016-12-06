@@ -48,13 +48,13 @@ public class FrontEndSteps {
     @Dann("^ist die Anmeldeaufforderung für \"([^\"]*)\" verschwunden$")
     public void istDieAnmeldeaufforderungVerschwunden(String client) throws Throwable {
         WebDriverWait wait = new WebDriverWait(TestServer.client.get(client), 2);
-        wait.until(ExpectedConditions.invisibilityOfElementLocated((By.id("LoginBox"))));
-        Assert.assertThat(TestServer.client.get(client).findElement(By.id("LoginBox")).getAttribute("style"), is("visibility: hidden;"));
+        wait.until(ExpectedConditions.invisibilityOfElementLocated((By.id("loginBox"))));
+        Assert.assertThat(TestServer.client.get(client).findElement(By.id("loginBox")).getAttribute("style"), is("visibility: hidden;"));
     }
 
     @Und("^er erscheint in der Liste der Benutzer, welche online sind$")
     public void erErscheintInDerListeDerBenutzerWelcheOnlineSind() throws Throwable {
-        TestServer.client.firstEntry().getValue().findElement(By.id("userlist")).findElement(By.id("user_" + user1.getUsername()));
+        TestServer.client.firstEntry().getValue().findElement(By.id("ul_userList")).findElement(By.id("user_" + user1.getUsername()));
     }
 
     @Gegebenseien("^die angemeldeten Benutzer$")
@@ -71,8 +71,8 @@ public class FrontEndSteps {
 
     @Wenn("^\"([^\"]*)\" nach \"([^\"]*)\" sucht$")
     public void nachSucht(String webdriver, String search) throws Throwable {
-        TestServer.client.get(webdriver).findElement(By.id("search")).clear();
-        TestServer.client.get(webdriver).findElement(By.id("search")).sendKeys(search);
+        TestServer.client.get(webdriver).findElement(By.id("searchUser")).clear();
+        TestServer.client.get(webdriver).findElement(By.id("searchUser")).sendKeys(search);
     }
 
     @Dann("^werden bei \"([^\"]*)\" die Benutzer angezeigt:$")

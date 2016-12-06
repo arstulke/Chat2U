@@ -11,8 +11,8 @@ $(document).ready(function() {
     showLoginDialog("show", "alert_register", ""); //show login Dialog
 
     if(window.location.search.substring(1).length > 0){
-        docIDs.in_loginUsername().val(window.location.search.substring(1));
-        docIDs.in_loginPassword().focus();
+        doc.input.loginUsername().val(window.location.search.substring(1));
+        doc.input.loginPassword().focus();
     }
 });
 //---------------------------------------- Web Socket ----------------------------------------
@@ -41,24 +41,24 @@ function connect(firstMessage) {
                 } else if (data.msg == "Registrieren erfolgreich") {
                     showLoginDialog("hide", "alert", "");
                     showLoginDialog("hide", "alert_register", "");
-                    loginUser(docIDs.in_registerUsername().val(), docIDs.in_registerPassword().val());
+                    loginUser(doc.input.registerUsername().val(), doc.input.registerPassword().val());
                 } else if (data.msg == "Gültige Zugangsdaten") {
                     showLoginDialog("hide", "alert", "");
                     showLoginDialog("hide", "alert_register", "");
-                    docIDs.in_chatMessage().focus();
-                    docIDs.div_tabContainer().html("<li><a href='javascript:void(0)' class='tablinks' onclick=\"tabManager.openTab(event.currentTarget, 'global')\" id='defaultOpen'>Global</a></li>");
-                    docIDs.div_chatContainer().html("<div id='global' class='tabcontent'><div class='media-body'><article><b>Chat2U</b><p>Herzlich Willkommen! Vielen Dank, dass du Chat2U benutzt.</p><small></small></article><hr></div></div>");
+                    doc.input.chatMessage().focus();
+                    doc.div.tabContainer().html("<li><a href='javascript:void(0)' class='tablinks' onclick=\"tabManager.openTab(event.currentTarget, 'global')\" id='a_defaultTab'>Global</a></li>");
+                    doc.div.chatContainer().html("<div id='global' class='tabcontent'><div class='media-body'><article><b>Chat2U</b><p>Herzlich Willkommen! Vielen Dank, dass du Chat2U benutzt.</p><small></small></article><hr></div></div>");
 
-                    var defaultChat = docIDs.a_defaultTab()[0];
+                    var defaultChat = doc.a_defaultTab()[0];
                     defaultChat.onclick({currentTarget: defaultChat});
                 }
             } else {
                 if (data["exceptionType"] == "AccessDeniedException") {
                     showLoginDialog("show", "alert", data["msg"]);
                 } else if (data["exceptionType"] == "UsernameExistException") {
-                    docIDs.in_registerUsername().prop('disabled', false);
-                    docIDs.in_registerPassword().prop('disabled', false);
-                    docIDs.in_registerSecPassword().prop('disabled', false);
+                    doc.input.registerUsername().prop('disabled', false);
+                    doc.input.registerPassword().prop('disabled', false);
+                    doc.input.registerSecPassword().prop('disabled', false);
 
                     showLoginDialog("show", "alert_register", data["msg"]);
                 } else if (data["exceptionType"] == "IllegalArgumentException") {
@@ -76,9 +76,9 @@ function connect(firstMessage) {
 }
 
 function registerUser(user, password, password2) {
-    docIDs.in_registerUsername().prop('disabled', true);
-    docIDs.in_registerPassword().prop('disabled', true);
-    docIDs.in_registerSecPassword().prop('disabled', true);
+    doc.input.registerUsername().prop('disabled', true);
+    doc.input.registerPassword().prop('disabled', true);
+    doc.input.registerSecPassword().prop('disabled', true);
     if (password == password2) {
         connect("{\"cmd\":\"register\",\"params\": {\"username\":\"" + user + "\",\"passwort\":\"" + password + "\"}}");
     } else {
@@ -109,7 +109,7 @@ function sendMessageToChat(message) {
         if (message !== "") {
             var msg = "{\"cmd\":\"sendMessage\",\"params\":{\"message\":\"" + message + "\",\"chatID\":\"" + chatID + "\"}}"
             webSocket.send(msg);
-            docIDs.in_chatMessage().val("");
+            doc.input.chatMessage().val("");
         }
     });
 }
@@ -119,14 +119,14 @@ function updateChat(msg, chatID) {
     var chat = $("#" + chatID).children()[0];
     chat.innerHTML += "\n" + msg;
 
-    var scrollBar = docIDs.div_chatContainer().parent();
+    var scrollBar = doc.div.chatContainer().parent();
     scrollBar.scrollTop = scrollBar.scrollHeight;
 
     notify();
 }
 
 function notify() {
-    if (window.blurred && docIDs.checkBox_notifications()[0].checked) {
+    if (window.blurred && doc.checkBox_notifications()[0].checked) {
         audio.play();
         document.title = "Chat2U ( ! )";
     }
@@ -134,14 +134,13 @@ function notify() {
 
 //update UserList
 function updateUserList(data) {
-    docIDs.ul_userList().html("");
+    doc.ul_userList().html("");
     data.userlist.forEach(function(user) {
         var userListItem = "<li id='user_" + user + "' class='media' style='display: block'><div class='media-body'><div class='media'><div class='pull-left'><img class='media-object img-circle' style='max-height:40px;' src='assets/img/newuser.png' /></div><div class='media-body' ><h5>" + user + "</h5><small class='text-muted'>DEIN STATUS</small></div></div></div></li>";
-        docIDs.ul_userList().html(docIDs.ul_userList().html() + userListItem);
+        doc.ul_userList().html(doc.ul_userList().html() + userListItem);
         if (username !== user) {
             var users = [username, user];
             $("#user_" + user).attr("onclick", 'inviteToChat("' + users + '")');
-            console.log($("#user_" + user).attr("onclick"));
         }
     });
 }
@@ -149,8 +148,8 @@ function updateUserList(data) {
 //show Login Dialog
 function showLoginDialog(showhide, alert_type, alert) {
     if (showhide == "show") {
-        docIDs.in_loginUsername().focus();
-        docIDs.div_loginBox().css("visibility", "visible");
+        doc.input.loginUsername().focus();
+        doc.div.loginBox().css("visibility", "visible");
         if (alert != "") {
             $("#" + alert_type).css("visibility", "visible");
             $("#" + alert_type).html(alert);
@@ -158,7 +157,7 @@ function showLoginDialog(showhide, alert_type, alert) {
             $("#" + alert_type).css("visibility", "hidden");
         }
     } else if (showhide == "hide") {
-        docIDs.div_loginBox().css("visibility", "hidden");
+        doc.div.loginBox().css("visibility", "hidden");
         $("#" + alert_type).css("visibility", "hidden");
     }
 }
@@ -182,7 +181,7 @@ function wait(callback) {
 }
 
 function getCurrentChatID() {
-    var chats = docIDs.div_chatContainer().children();
+    var chats = doc.div.chatContainer().children();
     for (var i = 0; i < chats.length; i++) {
         var child = chats[i];
         if (child.style.display === "block") {
