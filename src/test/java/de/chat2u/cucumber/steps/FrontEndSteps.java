@@ -42,14 +42,14 @@ public class FrontEndSteps {
 
     @Wenn("^\"([^\"]*)\" sich mit dem Passwort \"([^\"]*)\" registriert und einlogggt$")
     public void sichMitDemPasswortRegistriertUndEinlogggt(String username, String password) throws Throwable {
-        TestServer.client.put(username,registerUser(new AuthenticationUser(username, password)));
+        TestServer.client.put(username, registerUser(new AuthenticationUser(username, password)));
     }
 
     @Dann("^ist die Anmeldeaufforderung für \"([^\"]*)\" verschwunden$")
     public void istDieAnmeldeaufforderungVerschwunden(String client) throws Throwable {
         WebDriverWait wait = new WebDriverWait(TestServer.client.get(client), 2);
         wait.until(ExpectedConditions.invisibilityOfElementLocated((By.id("LoginBox"))));
-        Assert.assertThat(TestServer.client.get(client).findElement(By.id("LoginBox")).getAttribute("style"), is("visibility: hidden; position: fixed;"));
+        Assert.assertThat(TestServer.client.get(client).findElement(By.id("LoginBox")).getAttribute("style"), is("visibility: hidden;"));
     }
 
     @Und("^er erscheint in der Liste der Benutzer, welche online sind$")

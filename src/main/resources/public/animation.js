@@ -1,21 +1,21 @@
-(function(){
-    $("#header_registertext").click(function(){   handleClick()   });
-    $("#header_logintext").click(function(){   handleClick()   });
+$(document).ready(function(){
+    docIDs.div_registerPanelHead().click(handleClick);
+    docIDs.div_loginPanelHead().click(handleClick);
     function handleClick() {
-        if(document.getElementById("body_login").style.display != "block"){
+        if(docIDs.div_loginPanelBody().css("display") != "block"){
             //show login
-            $("#header_register").html("&#10225;");
-            $("#header_login").html("&#10224;");
+            $("#header_registertext").html("REGISTER<p style='float: right;'>&#10225;</p>");
+            $("#header_logintext").html("LOGIN<p style='float: right;'>&#10224;</p>");
 
-            $("#body_register").slideUp();
-            $("#body_login").slideDown();
+            docIDs.div_registerPanelBody().slideUp();
+            docIDs.div_loginPanelBody().slideDown();
         } else {
             //show register
-            $("#header_register").html("&#10224;");
-            $("#header_login").html("&#10225;");
+            $("#header_registertext").html("REGISTER<p style='float: right;'>&#10224;</p>");
+            $("#header_logintext").html("LOGIN<p style='float: right;'>&#10225;</p>");
 
-            $("#body_register").slideDown();
-            $("#body_login").slideUp();
+            docIDs.div_registerPanelBody().slideDown();
+            docIDs.div_loginPanelBody().slideUp();
         }
     }
 }());

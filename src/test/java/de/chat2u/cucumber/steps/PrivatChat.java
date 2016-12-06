@@ -14,6 +14,7 @@ import de.chat2u.model.Message;
 import de.chat2u.utils.MessageBuilder;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.common.WebSocketSession;
 
 import static org.mockito.Mockito.*;
 

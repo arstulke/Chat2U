@@ -3,6 +3,8 @@ package de.chat2u.model;
 import de.chat2u.ChatServer;
 import de.chat2u.authentication.UserRepository;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.Consumer;
@@ -28,7 +30,7 @@ public class Chat implements Iterable<User> {
         for(User user : users){
             convertUser(user);
         }
-        this.id = global ? ChatServer.GLOBAL : String.valueOf(hashCode());
+        this.id = setID(global);
     }
 
     private void convertUser(User user) {
@@ -50,7 +52,7 @@ public class Chat implements Iterable<User> {
      */
     public void addUser(User user) {
         users.addUser(user);
-        this.id = global ? ChatServer.GLOBAL : String.valueOf(hashCode());
+        this.id = setID(global);
     }
 
     /**
@@ -61,7 +63,11 @@ public class Chat implements Iterable<User> {
      */
     public void removeUser(User user) {
         users.removeUser(user);
-        this.id = global ? ChatServer.GLOBAL : String.valueOf(hashCode());
+        this.id = setID(global);
+    }
+
+    private String setID(boolean global) {
+        return global ? ChatServer.GLOBAL : (String.valueOf(hashCode()) + "_" + new Date().getTime());
     }
 
     /**
