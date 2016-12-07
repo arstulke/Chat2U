@@ -4,7 +4,7 @@ var audio = new Audio('assets/sound/message.mp3'); //notification Sound
 var hostIP = document.location["hostname"]; //aktuelle HostAdresse
 var port = 80; //port
 var webSocket; //webSocket
-var applicationData = {};
+var applicationData = {username:""};
 
 //----------------------------------------Events
 $(document).ready(function() {
@@ -49,8 +49,18 @@ function connect(firstMessage) {
         var dispatcher = new Dispatcher();
         dispatcher.createType("textMessage", function(msg){
             notify();
-            updateUserList(msg.secondData);
-            updateChat(msg.primeData.message, msg.primeData.chatID);
+
+            var myUsername = applicationData.username;
+            doc.ul_userList().html("");
+            msg.secondData.forEach(function(user) {
+                var userListItem = "<li id='user_" + user + "' class='media' style='display: block'><div class='media-body'><div class='media'><div class='pull-left'><img class='media-object img-circle' style='max-height:40px;' src='assets/img/newuser.png' /></div><div class='media-body' ><h5>" + user + "</h5><small class='text-muted'>DEIN STATUS</small></div></div></div></li>";
+                doc.ul_userList().html(doc.ul_userList().html() + userListItem);
+                if (myUsername !== user) {
+                    var users = [myUsername, user];
+                    $("#user_" + user).attr("onclick", 'inviteToChat("' + users + '")');
+                }
+            });
+            updateChat(msg.primeData);
         });
         dispatcher.createType("tabControl", function(msg){
         	if(msg.secondData === "open") {
@@ -63,6 +73,8 @@ function connect(firstMessage) {
         	}
         });
         dispatcher.createType("statusRegister", function(msg){
+            doc.div.loginBox().css("cursor", "auto");
+            doc.btn.register().prop("disabled", false);
             doc.input.registerUsername().prop('disabled', false);
             doc.input.registerPassword().prop('disabled', false);
             doc.input.registerSecPassword().prop('disabled', false);
@@ -81,6 +93,8 @@ function connect(firstMessage) {
             }
         });
         dispatcher.createType("statusLogin", function(msg){
+            doc.div.loginBox().css("cursor", "auto");
+            doc.btn.login().prop("disabled", false);
             doc.input.loginUsername().prop('disabled', false);
             doc.input.loginPassword().prop('disabled', false);
         	if(msg.primeData === true) {
@@ -104,10 +118,13 @@ function connect(firstMessage) {
         	dispatcher.runType(message);
         }
         webSocket.onclose = function() {
-            updateChat("<article><b>Chat2U</b><p style='color:#F70505'>Client disconnected!</p></article>", "global");
+            updateChat({message: "<article><b>Chat2U</b><p style='color:#F70505'>Client disconnected!</p></article>", chatID: "global"});
             showLoginDialog("show", "loginAlert", "<p style='color:#F70505'>Client disconnected!</p>"); //show login Dialog
             showLoginDialog("show", "registerAlert", ""); //show login Dialog
         };
+        setInterval(function(){
+            webSocket.send(".");
+        }, (1000*60*4) + 50);
     }
 }
 
@@ -118,6 +135,8 @@ function registerUser() {
 
     if(username !== "" && password !== ""){
         if (password === password2) {
+            doc.div.loginBox().css("cursor", "progress");
+            doc.btn.register().prop("disabled", true);
             doc.input.registerUsername().prop('disabled', true);
             doc.input.registerPassword().prop('disabled', true);
             doc.input.registerSecPassword().prop('disabled', true);
@@ -134,6 +153,8 @@ function loginUser() {
     if(username.length > 0 && password.length > 0){
         Cookie.set("username", username);
         applicationData.username = username;
+        doc.div.loginBox().css("cursor", "progress");
+        doc.btn.login().prop("disabled", true);
         doc.input.loginUsername().prop('disabled', true);
         doc.input.loginPassword().prop('disabled', true);
         connect("{\"cmd\":\"login\",\"params\": {\"username\":\"" + username + "\",\"passwort\":\"" + password + "\"}}");
@@ -153,7 +174,8 @@ function sendMessage(message) {
 
 //Send a message if it's not empty, then clear the input field
 function sendMessageToChat(message) {
-    var chatID = getCurrentChatID();
+    var chatID = tabManager.currentChatID;
+
     wait(function() {
         if (message !== "") {
             var msg = "{\"cmd\":\"sendMessage\",\"params\":{\"message\":\"" + message + "\",\"chatID\":\"" + chatID + "\"}}"
@@ -164,9 +186,9 @@ function sendMessageToChat(message) {
 }
 
 //Update the chat-panel
-function updateChat(msg, chatID) {
-    var chat = $("#" + chatID).children()[0];
-    chat.innerHTML += "\n" + msg;
+function updateChat(msg) {
+    var chat = $("#" + msg.chatID).children()[0];
+    chat.innerHTML += "\n" + msg.message;
 
     var scrollBar = doc.div.chatContainer().parent();
     scrollBar.scrollTop = scrollBar.scrollHeight;
@@ -177,20 +199,6 @@ function notify() {
         audio.play();
         document.title = "Chat2U ( ! )";
     }
-}
-
-//update UserList
-function updateUserList(data) {
-    var myUsername = applicationData.username;
-    doc.ul_userList().html("");
-    data.forEach(function(user) {
-        var userListItem = "<li id='user_" + user + "' class='media' style='display: block'><div class='media-body'><div class='media'><div class='pull-left'><img class='media-object img-circle' style='max-height:40px;' src='assets/img/newuser.png' /></div><div class='media-body' ><h5>" + user + "</h5><small class='text-muted'>DEIN STATUS</small></div></div></div></li>";
-        doc.ul_userList().html(doc.ul_userList().html() + userListItem);
-        if (myUsername !== user) {
-            var users = [myUsername, user];
-            $("#user_" + user).attr("onclick", 'inviteToChat("' + users + '")');
-        }
-    });
 }
 
 //show Login Dialog
@@ -210,33 +218,17 @@ function showLoginDialog(showHide, alert_type, alert) {
     }
 }
 
-//wait for the socket to connect
 function wait(callback) {
-    setTimeout(
-        function() {
-            if (webSocket.readyState === 1) {
-
-                if (callback != null) {
-                    callback();
-                }
-                return;
-
-            } else {
-                wait(callback);
+    setTimeout(function() {
+        if (webSocket.readyState === 1) {
+            if (callback != null) {
+                callback();
             }
-
-        }, 5); // wait 5 milisecond for the connection...
-}
-
-function getCurrentChatID() {
-    var chats = doc.div.chatContainer().children();
-    for (var i = 0; i < chats.length; i++) {
-        var child = chats[i];
-        if (child.style.display === "block") {
-            return child.id;
+            return;
+        } else {
+            wait(callback);
         }
-    }
-    return "global";
+    }, 5);
 }
 
 function inviteToChat(userList) {

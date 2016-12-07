@@ -3,6 +3,7 @@ package de.chat2u.network;
 import de.chat2u.ChatServer;
 import de.chat2u.authentication.UserRepository;
 import de.chat2u.model.User;
+import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
@@ -21,6 +22,7 @@ import java.io.IOException;
 @WebSocket
 public class ChatWebSocketHandler {
 
+    private final static Logger LOGGER = Logger.getLogger(ChatWebSocketHandler.class);
     //////////////////////////////////////////////////////////////////////////
     // ERGEBNISSE MIT CARSTEN 21.11.16                                      //
     //////////////////////////////////////////////////////////////////////////
@@ -45,11 +47,11 @@ public class ChatWebSocketHandler {
         try {
             handleCommandFromClient(webSocketSession, message);
         } catch (JSONException e) {
-            String sender = ChatServer.getUserBySession(webSocketSession).getUsername();
-            ChatServer.sendTextMessageToChat(sender + ":", message, ChatServer.GLOBAL);
+            LOGGER.debug(String.format("Fehler beim Verarbeiten der Nachricht(%s): %s", message.replaceAll("\n", ""), e.getMessage()));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e);
         }
+
     }
 
     /**
@@ -70,6 +72,7 @@ public class ChatWebSocketHandler {
     private void handleCommandFromClient(Session webSocketSession, String message) throws IOException, JSONException {
         JSONObject object = new JSONObject(message);
         JSONObject params = (JSONObject) object.get("params");
+
 
         String cmd = (String) object.get("cmd");
         switch (cmd) {

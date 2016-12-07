@@ -1,5 +1,7 @@
 var tabManager = {
+    currentChatID: null,
     openTab: function(eventTarget, tabID) {
+        this.currentChatID = tabID;
         var i;
 
         //set all tabLinks inactive
@@ -42,7 +44,7 @@ var tabManager = {
     },
 
     closeTab: function(chatID) {
-        if(getCurrentChatID() === chatID)
+        if(this.currentChatID === chatID)
             this.openTab(doc.a_defaultTab()[0], "global");
 
         var chatLinks = $(".tablinks");

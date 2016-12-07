@@ -23,11 +23,7 @@ public class TestServer {
     public static final AuthenticationUser user1 = new AuthenticationUser("Carsten", "pw1");
 
     public static final TreeMap<String, WebDriver> client = new TreeMap<>();
-
-    public static void initialize() {
-        UserRepository<AuthenticationUser> repo = new UserRepository<>();
-        ChatServer.initialize(new AuthenticationService(repo));
-    }
+    public static AuthenticationService authenticationService = new AuthenticationService(new UserRepository<>());
 
     public static WebSocketSession getMockSession() {
         WebSocketSession session = mock(WebSocketSession.class);

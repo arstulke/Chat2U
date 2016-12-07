@@ -40,13 +40,10 @@ $(document).ready(function(){
 
     //Search User in Userlist
     doc.input.searchUser().on('input', function() {
-        var searchEles = doc.ul_userList().children();
-        for(var i = 0; i < searchEles.length; i++) {
-            if(searchEles[i].id.indexOf('user_' + doc.input.searchUser().val()) !== 0) {
-                searchEles[i].style.display  = "none";
-            } else {
-                searchEles[i].style.display = "block";
-            }
+        var userList = doc.ul_userList().children();
+        for(var i = 0; i < userList.length; i++) {
+            var matches = userList[i].id.includes('user_' + doc.input.searchUser().val());
+            userList[i].style.display  = matches ? "block" : "none";
         }
     });
 });

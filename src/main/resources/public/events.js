@@ -42,11 +42,8 @@ $(document).ready(function(){
     doc.input.searchUser().on('input', function() {
         var userList = doc.ul_userList().children();
         for(var i = 0; i < userList.length; i++) {
-            if(userList[i].id.includes('user_' + doc.input.searchUser().val()) !== 0) {
-                userList[i].style.display  = "none";
-            } else {
-                userList[i].style.display = "block";
-            }
+            var matches = userList[i].id.includes('user_' + doc.input.searchUser().val());
+            userList[i].style.display  = matches ? "block" : "none";
         }
     });
 });

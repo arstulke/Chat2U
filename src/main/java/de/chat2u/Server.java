@@ -10,7 +10,7 @@ import spark.Spark;
  * Created Server in de.chat2u
  * by ARSTULKE on 17.11.2016.
  */
-class Server {
+public class Server {
     public static void main(String[] args) {
         initialize();
         start();
@@ -23,7 +23,7 @@ class Server {
         ChatServer.initialize(new AuthenticationService(repo));
     }
 
-    private static void start() {
+    public static void start() {
         Spark.webSocket("/chat", ChatWebSocketHandler.class);
         Spark.staticFileLocation("/public");
         Spark.port(80);
