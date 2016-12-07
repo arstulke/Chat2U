@@ -1,13 +1,10 @@
 package de.chat2u.cucumber.steps;
 
-import cucumber.api.PendingException;
 import cucumber.api.java.de.Dann;
 import cucumber.api.java.de.Gegebensei;
-import cucumber.api.java.de.Gegebenseien;
 import cucumber.api.java.de.Wenn;
 import de.chat2u.ChatServer;
 import de.chat2u.authentication.AuthenticationService;
-import de.chat2u.authentication.Permissions;
 import de.chat2u.authentication.UserRepository;
 import de.chat2u.model.AuthenticationUser;
 import org.junit.Assert;
@@ -21,7 +18,7 @@ public class LogoutSteps {
     @Gegebensei("^der angemeldete Teilnehmer \"([^\"]*)\" mit dem Passwort \"([^\"]*)\".$")
     public void derAngemeldeteTeilnehmerMitDemPasswort(String username, String password) throws Throwable {
         UserRepository<AuthenticationUser> userRepository = new UserRepository<>();
-        userRepository.addUser(new AuthenticationUser(username, password, Permissions.USER));
+        userRepository.addUser(new AuthenticationUser(username, password));
         ChatServer.initialize(new AuthenticationService(userRepository));
 
         ChatServer.login(username, password, null);

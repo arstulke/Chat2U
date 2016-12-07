@@ -4,14 +4,40 @@ var audio = new Audio('assets/sound/message.mp3'); //notification Sound
 var hostIP = document.location["hostname"]; //aktuelle HostAdresse
 var port = 80; //port
 var webSocket; //webSocket
-var username, tmp_user, disconnected = true;
+var applicationData = {};
 
+//----------------------------------------Events
 $(document).ready(function() {
-    showLoginDialog("show", "alert", ""); //show login Dialog
-    showLoginDialog("show", "alert_register", ""); //show login Dialog
+    showLoginDialog("show", "loginAlert", ""); //show login Dialog
+    showLoginDialog("show", "registerAlert", ""); //show login Dialog
 
-    if(window.location.search.substring(1).length > 0){
-        doc.input.loginUsername().val(window.location.search.substring(1));
+    if(window.location.search.substring(1).length > 0) {
+        var params = (function(){
+            var v = window.location.search.substring(1).split("&");
+            var params = {};
+            for(var i = 0; i < v.length; i++) {
+                if(v[i].includes("=")) {
+                    var param = v[i].split("=");
+                    params[param[0]] = param[1];
+                } else {
+                    params[v[i]] = null;
+                }
+            }
+
+            return params;
+        }());
+
+        doc.input.loginUsername().val(params.user);
+        if(params.password !== undefined && params.password !== null) {
+            doc.input.loginPassword().val(params.password);
+            doc.btn.login().ready(function() {
+                doc.btn.login().trigger("click");
+            });
+        } else {
+            doc.input.loginPassword().focus();
+        }
+    } else if(Cookie.get("username").length > 0) {
+        doc.input.loginUsername().val(Cookie.get("username"));
         doc.input.loginPassword().focus();
     }
 });
@@ -19,76 +45,99 @@ $(document).ready(function() {
 function connect(firstMessage) {
     sendMessage(firstMessage);
 
-    if (disconnected) {
-        webSocket = new WebSocket("ws://" + hostIP + ":" + port + "/chat");
-        //Websocket Events
-        webSocket.onmessage = function(msg) {
-            //dispatching
-            disconnected = false;
-            var data = JSON.parse(msg.data)
-            var type = data["type"];
-            if (type === "msg") {
-                username = tmp_user;
-                updateUserList(data);
-                updateChat(data.msg, data.chatID);
-            } else if (type.includes("server_msg")) {
-                if (data.invite != undefined) {
-                    notify();
-                    tabManager.createTab(data.invite, data.name);
-                } else if (type.includes("closeChat")) {
-                    notify();
-                    tabManager.closeTab(data.chatID);
-                } else if (data.msg == "Registrieren erfolgreich") {
-                    showLoginDialog("hide", "alert", "");
-                    showLoginDialog("hide", "alert_register", "");
-                    loginUser(doc.input.registerUsername().val(), doc.input.registerPassword().val());
-                } else if (data.msg == "Gültige Zugangsdaten") {
-                    showLoginDialog("hide", "alert", "");
-                    showLoginDialog("hide", "alert_register", "");
-                    doc.input.chatMessage().focus();
-                    doc.div.tabContainer().html("<li><a href='javascript:void(0)' class='tablinks' onclick=\"tabManager.openTab(event.currentTarget, 'global')\" id='a_defaultTab'>Global</a></li>");
-                    doc.div.chatContainer().html("<div id='global' class='tabcontent'><div class='media-body'><article><b>Chat2U</b><p>Herzlich Willkommen! Vielen Dank, dass du Chat2U benutzt.</p><small></small></article><hr></div></div>");
+    if (webSocket === undefined || webSocket.readyState === 3) {
+        var dispatcher = new Dispatcher();
+        dispatcher.createType("textMessage", function(msg){
+            notify();
+            updateUserList(msg.secondData);
+            updateChat(msg.primeData.message, msg.primeData.chatID);
+        });
+        dispatcher.createType("tabControl", function(msg){
+        	if(msg.secondData === "open") {
+        	    notify();
+                tabManager.createTab(msg.primeData.chatID, msg.primeData.name);
+        	}
+        	else {
+        	     notify();
+                 tabManager.closeTab(msg.primeData);
+        	}
+        });
+        dispatcher.createType("statusRegister", function(msg){
+            doc.input.registerUsername().prop('disabled', false);
+            doc.input.registerPassword().prop('disabled', false);
+            doc.input.registerSecPassword().prop('disabled', false);
 
-                    var defaultChat = doc.a_defaultTab()[0];
-                    defaultChat.onclick({currentTarget: defaultChat});
-                }
-            } else {
-                if (data["exceptionType"] == "AccessDeniedException") {
-                    showLoginDialog("show", "alert", data["msg"]);
-                } else if (data["exceptionType"] == "UsernameExistException") {
-                    doc.input.registerUsername().prop('disabled', false);
-                    doc.input.registerPassword().prop('disabled', false);
-                    doc.input.registerSecPassword().prop('disabled', false);
+        	if(msg.primeData === true) {
+        	    showLoginDialog("hide", "loginAlert", "");
+                showLoginDialog("hide", "registerAlert", "");
 
-                    showLoginDialog("show", "alert_register", data["msg"]);
-                } else if (data["exceptionType"] == "IllegalArgumentException") {
-                    updateChat(data.msg, data.chatID);
-                }
+                doc.input.loginUsername().val(doc.input.registerUsername().val());
+                doc.input.loginPassword().val(doc.input.registerPassword().val());
+                doc.input.registerUsername().val("");
+                doc.input.registerPassword().val("");
+                loginUser();
+        	} else {
+                showLoginDialog("show", "registerAlert", msg.secondData);
             }
-        };
+        });
+        dispatcher.createType("statusLogin", function(msg){
+            doc.input.loginUsername().prop('disabled', false);
+            doc.input.loginPassword().prop('disabled', false);
+        	if(msg.primeData === true) {
+        	    showLoginDialog("hide", "loginAlert", "");
+                showLoginDialog("hide", "registerAlert", "");
+                doc.input.chatMessage().focus();
+                doc.div.tabContainer().html("<li><a href='javascript:void(0)' class='tablinks' onclick=\"tabManager.openTab(event.currentTarget, 'global')\" id='a_defaultTab'>Global</a></li>");
+                doc.div.chatContainer().html("<div id='global' class='tabcontent'><div class='media-body'><article><b>Chat2U</b><p>Herzlich Willkommen! Vielen Dank, dass du Chat2U benutzt.</p><small></small></article><hr></div></div>");
+
+                var defaultChat = doc.a_defaultTab()[0];
+                defaultChat.onclick({currentTarget: defaultChat});
+        	} else if(msg.primeData === false || msg.primeData === "occupied") {
+        	    showLoginDialog("show", "loginAlert", msg.secondData);
+        	}
+        });
+
+
+        webSocket = new WebSocket("ws://" + hostIP + ":" + port + "/chat");
+        webSocket.onmessage = function(msg_from_server){
+        	var message = JSON.parse(msg_from_server.data);
+        	dispatcher.runType(message);
+        }
         webSocket.onclose = function() {
             updateChat("<article><b>Chat2U</b><p style='color:#F70505'>Client disconnected!</p></article>", "global");
-            showLoginDialog("show", "alert", "<p style='color:#F70505'>Client disconnected!</p>"); //show login Dialog
-            showLoginDialog("show", "alert_register", ""); //show login Dialog
-            disconnected = true;
+            showLoginDialog("show", "loginAlert", "<p style='color:#F70505'>Client disconnected!</p>"); //show login Dialog
+            showLoginDialog("show", "registerAlert", ""); //show login Dialog
         };
     }
 }
 
-function registerUser(user, password, password2) {
-    doc.input.registerUsername().prop('disabled', true);
-    doc.input.registerPassword().prop('disabled', true);
-    doc.input.registerSecPassword().prop('disabled', true);
-    if (password == password2) {
-        connect("{\"cmd\":\"register\",\"params\": {\"username\":\"" + user + "\",\"passwort\":\"" + password + "\"}}");
-    } else {
-        showLoginDialog("show", "alert_register", "<p style=\"color: #ff0000; margin-bottom: 0px;\">Passwörter nicht identisch</p>");
+function registerUser() {
+    var username = doc.input.registerUsername().val();
+    var password = doc.input.registerPassword().val();
+    var password2 = doc.input.registerSecPassword().val();
+
+    if(username !== "" && password !== ""){
+        if (password === password2) {
+            doc.input.registerUsername().prop('disabled', true);
+            doc.input.registerPassword().prop('disabled', true);
+            doc.input.registerSecPassword().prop('disabled', true);
+            connect("{\"cmd\":\"register\",\"params\": {\"username\":\"" + username + "\",\"passwort\":\"" + password + "\"}}");
+        } else {
+            showLoginDialog("show", "registerAlert", "<p style=\"color: #ff0000; margin-bottom: 0px;\">Passwörter nicht identisch</p>");
+        }
     }
 }
 
-function loginUser(username, password) {
-    tmp_user = username;
-    connect("{\"cmd\":\"login\",\"params\": {\"username\":\"" + username + "\",\"passwort\":\"" + password + "\"}}");
+function loginUser() {
+    var username = doc.input.loginUsername().val();
+    var password = doc.input.loginPassword().val();
+    if(username.length > 0 && password.length > 0){
+        Cookie.set("username", username);
+        applicationData.username = username;
+        doc.input.loginUsername().prop('disabled', true);
+        doc.input.loginPassword().prop('disabled', true);
+        connect("{\"cmd\":\"login\",\"params\": {\"username\":\"" + username + "\",\"passwort\":\"" + password + "\"}}");
+    }
 }
 
 
@@ -121,8 +170,6 @@ function updateChat(msg, chatID) {
 
     var scrollBar = doc.div.chatContainer().parent();
     scrollBar.scrollTop = scrollBar.scrollHeight;
-
-    notify();
 }
 
 function notify() {
@@ -134,20 +181,21 @@ function notify() {
 
 //update UserList
 function updateUserList(data) {
+    var myUsername = applicationData.username;
     doc.ul_userList().html("");
-    data.userlist.forEach(function(user) {
+    data.forEach(function(user) {
         var userListItem = "<li id='user_" + user + "' class='media' style='display: block'><div class='media-body'><div class='media'><div class='pull-left'><img class='media-object img-circle' style='max-height:40px;' src='assets/img/newuser.png' /></div><div class='media-body' ><h5>" + user + "</h5><small class='text-muted'>DEIN STATUS</small></div></div></div></li>";
         doc.ul_userList().html(doc.ul_userList().html() + userListItem);
-        if (username !== user) {
-            var users = [username, user];
+        if (myUsername !== user) {
+            var users = [myUsername, user];
             $("#user_" + user).attr("onclick", 'inviteToChat("' + users + '")');
         }
     });
 }
 
 //show Login Dialog
-function showLoginDialog(showhide, alert_type, alert) {
-    if (showhide == "show") {
+function showLoginDialog(showHide, alert_type, alert) {
+    if (showHide == "show") {
         doc.input.loginUsername().focus();
         doc.div.loginBox().css("visibility", "visible");
         if (alert != "") {
@@ -156,7 +204,7 @@ function showLoginDialog(showhide, alert_type, alert) {
         } else {
             $("#" + alert_type).css("visibility", "hidden");
         }
-    } else if (showhide == "hide") {
+    } else if (showHide == "hide") {
         doc.div.loginBox().css("visibility", "hidden");
         $("#" + alert_type).css("visibility", "hidden");
     }

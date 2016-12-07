@@ -2,12 +2,10 @@ package de.chat2u.cucumber.selenium;
 
 import de.chat2u.ChatServer;
 import de.chat2u.authentication.AuthenticationService;
-import de.chat2u.authentication.Permissions;
 import de.chat2u.authentication.UserRepository;
 import de.chat2u.model.AuthenticationUser;
 import de.chat2u.network.ChatWebSocketHandler;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
-import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.common.WebSocketSession;
 import org.openqa.selenium.WebDriver;
 import spark.Spark;
@@ -22,17 +20,12 @@ import static org.mockito.Mockito.when;
  * by ARSTULKE on 23.11.2016.
  */
 public class TestServer {
-    public static final AuthenticationUser user1 = new AuthenticationUser("Carsten", "pw1", Permissions.USER);
-    public static final AuthenticationUser user2 = new AuthenticationUser("Marianne", "pw2", Permissions.USER);
-    public static final AuthenticationUser user3 = new AuthenticationUser("Thorsten", "pw3", Permissions.USER);
+    public static final AuthenticationUser user1 = new AuthenticationUser("Carsten", "pw1");
 
     public static final TreeMap<String, WebDriver> client = new TreeMap<>();
 
     public static void initialize() {
         UserRepository<AuthenticationUser> repo = new UserRepository<>();
-        //repo.addUser(user1);
-        //repo.addUser(user2);
-        //repo.addUser(user3);
         ChatServer.initialize(new AuthenticationService(repo));
     }
 

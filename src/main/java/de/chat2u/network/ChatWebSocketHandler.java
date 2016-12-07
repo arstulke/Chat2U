@@ -3,7 +3,6 @@ package de.chat2u.network;
 import de.chat2u.ChatServer;
 import de.chat2u.authentication.UserRepository;
 import de.chat2u.model.User;
-import de.chat2u.utils.MessageBuilder;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
@@ -47,13 +46,9 @@ public class ChatWebSocketHandler {
             handleCommandFromClient(webSocketSession, message);
         } catch (JSONException e) {
             String sender = ChatServer.getUserBySession(webSocketSession).getUsername();
-            ChatServer.sendMessageToGlobalChat(sender + ":", message, "msg");
-        } catch (Exception exception) {
-            try {
-                ChatServer.sendMessageToSession(MessageBuilder.buildExceptionMessage(exception), webSocketSession);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            ChatServer.sendTextMessageToChat(sender + ":", message, ChatServer.GLOBAL);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -72,7 +67,7 @@ public class ChatWebSocketHandler {
      * @throws JSONException wenn die Nachricht kein JSON ist oder ein falsches Format hat
      * @throws IOException   wenn keine Nachricht zurück an den Client gesenet werden kann.
      */
-    private void handleCommandFromClient(Session webSocketSession, String message) throws JSONException, IOException {
+    private void handleCommandFromClient(Session webSocketSession, String message) throws IOException, JSONException {
         JSONObject object = new JSONObject(message);
         JSONObject params = (JSONObject) object.get("params");
 
@@ -92,10 +87,11 @@ public class ChatWebSocketHandler {
                 break;
             case "sendMessage":
                 String sender = ChatServer.getUserBySession(webSocketSession).getUsername();
-                ChatServer.sendMessageToChat(sender, (String) params.get("message"), (String) params.get("chatID"), "msg");
+                ChatServer.sendTextMessageToChat(sender, (String) params.get("message"), (String) params.get("chatID"));
                 break;
             case "openChat":
-                UserRepository<User> users = new UserRepository<>();
+                UserRepository<User> users;
+                users = new UserRepository<>();
                 JSONArray userList = (JSONArray) params.get("users");
                 for (int i = 0; i < userList.length(); i++) {
                     String username = (String) ((JSONObject) userList.get(i)).get("name");

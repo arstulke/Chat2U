@@ -16,13 +16,6 @@ public class Message {
     private final String chatID;
     private final Date timestamp;
 
-    public Message(String sender, String message, String chatID, Date timestamp) {
-        this.sender = sender;
-        this.message = message;
-        this.chatID = chatID;
-        this.timestamp = timestamp;
-    }
-
     public Message(String sender, String message, String chatID) {
         this.sender = sender;
         this.message = message;
@@ -32,15 +25,12 @@ public class Message {
 
     /**
      * @return ein {@link JSONObject JSON Objekt} mit dem Zeitstempel, dem Absender, der ChatID und der Text-Nachricht
-     * */
-    public JSONObject getJSON() {
+     */
+    public JSONObject getPrimeData() {
         try {
             return new JSONObject()
-                    .put("sender", sender)
-                    .put("timestamp", MessageBuilder.getTimestamp(timestamp))
                     .put("chatID", chatID)
-                    .put("msg", MessageBuilder.createHTMLMessage(sender, message, MessageBuilder.getTimestamp(timestamp)))
-                    .put("noHTMLmsg", message);
+                    .put("message", MessageBuilder.createHTMLMessage(sender, message, MessageBuilder.getTimestamp(timestamp)));
         } catch (JSONException e) {
             return new JSONObject();
         }

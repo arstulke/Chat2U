@@ -9,11 +9,9 @@ Funktionalität: Anmelden
 	Szenario: Anmeldung mit invalidem Passwort
 		Gegeben sei der registrierte Teilnehmer "Max" mit dem Passwort "geheim".
 		Wenn ich mich als Teilnehmer "Max" mit dem Passwort "nichtgeheim" anmelde,
-		Dann wird der Zugriff verweigert
-		Und die Nachricht "Ungültige Zugangsdaten" erscheint.
+		Dann die Nachricht "Ungültige Zugangsdaten." erscheint.
 	
 	Szenario: Anmeldung als unbekannter Benutzer
 		Gegeben sei der registrierte Teilnehmer "Max" mit dem Passwort "geheim".
 		Wenn ich mich als Teilnehmer "Marianne" mit dem Passwort "geheim" anmelde,
-		Dann wird der Zugriff verweigert
-		Und die Nachricht "Ungültige Zugangsdaten" erscheint.
+		Dann die Nachricht "Ungültige Zugangsdaten." erscheint.

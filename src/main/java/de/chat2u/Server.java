@@ -6,19 +6,17 @@ import de.chat2u.model.AuthenticationUser;
 import de.chat2u.network.ChatWebSocketHandler;
 import spark.Spark;
 
-import static spark.Spark.get;
-
 /**
  * Created Server in de.chat2u
  * by ARSTULKE on 17.11.2016.
  */
-public class Server {
+class Server {
     public static void main(String[] args) {
         initialize();
         start();
     }
 
-    public static void initialize() {
+    private static void initialize() {
         UserRepository<AuthenticationUser> repo = new UserRepository<>();
         repo.addUser(new AuthenticationUser("Kito", "Test123"));
         repo.addUser(new AuthenticationUser("Arne", "Test123"));

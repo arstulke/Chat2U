@@ -1,10 +1,7 @@
 package de.chat2u;
 
 import de.chat2u.authentication.AuthenticationService;
-import de.chat2u.authentication.Permissions;
 import de.chat2u.authentication.UserRepository;
-import de.chat2u.exceptions.AccessDeniedException;
-import de.chat2u.exceptions.UsernameExistException;
 import de.chat2u.model.*;
 import de.chat2u.utils.MessageBuilder;
 import org.eclipse.jetty.websocket.api.Session;
@@ -14,6 +11,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static de.chat2u.utils.MessageBuilder.buildMessage;
 
 /**
  * Bevor der {@link ChatServer} benutzt werden kann, muss die {@link ChatServer#initialize(AuthenticationService)}
@@ -47,22 +46,6 @@ public class ChatServer {
     //region  Register, Login, Logout
 
     /**
-     * Registriert einen Benutzer anhand des Passworts und des Benuzternamens.
-     * Wenn dies fehlschlägt, aufgrund von vergebenen Benutzernamens, dann wird
-     * eine Exception geschmissen.
-     * <p>
-     *
-     * @param username ist der username für den neuen Benutzer
-     * @param password ist das passwort für den neuen Benutzer
-     * @return eine Nachricht über erfolg, die angezeigt werden kann
-     * @throws UsernameExistException wenn der Benutzer bereits existiert
-     * @see AuthenticationService#addUser(AuthenticationUser) AuthenticationService für weitere Infos.
-     */
-    public static String register(String username, String password) {
-        return register(username, password, null);
-    }
-
-    /**
      * Registriert einen Benutzer anhand des Passworts und des Benuzternamens mit Berechtigungen.
      * Wenn dies fehlschlägt, aufgrund von vergebenen Benutzernamens, dann wird
      * eine Exception geschmissen.
@@ -70,26 +53,21 @@ public class ChatServer {
      *
      * @param username ist der username für den neuen Benutzer
      * @param password ist das passwort für den neuen Benutzer
-     * @param token    ist der Berechtigungsschlüssel für ein Berechtigunslevel
      * @return eine Nachricht über erfolg, die angezeigt werden kann
-     * @throws UsernameExistException wenn der Benutzer bereits existiert
      * @see AuthenticationService#addUser(AuthenticationUser) AuthenticationService für weitere Infos.
      */
-    public static String register(String username, String password, String token) {
+    public static String register(String username, String password) {
         checksIllegalState();
 
-        if (username == null || username.length() < 1) {
-            throw new IllegalArgumentException("Username too short.");
+        if (username == null || username.length() <= 3) {
+            return buildMessage("statusRegister", false, "Benutzername ist zu kurz.").toString();
         }
 
-        Permissions permissions;
-        if (!authenticationService.userExist(username))
-            permissions = authenticationService.verifyToken(token);
-        else
-            throw new UsernameExistException("Benutzername bereits vergeben");
-        AuthenticationUser authUser = new AuthenticationUser(username, password, permissions);
+        if (authenticationService.userExist(username))
+            return buildMessage("statusRegister", false, "Benutzername bereits vergeben.").toString();
+        AuthenticationUser authUser = new AuthenticationUser(username, password);
         authenticationService.addUser(authUser);
-        return "{\"type\":\"server_msg\",\"msg\":\"Registrieren erfolgreich\"}";
+        return buildMessage("statusRegister", true, null).toString();
     }
 
     /**
@@ -101,12 +79,11 @@ public class ChatServer {
      * @param password    ist das Passwort zu dem Username
      * @param userSession ist die Session des Users zum abspeichern
      * @return die Antwort der Datenbank über erfolg ("Gültige Zugangsdaten")
-     * @throws AccessDeniedException wenn der AuthenticationUser nicht mit den gegebenen
-     *                               Parametern eingetragen ist. Die Message ist ("Ungültige Zugangsdaten")
      */
-    public static String login(String username, String password, Session userSession) throws AccessDeniedException, IOException {
+    public static String login(String username, String password, Session userSession) throws IOException {
         checksIllegalState();
 
+        String msg;
         if (!onlineUsers.containsUsername(username)) {
             AuthenticationUser user = authenticationService.authenticate(username, password);
             if (user != null) {
@@ -114,14 +91,19 @@ public class ChatServer {
                 User simpleUser = user.getSimpleUser();
                 onlineUsers.addUser(simpleUser);
                 chats.overwrite(GLOBAL, onlineUsers, true);
-                String msg = "{\"type\":\"server_msg\",\"msg\":\"Gültige Zugangsdaten\"}";
+                msg = buildMessage("statusLogin", true, null).toString();
                 sendMessageToSession(msg, userSession);
-                sendMessageToGlobalChat("Server:", user.getUsername() + " joined the Server", "msg");
+                sendTextMessageToChat("Server:", user.getUsername() + " joined the Server", GLOBAL);
                 return msg;
+            } else {
+                msg = MessageBuilder.buildMessage("statusLogin", false, "Ungültige Zugangsdaten.").toString();
             }
-            throw new AccessDeniedException("Ungültige Zugangsdaten");
+        } else {
+            msg = MessageBuilder.buildMessage("statusLogin", "occupied", "Benutzer bereits angemeldet.").toString();
         }
-        throw new AccessDeniedException("Benutzer bereits angemeldet");
+
+        sendMessageToSession(msg, userSession);
+        return msg;
     }
 
     /**
@@ -146,31 +128,29 @@ public class ChatServer {
         containedChats.entrySet().forEach(chat -> {
             String chatID = chat.getKey();
             if (!chatID.equals(GLOBAL) && chat.getValue().size() == 1) {
-                sendMessageToChat("Server", username, chatID, "server_msg closeChat");
+                sendTextMessageToChat("Server", username, chatID);
+                JSONObject json = buildMessage("tabControl", chatID, "close");
+                sendMessageToChat(json, chatID);
                 chats.removeChat(chatID);
             }
         });
 
-        sendMessageToGlobalChat("Server:", username + " left the Server", "msg");
+        sendTextMessageToChat("Server:", username + " left the Server", GLOBAL);
+    }
+
+    private static void sendMessageToChat(JSONObject json, String chatID) {
+        chats.getChat(chatID).forEach(user -> {
+            try {
+                sendMessageToSession(json.toString(), user.getSession());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     //endregion
 
     //region send Messages
-
-    /**
-     * Sendet eine Nachricht an alle Personen, welche online sind.
-     * Bei fehlschlagen wird ein StackTrace geprintet und der Error
-     * wird ignoriert.
-     * <p>
-     *
-     * @param sender  ist der Absender der Nachricht
-     * @param message ist die zu sendene Nachricht
-     * @param type    ist der Nachrichtentyp
-     */
-    public static void sendMessageToGlobalChat(String sender, String message, String type) {
-        sendMessageToChat(sender, message, GLOBAL, type);
-    }
 
     /**
      * Sendet eine Nachricht an alle Benutzer in einem Chat
@@ -179,20 +159,12 @@ public class ChatServer {
      * @param senderName ist der Benutzername eines Benutzers
      * @param message    ist die Textnachricht die versendet werden soll
      * @param chatID     ist die ID des Chats, in welchem die Nachricht versandt werden soll
-     * @param type       ist der Nachrichtentyp
      */
-    public static void sendMessageToChat(String senderName, String message, String chatID, String type) {
+    public static void sendTextMessageToChat(String senderName, String message, String chatID) {
         Message msg = new Message(senderName, message, chatID);
-        message = MessageBuilder.buildMessage(msg, type).toString();
-        String finalMessage = message;
-        chats.getChat(chatID).forEach(user -> {
-            try {
-                user.addMessageToHistory(msg);
-                ChatServer.sendMessageToSession(finalMessage, user.getSession());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        JSONObject json = MessageBuilder.buildTextMessage(msg);
+        chats.getChat(chatID).forEach(user -> user.addMessageToHistory(msg));
+        sendMessageToChat(json, chatID);
     }
 
     /**
@@ -221,27 +193,6 @@ public class ChatServer {
     }
 
     /**
-     * Generiert einen einzigartigen Token.
-     * <p>
-     *
-     * @param permissions ist das Berechtigungslevel, welches der Nutzer bekommt wenn er den generierten Token verwendet.
-     * @return den generierten Token
-     */
-    public static String generateToken(Permissions permissions) {
-        checksIllegalState();
-        return authenticationService.generateToken(permissions);
-    }
-
-    /**
-     * @param username ist der Benutzername des zu suchenden Benutzers
-     *                 <p>
-     * @return einen Registrierten {@link User Benutzer}
-     */
-    public static User getRegisteredUserByName(String username) {
-        return authenticationService.getUserByName(username);
-    }
-
-    /**
      * @param webSocketSession ist die Jetty Session des Benutzers
      *                         <p>
      * @return einen {@link User Benutzer}
@@ -264,12 +215,8 @@ public class ChatServer {
     }
 
     public static void inviteUser(UserRepository<User> users, String chatID) throws JSONException {
-        String userList = users.getUsernameList().toString().replace("[", "{").replace("]", "}");
-        String msg = "You were invited to a new Chat.<br>The users are " + userList;
-        JSONObject json = MessageBuilder.buildMessage(new Message("Server", msg, chatID), "server_msg");
-        json.put("invite", chatID);
-        json.remove("chatID");
-        json.put("name", userList.replace("{", "").replace("}", ""));
+        String name = users.getUsernameList().toString().replace("[", "").replace("]", "");
+        JSONObject json = buildMessage("tabControl", new JSONObject().put("chatID", chatID).put("name", name), "open");
         String message = json.toString();
         users.forEach(user -> {
             try {

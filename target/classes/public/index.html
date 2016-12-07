@@ -26,6 +26,8 @@
     <link href="assets/css/bootstrap.css" rel="stylesheet"/>
 
     <script src="assets/js/jquery-1.12.4.js"></script>
+    <script src="utils.js"></script>
+    <script src="dispatcher.js"></script>
     <script src="doc.js"></script>
     <script src="tabs.js"></script>
 </head>
@@ -40,7 +42,7 @@
             <div class="panel panel-primary">
                 <div id="loginPanelHead" class="panel-heading">LOGIN<p style="float:right;">&#10224;</p></div>
                 <div id="loginPanelBody" style="display: block; height: 222px;" class="panel-body">
-                    <div id="alert" style="visibility: visible; padding-left: 15px;">
+                    <div id="loginAlert" style="visibility: visible; padding-left: 15px; color: #ff0000;">
                     </div>
                     <div class="col-md-12" style="margin-bottom:10px">
                         Username:
@@ -57,7 +59,7 @@
             <div class="panel panel-primary">
                 <div id="registerPanelHead" class="panel-heading">REGISTER<p style="float:right;">&#10225;</p></div>
                 <div id="registerPanelBody" class="panel-body" style="height: 222px; padding-top: 10px; display: none;">
-                    <div id="alert_register" style="visibility: visible; padding-left: 15px;">
+                    <div id="registerAlert" style="visibility: visible; padding-left: 15px; color: #ff0000;">
                     </div>
                     <div class="col-md-12" style="margin-bottom:10px">
                         Username: <input id="registerUsername" name="user" style="margin-bottom:10px; width: 100%"><br>

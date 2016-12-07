@@ -13,22 +13,6 @@ import java.util.function.Consumer;
 public class UserRepository<U extends User> implements Iterable<U> {
     private final HashMap<String, U> users = new HashMap<>();
 
-    public UserRepository() {
-    }
-
-    @SafeVarargs
-    public UserRepository(U... users) {
-        for(U user: users) {
-            this.users.put(user.getUsername(), user);
-        }
-    }
-
-    public UserRepository(Collection<U> users) {
-        for(U user: users) {
-            this.users.put(user.getUsername(), user);
-        }
-    }
-
     /**
      * Fügt einen {@link User} zur Liste hinzu.
      * <p>

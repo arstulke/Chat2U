@@ -14,7 +14,7 @@ import java.util.function.Consumer;
  * by ARSTULKE on 23.11.2016.
  */
 public class ChatContainer implements Iterable<Chat> {
-    private Map<String, Chat> chats = new HashMap<>();
+    private final Map<String, Chat> chats = new HashMap<>();
 
     public ChatContainer() {
         chats.put(ChatServer.GLOBAL, new Chat(true));

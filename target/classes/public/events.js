@@ -9,61 +9,33 @@ $(document).ready(function(){
         window.blurred = false;
     };
     //BUTTON EVENT LISTENER
-    doc.btn.chatSendMessage().click(function() {
+    doc.btn.chatSendMessage().click(function(e) {
         sendMessageToChat(doc.input.chatMessage().val());
     });
     doc.input.chatMessage().keypress(function(e) {
-        if (e.keyCode === 13) {
-            sendMessageToChat(e.target.value);
+        if (e === undefined || e === null || e.keyCode === 13) {
+            sendMessageToChat(doc.input.chatMessage().val());
         }
     });
     //-----------------LOGIN EVENTS
-    doc.input.loginUsername().keypress(function(e) {
-        if (e.keyCode === 13) {
-            if(doc.input.loginUsername().val() !== "" && doc.input.loginPassword().val() !== ""){
-                loginUser(doc.input.loginUsername().val(), doc.input.loginPassword().val());
-           }
+    function login(e) {
+        if (e.type === "click" || e.keyCode === 13) {
+            loginUser();
         }
-    });
-    doc.input.loginPassword().keypress(function(e) {
-        if (e.keyCode === 13) {
-            if(doc.input.loginUsername().val() !== "" && doc.input.loginPassword().val() !== "") {
-                loginUser(doc.input.loginUsername().val(), doc.input.loginPassword().val());
-            }
-        }
-    });
-    doc.btn.login().click(function() {
-        if(doc.input.loginUsername().val() !== "" && doc.input.loginPassword().val() !== "") {
-            loginUser(doc.input.loginUsername().val(), doc.input.loginPassword().val());
-        }
-    });
+    }
+    doc.input.loginUsername().keypress(login);
+    doc.input.loginPassword().keypress(login);
+    doc.btn.login().click(login);
     //------------------REGISTER EVENTS
-    doc.btn.register().click(function() {
-        if(doc.input.registerUsername().val() !== "" && doc.input.registerPassword().val() !== ""){
-            registerUser(doc.input.registerUsername().val(), doc.input.registerPassword().val(), doc.input.registerSecPassword().val());
+    function register(e) {
+        if (e.type === "click" || e.keyCode === 13) {
+            registerUser();
         }
-    });
-    doc.input.registerUsername().keypress(function(e) {
-        if (e.keyCode === 13) {
-            if(doc.input.registerUsername().val() !== "" && doc.input.registerPassword().val() !== ""){
-                registerUser(doc.input.registerUsername().val(), doc.input.registerPassword().val(), doc.input.registerSecPassword().val());
-            }
-        }
-    });
-    doc.input.registerPassword().keypress(function(e) {
-        if (e.keyCode === 13) {
-            if(doc.input.registerUsername().val() !== "" && doc.input.registerPassword().val() !== ""){
-                registerUser(doc.input.registerUsername().val(), doc.input.registerPassword().val(), doc.input.registerSecPassword().val());
-            }
-        }
-    });
-    doc.input.registerSecPassword().keypress(function(e) {
-        if (e.keyCode === 13) {
-            if(doc.input.registerUsername().val() !== "" && doc.input.registerPassword().val() !== ""){
-                registerUser(doc.input.registerUsername().val(), doc.input.registerPassword().val(), doc.input.registerSecPassword().val());
-            }
-        }
-    });
+    }
+    doc.btn.register().click(register);
+    doc.input.registerUsername().keypress(register);
+    doc.input.registerPassword().keypress(register);
+    doc.input.registerSecPassword().keypress(register);
 
 
     //Search User in Userlist
