@@ -4,6 +4,7 @@ import de.chat2u.authentication.AuthenticationService;
 import de.chat2u.authentication.UserRepository;
 import de.chat2u.model.*;
 import de.chat2u.utils.MessageBuilder;
+import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,6 +23,8 @@ import static de.chat2u.utils.MessageBuilder.buildMessage;
  */
 public class ChatServer {
 
+    private final static Logger LOGGER = Logger.getLogger(ChatServer.class);
+
     private final static UserRepository<User> onlineUsers = new UserRepository<>();
     private final static ChatContainer chats = new ChatContainer();
     public static final String GLOBAL = "global";
@@ -36,6 +39,7 @@ public class ChatServer {
      */
     public static void initialize(AuthenticationService authenticationService) {
         ChatServer.authenticationService = authenticationService;
+        chats.overwrite(GLOBAL, onlineUsers, true);
     }
 
     private static void checksIllegalState() {
@@ -128,10 +132,11 @@ public class ChatServer {
         containedChats.entrySet().forEach(chat -> {
             String chatID = chat.getKey();
             if (!chatID.equals(GLOBAL) && chat.getValue().size() == 1) {
-                sendTextMessageToChat("Server", username, chatID);
                 JSONObject json = buildMessage("tabControl", chatID, "close");
                 sendMessageToChat(json, chatID);
                 chats.removeChat(chatID);
+            } else if (!chatID.equals(GLOBAL)) {
+                sendTextMessageToChat("Server", username + "left the Chat.", chatID);
             }
         });
 
@@ -139,11 +144,12 @@ public class ChatServer {
     }
 
     private static void sendMessageToChat(JSONObject json, String chatID) {
+        String msg = json.toString();
         chats.getChat(chatID).forEach(user -> {
             try {
-                sendMessageToSession(json.toString(), user.getSession());
+                sendMessageToSession(msg, user.getSession());
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.debug(e);
             }
         });
     }
@@ -163,7 +169,13 @@ public class ChatServer {
     public static void sendTextMessageToChat(String senderName, String message, String chatID) {
         Message msg = new Message(senderName, message, chatID);
         JSONObject json = MessageBuilder.buildTextMessage(msg);
-        chats.getChat(chatID).forEach(user -> user.addMessageToHistory(msg));
+        chats.getChat(chatID).forEach(user -> {
+            try {
+                user.addMessageToHistory(msg);
+            } catch (Exception e) {
+                LOGGER.debug(e);
+            }
+        });
         sendMessageToChat(json, chatID);
     }
 
@@ -222,7 +234,7 @@ public class ChatServer {
             try {
                 sendMessageToSession(message, user.getSession());
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.debug(e);
             }
         });
     }

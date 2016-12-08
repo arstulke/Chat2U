@@ -1,22 +1,23 @@
 $(document).ready(function(){
     //----------------------------------------Event Listener----------------------------------------
-    //Tab opend, Closed Events
+    //-----------------BLUR EVENTS
     $(window).blur(function() {
         window.blurred = true;
     });
-    window.onfocus = function() {
+    $(window).focus(function() {
         document.title = "Chat2U";
         window.blurred = false;
-    };
-    //BUTTON EVENT LISTENER
-    doc.btn.chatSendMessage().click(function(e) {
-        sendMessageToChat(doc.input.chatMessage().val());
     });
-    doc.input.chatMessage().keypress(function(e) {
-        if (e === undefined || e === null || e.keyCode === 13) {
+     //-----------------SEND EVENTS
+    function sendMessageEvent(e) {
+        if (e.type === "click" || e.keyCode === 13) {
             sendMessageToChat(doc.input.chatMessage().val());
+            doc.input.chatMessage().focus();
         }
-    });
+    }
+    doc.btn.chatSendMessage().click(sendMessageEvent);
+    doc.input.chatMessage().keypress(sendMessageEvent);
+
     //-----------------LOGIN EVENTS
     function login(e) {
         if (e.type === "click" || e.keyCode === 13) {
@@ -37,13 +38,4 @@ $(document).ready(function(){
     doc.input.registerPassword().keypress(register);
     doc.input.registerSecPassword().keypress(register);
 
-
-    //Search User in Userlist
-    doc.input.searchUser().on('input', function() {
-        var userList = doc.ul_userList().children();
-        for(var i = 0; i < userList.length; i++) {
-            var matches = userList[i].id.includes('user_' + doc.input.searchUser().val());
-            userList[i].style.display  = matches ? "block" : "none";
-        }
-    });
 });

@@ -13,7 +13,7 @@ import java.util.function.Consumer;
  * by ARSTULKE on 23.11.2016.
  */
 public class Chat implements Iterable<User> {
-    private UserRepository<User> users;
+    private final UserRepository<User> users;
     private boolean global = false;
     private String id;
 
@@ -30,6 +30,7 @@ public class Chat implements Iterable<User> {
         for(User user : users){
             this.users.addUser(convertUser(user));
         }
+        this.global = global;
         this.id = setID(global);
     }
 

@@ -79,12 +79,6 @@ public class FrontEndSteps {
         }
     }
 
-    @After("@endSzenario")
-    public void AfterFeature() {
-        Collection<WebDriver> c = client.values();
-        c.forEach(WebDriver::close);
-    }
-
     @Wenn("^\"([^\"]*)\" die Nachricht an alle \"([^\"]*)\" sendet$")
     public void dieNachrichtAnAlleSendet(String webdriver, String msg) throws Throwable {
         client.get(webdriver).findElement(By.id("chatMessage")).clear();
@@ -106,8 +100,9 @@ public class FrontEndSteps {
         Assert.assertThat(client.get(webdriver).findElement(By.id("chatContainer")).getText(), Matchers.containsString(message));
     }
 
-    @Gegebensei("^das Ende vom Lied.$")
-    public void dasEndeVomLied() throws Throwable {
-        Assert.assertEquals(0, 0);
+    @After("@CleanSelenium")
+    public void afterFeature() {
+        Collection<WebDriver> c = client.values();
+        c.forEach(WebDriver::close);
     }
 }

@@ -7,14 +7,15 @@ import cucumber.api.java.de.Wenn;
 import de.chat2u.ChatServer;
 import de.chat2u.authentication.AuthenticationService;
 import de.chat2u.authentication.UserRepository;
+import de.chat2u.cucumber.selenium.TestServer;
 import de.chat2u.model.AuthenticationUser;
 import de.chat2u.model.Chat;
 import de.chat2u.model.Message;
 import de.chat2u.utils.MessageBuilder;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
-import org.eclipse.jetty.websocket.api.Session;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created de.chat2u.cucumber.steps.PrivatChat in PACKAGE_NAME
@@ -35,19 +36,9 @@ public class PrivatChat {
         repo.addUser(user3);
         ChatServer.initialize(new AuthenticationService(repo));
 
-        Session session1 = mock(Session.class);
-        Session session2 = mock(Session.class);
-        Session session3 = mock(Session.class);
-        RemoteEndpoint remote1 = mock(RemoteEndpoint.class);
-        RemoteEndpoint remote2 = mock(RemoteEndpoint.class);
-        RemoteEndpoint remote3 = mock(RemoteEndpoint.class);
-        when(session1.getRemote()).thenReturn(remote1);
-        when(session2.getRemote()).thenReturn(remote2);
-        when(session3.getRemote()).thenReturn(remote3);
-
-        ChatServer.login(user1.getUsername(), user1.getPassword(), session1);
-        ChatServer.login(user2.getUsername(), user2.getPassword(), session2);
-        ChatServer.login(user3.getUsername(), user3.getPassword(), session3);
+        ChatServer.login(user1.getUsername(), user1.getPassword(), TestServer.getMockSession());
+        ChatServer.login(user2.getUsername(), user2.getPassword(), TestServer.getMockSession());
+        ChatServer.login(user3.getUsername(), user3.getPassword(), TestServer.getMockSession());
     }
 
     @Wenn("^der Erste dem Zweiten eine Nachricht im privat Chat sendet$")

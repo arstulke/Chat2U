@@ -18,4 +18,13 @@ $(document).ready(function(){
             doc.div.loginPanelBody().slideUp();
         }
     }
+
+    //Search User in Userlist
+    doc.input.searchUser().on('input', function() {
+        var userList = doc.ul_userList().children();
+        for(var i = 0; i < userList.length; i++) {
+            var matches = userList[i].id.includes('user_' + doc.input.searchUser().val());
+            userList[i].style.display  = matches ? "block" : "none";
+        }
+    });
 }());

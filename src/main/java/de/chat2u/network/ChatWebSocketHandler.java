@@ -3,6 +3,8 @@ package de.chat2u.network;
 import de.chat2u.ChatServer;
 import de.chat2u.authentication.UserRepository;
 import de.chat2u.model.User;
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
@@ -13,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Created ChatWebsocketHandler in de.chat2u
@@ -23,6 +26,7 @@ import java.io.IOException;
 public class ChatWebSocketHandler {
 
     private final static Logger LOGGER = Logger.getLogger(ChatWebSocketHandler.class);
+
     //////////////////////////////////////////////////////////////////////////
     // ERGEBNISSE MIT CARSTEN 21.11.16                                      //
     //////////////////////////////////////////////////////////////////////////
@@ -50,8 +54,11 @@ public class ChatWebSocketHandler {
             LOGGER.debug(String.format("Fehler beim Verarbeiten der Nachricht(%s): %s", message.replaceAll("\n", ""), e.getMessage()));
         } catch (Exception e) {
             LOGGER.error(e);
-        }
 
+            String stackTrace = Arrays.toString(e.getStackTrace()).replace("), ", ")\n\t[" + Thread.currentThread().getName() + "] ");
+            stackTrace = stackTrace.substring(1, stackTrace.length() - 1);
+            LOGGER.debug(message + ": \n\t[" + Thread.currentThread().getName() + "] " + stackTrace);
+        }
     }
 
     /**

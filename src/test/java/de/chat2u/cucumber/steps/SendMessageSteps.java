@@ -6,6 +6,7 @@ import cucumber.api.java.de.Wenn;
 import de.chat2u.ChatServer;
 import de.chat2u.authentication.AuthenticationService;
 import de.chat2u.authentication.UserRepository;
+import de.chat2u.cucumber.selenium.TestServer;
 import de.chat2u.model.AuthenticationUser;
 import de.chat2u.model.Message;
 import de.chat2u.model.User;
@@ -35,8 +36,8 @@ public class SendMessageSteps {
         userRepository.addUser(new AuthenticationUser(user1, password));
         userRepository.addUser(new AuthenticationUser(user2, password));
         ChatServer.initialize(new AuthenticationService(userRepository));
-        ChatServer.login(user1, password, null);
-        ChatServer.login(user2, password, null);
+        ChatServer.login(user1, password, TestServer.getMockSession());
+        ChatServer.login(user2, password, TestServer.getMockSession());
     }
 
     @Wenn("^\"([^\"]*)\" die Nachricht \"([^\"]*)\" sendet$")

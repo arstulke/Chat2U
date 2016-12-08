@@ -10,7 +10,7 @@ Funktionalität: Anmelden
 		Gegeben sei der registrierte Teilnehmer "Max" mit dem Passwort "geheim".
 		Wenn ich mich als Teilnehmer "Max" mit dem Passwort "nichtgeheim" anmelde,
 		Dann die Nachricht "Ungültige Zugangsdaten." erscheint.
-	
+
 	Szenario: Anmeldung als unbekannter Benutzer
 		Gegeben sei der registrierte Teilnehmer "Max" mit dem Passwort "geheim".
 		Wenn ich mich als Teilnehmer "Marianne" mit dem Passwort "geheim" anmelde,

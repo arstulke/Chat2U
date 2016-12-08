@@ -17,13 +17,11 @@ Funktionalität: search_user
     Dann werden bei "Carsten" die Benutzer angezeigt:
       | Thorsten |
 
+  @CleanUp
+  @CleanSelenium
   Szenario: Nachricht an alle Senden
     Gegeben seien die angemeldeten Benutzer
       | Carsten  |
     Wenn "KreiselhammerXD2000" sich mit dem Passwort "geheim" registriert und einlogggt
     Und "Carsten" die Nachricht an alle "Hallo, Das ist einzigartig" sendet
     Dann wird bei "KreiselhammerXD2000" die Nachricht "Hallo, Das ist einzigartig" erscheinen
-
-  @endSzenario
-  Szenario: Ende
-    Gegeben sei das Ende vom Lied.
