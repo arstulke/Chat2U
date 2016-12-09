@@ -3,7 +3,9 @@ package de.chat2u.network;
 import de.chat2u.ChatServer;
 import de.chat2u.authentication.UserRepository;
 import de.chat2u.model.User;
-import de.chat2u.utils.MessageBuilder;
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
@@ -13,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Created ChatWebsocketHandler in de.chat2u
@@ -21,6 +24,8 @@ import java.io.IOException;
 @SuppressWarnings("unused") //werden von Spark aufgerufen
 @WebSocket
 public class ChatWebSocketHandler {
+
+    private final static Logger LOGGER = Logger.getLogger(ChatWebSocketHandler.class);
 
     //////////////////////////////////////////////////////////////////////////
     // ERGEBNISSE MIT CARSTEN 21.11.16                                      //
@@ -47,14 +52,13 @@ public class ChatWebSocketHandler {
         try {
             handleCommandFromClient(webSocketSession, message);
         } catch (JSONException e) {
-            String sender = ChatServer.getUserBySession(webSocketSession).getUsername();
-            ChatServer.sendMessageToGlobalChat(sender + ":", message, "msg");
-        } catch (Exception exception) {
-            try {
-                ChatServer.sendMessageToSession(MessageBuilder.buildExceptionMessage(exception), webSocketSession);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            LOGGER.debug(String.format("Fehler beim Verarbeiten der Nachricht(%s): %s", message.replaceAll("\n", ""), e.getMessage()));
+        } catch (Exception e) {
+            LOGGER.error(e);
+
+            String stackTrace = Arrays.toString(e.getStackTrace()).replace("), ", ")\n\t[" + Thread.currentThread().getName() + "] ");
+            stackTrace = stackTrace.substring(1, stackTrace.length() - 1);
+            LOGGER.debug(message + ": \n\t[" + Thread.currentThread().getName() + "] " + stackTrace);
         }
     }
 
@@ -73,9 +77,10 @@ public class ChatWebSocketHandler {
      * @throws JSONException wenn die Nachricht kein JSON ist oder ein falsches Format hat
      * @throws IOException   wenn keine Nachricht zurück an den Client gesenet werden kann.
      */
-    private void handleCommandFromClient(Session webSocketSession, String message) throws JSONException, IOException {
+    private void handleCommandFromClient(Session webSocketSession, String message) throws IOException, JSONException {
         JSONObject object = new JSONObject(message);
         JSONObject params = (JSONObject) object.get("params");
+
 
         String cmd = (String) object.get("cmd");
         switch (cmd) {
@@ -93,10 +98,11 @@ public class ChatWebSocketHandler {
                 break;
             case "sendMessage":
                 String sender = ChatServer.getUserBySession(webSocketSession).getUsername();
-                ChatServer.sendMessageToChat(sender, (String) params.get("message"), (String) params.get("chatID"), "msg");
+                ChatServer.sendTextMessageToChat(sender, (String) params.get("message"), (String) params.get("chatID"));
                 break;
             case "openChat":
-                UserRepository<User> users = new UserRepository<>();
+                UserRepository<User> users;
+                users = new UserRepository<>();
                 JSONArray userList = (JSONArray) params.get("users");
                 for (int i = 0; i < userList.length(); i++) {
                     String username = (String) ((JSONObject) userList.get(i)).get("name");

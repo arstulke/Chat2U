@@ -15,25 +15,29 @@ import static j2html.TagCreator.*;
  * by ARSTULKE on 18.11.2016.
  */
 public class MessageBuilder {
-    /**
-     * Generieren der zu sendenen Nachricht. Die Nachricht wird zusammengesetzt aus
-     * <p>- Absender
-     * <p>- Nachricht
-     * <p>
-     *
-     * @param msg ist die zu sendene Nachricht
-     * @param type is the message type (e.g.: msg, server_msg)
-     * @return die fertig generierte Nachricht.
-     */
-    public static JSONObject buildMessage(Message msg, String type) {
+
+    public static JSONObject buildMessage(String type, Object primeData, Object secondData) {
+        JSONObject output = new JSONObject();
         try {
-            return msg.getJSON()
-                    .put("type", type)
-                    .put("userlist", ChatServer.getOnlineUsers().getUsernameList());
+            output.put("type", type);
+            if(primeData != null)
+                output.put("primeData", primeData);
+            if(secondData != null)
+                output.put("secondData", secondData);
+            return output;
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     *
+     * <p>
+     * @param msg    textMessage
+     */
+    public static JSONObject buildTextMessage(Message msg) {
+        return buildMessage("textMessage", msg.getPrimeData(), ChatServer.getOnlineUsers().getUsernameList());
     }
 
     /**
@@ -50,28 +54,6 @@ public class MessageBuilder {
                         unsafeHtml(" " + message),
                         p().with(small(timestamp).withClass("text-muted")))
                 .render();
-    }
-
-    /**
-     * Baut aus eine nachricht aus einer Exception.
-     * <p>
-     *
-     * @param exception ist die Exception, zu der eine Nachricht gebaut werden soll.
-     * @return die gebaute Nachricht
-     */
-    public static String buildExceptionMessage(Exception exception) {
-        try {
-            String timestamp = getTimestamp(new Date());
-            return String.valueOf(new JSONObject()
-                    .put("type", "error")
-                    .put("exceptionType", exception.getClass().getSimpleName())
-                    .put("exceptionMessage", exception.getMessage())
-                    .put("timestamp", timestamp)
-                    .put("msg", "<p style=\"color: #ff0000; margin-bottom: 0px;\">" + exception.getMessage() + "</p>"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     /**

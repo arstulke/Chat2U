@@ -1,80 +1,41 @@
 $(document).ready(function(){
     //----------------------------------------Event Listener----------------------------------------
-    //Tab opend, Closed Events
+    //-----------------BLUR EVENTS
     $(window).blur(function() {
         window.blurred = true;
     });
-    window.onfocus = function() {
+    $(window).focus(function() {
         document.title = "Chat2U";
         window.blurred = false;
-    };
-    //BUTTON EVENT LISTENER
-    doc.btn.chatSendMessage().click(function() {
-        sendMessageToChat(doc.input.chatMessage().val());
     });
-    doc.input.chatMessage().keypress(function(e) {
-        if (e.keyCode === 13) {
-            sendMessageToChat(e.target.value);
+     //-----------------SEND EVENTS
+    function sendMessageEvent(e) {
+        if (e.type === "click" || e.keyCode === 13) {
+            sendMessageToChat(doc.input.chatMessage().val());
+            doc.input.chatMessage().focus();
         }
-    });
+    }
+    doc.btn.chatSendMessage().click(sendMessageEvent);
+    doc.input.chatMessage().keypress(sendMessageEvent);
+
     //-----------------LOGIN EVENTS
-    doc.input.loginUsername().keypress(function(e) {
-        if (e.keyCode === 13) {
-            if(doc.input.loginUsername().val() !== "" && doc.input.loginPassword().val() !== ""){
-                loginUser(doc.input.loginUsername().val(), doc.input.loginPassword().val());
-           }
+    function login(e) {
+        if (e.type === "click" || e.keyCode === 13) {
+            loginUser();
         }
-    });
-    doc.input.loginPassword().keypress(function(e) {
-        if (e.keyCode === 13) {
-            if(doc.input.loginUsername().val() !== "" && doc.input.loginPassword().val() !== "") {
-                loginUser(doc.input.loginUsername().val(), doc.input.loginPassword().val());
-            }
-        }
-    });
-    doc.btn.login().click(function() {
-        if(doc.input.loginUsername().val() !== "" && doc.input.loginPassword().val() !== "") {
-            loginUser(doc.input.loginUsername().val(), doc.input.loginPassword().val());
-        }
-    });
+    }
+    doc.input.loginUsername().keypress(login);
+    doc.input.loginPassword().keypress(login);
+    doc.btn.login().click(login);
     //------------------REGISTER EVENTS
-    doc.btn.register().click(function() {
-        if(doc.input.registerUsername().val() !== "" && doc.input.registerPassword().val() !== ""){
-            registerUser(doc.input.registerUsername().val(), doc.input.registerPassword().val(), doc.input.registerSecPassword().val());
+    function register(e) {
+        if (e.type === "click" || e.keyCode === 13) {
+            registerUser();
         }
-    });
-    doc.input.registerUsername().keypress(function(e) {
-        if (e.keyCode === 13) {
-            if(doc.input.registerUsername().val() !== "" && doc.input.registerPassword().val() !== ""){
-                registerUser(doc.input.registerUsername().val(), doc.input.registerPassword().val(), doc.input.registerSecPassword().val());
-            }
-        }
-    });
-    doc.input.registerPassword().keypress(function(e) {
-        if (e.keyCode === 13) {
-            if(doc.input.registerUsername().val() !== "" && doc.input.registerPassword().val() !== ""){
-                registerUser(doc.input.registerUsername().val(), doc.input.registerPassword().val(), doc.input.registerSecPassword().val());
-            }
-        }
-    });
-    doc.input.registerSecPassword().keypress(function(e) {
-        if (e.keyCode === 13) {
-            if(doc.input.registerUsername().val() !== "" && doc.input.registerPassword().val() !== ""){
-                registerUser(doc.input.registerUsername().val(), doc.input.registerPassword().val(), doc.input.registerSecPassword().val());
-            }
-        }
-    });
+    }
+    doc.btn.register().click(register);
+    doc.input.registerUsername().keypress(register);
+    doc.input.registerPassword().keypress(register);
+    doc.input.registerSecPassword().keypress(register);
 
-
-    //Search User in Userlist
-    doc.input.searchUser().on('input', function() {
-        var searchEles = doc.ul_userList().children();
-        for(var i = 0; i < searchEles.length; i++) {
-            if(searchEles[i].id.indexOf('user_' + doc.input.searchUser().val()) !== 0) {
-                searchEles[i].style.display  = "none";
-            } else {
-                searchEles[i].style.display = "block";
-            }
-        }
-    });
 });

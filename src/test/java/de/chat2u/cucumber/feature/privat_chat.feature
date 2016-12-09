@@ -1,6 +1,7 @@
 #language:de
 #noinspection SpellCheckingInspection
 Funktionalität: Privat Chat
+    @CleanUp
     Szenario: Nachricht im privaten Chat senden
         #beispiele
         Gegeben seien drei angemeldete Benutzer

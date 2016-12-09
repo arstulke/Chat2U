@@ -14,14 +14,13 @@ import java.util.concurrent.TimeUnit;
  */
 public class SeleniumHelper {
     public static WebDriver loginUser(AuthenticationUser user, WebDriver driver) {
-
         fillInput(driver, "user", user.getUsername());
         fillInput(driver, "password", user.getPassword());
         clickButton(driver, "login");
         return driver;
     }
 
-    public static WebDriver registerUser(AuthenticationUser user) throws InterruptedException {
+    public static WebDriver registerUser(AuthenticationUser user) {
         WebDriver driver = new ChromeDriver();
         driver.get("http://localhost/");
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
@@ -36,15 +35,6 @@ public class SeleniumHelper {
         clickButton(driver, "register");
 
         return driver;
-    }
-
-    private static boolean isAccessable(WebDriver driver, By password_register) {
-        try{
-            driver.findElement(password_register).sendKeys(Keys.BACK_SPACE);
-        }catch (Exception e){
-            return false;
-        }
-        return true;
     }
 
 

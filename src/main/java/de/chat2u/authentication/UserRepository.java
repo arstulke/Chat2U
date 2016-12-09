@@ -4,6 +4,7 @@ import de.chat2u.model.User;
 import org.eclipse.jetty.websocket.api.Session;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 /**
@@ -11,23 +12,7 @@ import java.util.function.Consumer;
  * by ARSTULKE on 16.11.2016.
  */
 public class UserRepository<U extends User> implements Iterable<U> {
-    private final HashMap<String, U> users = new HashMap<>();
-
-    public UserRepository() {
-    }
-
-    @SafeVarargs
-    public UserRepository(U... users) {
-        for(U user: users) {
-            this.users.put(user.getUsername(), user);
-        }
-    }
-
-    public UserRepository(Collection<U> users) {
-        for(U user: users) {
-            this.users.put(user.getUsername(), user);
-        }
-    }
+    private final Map<String, U> users = new ConcurrentHashMap<>();
 
     /**
      * Fügt einen {@link User} zur Liste hinzu.
@@ -35,7 +20,7 @@ public class UserRepository<U extends User> implements Iterable<U> {
      *
      * @param user ist der hinzu zufügende User.
      */
-    public void addUser(U user) {
+    public synchronized void addUser(U user) {
         users.put(user.getUsername(), user);
     }
 
@@ -47,7 +32,7 @@ public class UserRepository<U extends User> implements Iterable<U> {
      * @return einen User, wenn dieser gefunden wurde oder {@code null} wenn
      * dieser nicht gefunden werden konnte
      */
-    public U getByUsername(String username) {
+    public synchronized U getByUsername(String username) {
         return users.get(username);
     }
 
@@ -57,7 +42,7 @@ public class UserRepository<U extends User> implements Iterable<U> {
      *
      * @return alle Benutzername der Liste
      */
-    public Set<String> getUsernameList() {
+    public synchronized Set<String> getUsernameList() {
         return users.keySet();
     }
 
@@ -67,7 +52,7 @@ public class UserRepository<U extends User> implements Iterable<U> {
      *
      * @param user ist der zu entfernende User
      */
-    public void removeUser(U user) {
+    public synchronized void removeUser(U user) {
         if (user != null && users.containsValue(user)) {
             users.remove(user.getUsername());
         }
@@ -79,7 +64,7 @@ public class UserRepository<U extends User> implements Iterable<U> {
      *
      * @param username ist der zu überprüfende Benutzername
      */
-    public boolean containsUsername(String username) {
+    public synchronized boolean containsUsername(String username) {
         return users.containsKey(username);
     }
 
@@ -91,42 +76,42 @@ public class UserRepository<U extends User> implements Iterable<U> {
         return null;
     }
 
-    public boolean contains(U user) {
+    public synchronized boolean contains(U user) {
         return users.values().contains(user);
     }
 
-    public int size() {
+    public synchronized int size() {
         return users.size();
     }
 
     @Override
-    public Iterator<U> iterator() {
+    public synchronized Iterator<U> iterator() {
         return users.values().iterator();
     }
 
     @Override
-    public void forEach(Consumer<? super U> action) {
+    public synchronized void forEach(Consumer<? super U> action) {
         users.values().forEach(action);
     }
 
     @Override
-    public Spliterator<U> spliterator() {
+    public synchronized Spliterator<U> spliterator() {
         return users.values().spliterator();
     }
 
     @Override
-    public boolean equals(Object o) {
+    public synchronized boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
         UserRepository<?> that = (UserRepository<?>) o;
 
-        return users != null ? users.equals(that.users) : that.users == null;
+        return users.equals(that.users);
 
     }
 
     @Override
-    public int hashCode() {
-        return users != null ? users.keySet().hashCode() : 0;
+    public synchronized int hashCode() {
+        return users.keySet().hashCode();
     }
 }

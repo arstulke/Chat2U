@@ -3,7 +3,6 @@ package de.chat2u.model;
 import de.chat2u.ChatServer;
 import de.chat2u.authentication.UserRepository;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Spliterator;
@@ -14,30 +13,32 @@ import java.util.function.Consumer;
  * by ARSTULKE on 23.11.2016.
  */
 public class Chat implements Iterable<User> {
-    private UserRepository<User> users;
+    private final UserRepository<User> users;
     private boolean global = false;
     private String id;
 
-    public Chat(boolean global, User... users){
-        this(global);
+    public Chat(User... users){
+        this.users = new UserRepository<>();
+        this.global = false;
         for(User user : users){
-            convertUser(user);
+            this.users.addUser(convertUser(user));
         }
     }
 
     Chat(UserRepository<User> users, boolean global) {
         this.users = new UserRepository<>();
         for(User user : users){
-            convertUser(user);
+            this.users.addUser(convertUser(user));
         }
+        this.global = global;
         this.id = setID(global);
     }
 
-    private void convertUser(User user) {
+    private User convertUser(User user) {
         if(user instanceof AuthenticationUser){
             user = ((AuthenticationUser) user).getSimpleUser();
         }
-        this.users.addUser(user);
+        return user;
     }
 
     Chat(boolean global) {

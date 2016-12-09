@@ -1,6 +1,7 @@
 #language:de
 #noinspection SpellCheckingInspection
 Funktionalität: Abmelden
+	@CleanUp
 	Szenario: vom Server abmelden
 		Gegeben sei der angemeldete Teilnehmer "Carsten" mit dem Passwort "geheim".
 		Wenn "Carsten" sich abmeldet,
