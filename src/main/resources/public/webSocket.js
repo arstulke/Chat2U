@@ -46,71 +46,71 @@ function connect(firstMessage) {
     sendMessage(firstMessage);
 
     if (webSocket === undefined || webSocket.readyState === 3) {
-        var dispatcher = new Dispatcher();
-        dispatcher.createType("textMessage", function(msg){
-            notify();
+        var dispatcher = (function() {
+            var dispatcher = new Dispatcher();
+            dispatcher.createType("textMessage", function(msg){
+                notify();
 
-            var myUsername = applicationData.username;
-            doc.ul_userList().html("");
-            msg.secondData.forEach(function(user) {
-                var userListItem = "<li id='user_" + user + "' class='media' style='display: block'><div class='media-body'><div class='media'><div class='pull-left'><img class='media-object img-circle' style='max-height:40px;' src='assets/img/newuser.png' /></div><div class='media-body' ><h5>" + user + "</h5><small class='text-muted'>DEIN STATUS</small></div></div></div></li>";
-                doc.ul_userList().html(doc.ul_userList().html() + userListItem);
-                if (myUsername !== user) {
-                    var users = [myUsername, user];
-                    $("#user_" + user).attr("onclick", 'inviteToChat("' + users + '")');
+                var myUsername = applicationData.username;
+                doc.ul_userList().html("");
+                msg.secondData.forEach(function(user) {
+                    var userListItem = "<li id='user_" + user + "' class='media' style='display: block'><div class='media-body'><div class='media'><div class='pull-left'><img class='media-object img-circle' style='max-height:40px;' src='assets/img/newuser.png' /></div><div class='media-body' ><h5>" + user + "</h5><small class='text-muted'>DEIN STATUS</small></div></div></div></li>";
+                    doc.ul_userList().html(doc.ul_userList().html() + userListItem);
+                    if (myUsername !== user) {
+                        var users = [myUsername, user];
+                        $("#user_" + user).attr("onclick", 'inviteToChat("' + users + '", prompt("Chat Name: "))');
+                    }
+                });
+                updateChat(msg.primeData);
+            });
+            dispatcher.createType("tabControl", function(msg){
+                if(msg.secondData === "open") {
+                    notify();
+                    tabManager.createTab(msg.primeData.chatID, msg.primeData.name);
+                }
+                else {
+                     notify();
+                     tabManager.closeTab(msg.primeData);
                 }
             });
-            updateChat(msg.primeData);
-        });
-        dispatcher.createType("tabControl", function(msg){
-        	if(msg.secondData === "open") {
-        	    notify();
-                tabManager.createTab(msg.primeData.chatID, msg.primeData.name);
-        	}
-        	else {
-        	     notify();
-                 tabManager.closeTab(msg.primeData);
-        	}
-        });
-        dispatcher.createType("statusRegister", function(msg){
-            doc.div.loginBox().css("cursor", "auto");
-            doc.btn.register().prop("disabled", false);
-            doc.input.registerUsername().prop('disabled', false);
-            doc.input.registerPassword().prop('disabled', false);
-            doc.input.registerSecPassword().prop('disabled', false);
+            dispatcher.createType("statusRegister", function(msg){
+                doc.div.loginBox().css("cursor", "auto");
+                doc.btn.register().prop("disabled", false);
+                doc.input.registerUsername().prop('disabled', false);
+                doc.input.registerPassword().prop('disabled', false);
+                doc.input.registerSecPassword().prop('disabled', false);
 
-        	if(msg.primeData === true) {
-        	    showLoginDialog("hide", "loginAlert", "");
-                showLoginDialog("hide", "registerAlert", "");
+                if(msg.primeData === true) {
+                    showLoginDialog("hide", "loginAlert", "");
+                    showLoginDialog("hide", "registerAlert", "");
 
-                doc.input.loginUsername().val(doc.input.registerUsername().val());
-                doc.input.loginPassword().val(doc.input.registerPassword().val());
-                doc.input.registerUsername().val("");
-                doc.input.registerPassword().val("");
-                loginUser();
-        	} else {
-                showLoginDialog("show", "registerAlert", msg.secondData);
-            }
-        });
-        dispatcher.createType("statusLogin", function(msg){
-            doc.div.loginBox().css("cursor", "auto");
-            doc.btn.login().prop("disabled", false);
-            doc.input.loginUsername().prop('disabled', false);
-            doc.input.loginPassword().prop('disabled', false);
-        	if(msg.primeData === true) {
-        	    showLoginDialog("hide", "loginAlert", "");
-                showLoginDialog("hide", "registerAlert", "");
-                doc.input.chatMessage().focus();
-                doc.div.tabContainer().html("<li><a href='javascript:void(0)' class='tablinks' onclick=\"tabManager.openTab(event.currentTarget, 'global')\" id='a_defaultTab'>Global</a></li>");
-                doc.div.chatContainer().html("<div id='global' class='tabcontent'><div class='media-body'><article><b>Chat2U</b><p>Herzlich Willkommen! Vielen Dank, dass du Chat2U benutzt.</p><small></small></article><hr></div></div>");
+                    doc.input.loginUsername().val(doc.input.registerUsername().val());
+                    doc.input.loginPassword().val(doc.input.registerPassword().val());
+                    doc.input.registerUsername().val("");
+                    doc.input.registerPassword().val("");
+                    loginUser();
+                } else {
+                    showLoginDialog("show", "registerAlert", msg.secondData);
+                }
+            });
+            dispatcher.createType("statusLogin", function(msg){
+                doc.div.loginBox().css("cursor", "auto");
+                doc.btn.login().prop("disabled", false);
+                doc.input.loginUsername().prop('disabled', false);
+                doc.input.loginPassword().prop('disabled', false);
+                if(msg.primeData === true) {
+                    showLoginDialog("hide", "loginAlert", "");
+                    showLoginDialog("hide", "registerAlert", "");
+                    doc.input.chatMessage().focus();
+                    doc.div.tabContainer().html("");
+                    doc.div.chatContainer().html("");
+                } else if(msg.primeData === false || msg.primeData === "occupied") {
+                    showLoginDialog("show", "loginAlert", msg.secondData);
+                }
+            });
 
-                var defaultChat = doc.a_defaultTab()[0];
-                defaultChat.onclick({currentTarget: defaultChat});
-        	} else if(msg.primeData === false || msg.primeData === "occupied") {
-        	    showLoginDialog("show", "loginAlert", msg.secondData);
-        	}
-        });
-
+            return dispatcher;
+        })();
 
         webSocket = new WebSocket("ws://" + hostIP + ":" + port + "/chat");
         webSocket.onmessage = function(msg_from_server){
@@ -124,7 +124,7 @@ function connect(firstMessage) {
         };
         setInterval(function(){
             webSocket.send(".");
-        }, (1000*60*4) + 50);
+        }, 1000*((60*4) + 50));
     }
 }
 
@@ -231,14 +231,14 @@ function wait(callback) {
     }, 5);
 }
 
-function inviteToChat(userList) {
+function inviteToChat(userList, chatName) {
     userList = userList.split(",");
     var users = (function(){
         var output = "";
         userList.forEach(function(user) {
             output += '{"name":"' + user + '"}, ';
         });
-        return output.substring(0, output.length - 1);
+        return output.substring(0, output.length - 2);
     }());
-    sendMessage('{"cmd":"openChat","params":{"users":[' + users + ']}}');
+    sendMessage('{"cmd":"openChat","params":{"users":[' + users + '], "chatName":"' + chatName + '"}}');
 }

@@ -8,7 +8,9 @@ $(document).ready(function(){
         document.title = "Chat2U";
         window.blurred = false;
     });
-     //-----------------SEND EVENTS
+
+
+    //-----------------SEND EVENTS
     function sendMessageEvent(e) {
         if (e.type === "click" || e.keyCode === 13) {
             sendMessageToChat(doc.input.chatMessage().val());
@@ -17,6 +19,7 @@ $(document).ready(function(){
     }
     doc.btn.chatSendMessage().click(sendMessageEvent);
     doc.input.chatMessage().keypress(sendMessageEvent);
+
 
     //-----------------LOGIN EVENTS
     function login(e) {
@@ -27,6 +30,8 @@ $(document).ready(function(){
     doc.input.loginUsername().keypress(login);
     doc.input.loginPassword().keypress(login);
     doc.btn.login().click(login);
+
+
     //------------------REGISTER EVENTS
     function register(e) {
         if (e.type === "click" || e.keyCode === 13) {
@@ -37,5 +42,4 @@ $(document).ready(function(){
     doc.input.registerUsername().keypress(register);
     doc.input.registerPassword().keypress(register);
     doc.input.registerSecPassword().keypress(register);
-
 });

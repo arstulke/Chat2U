@@ -9,10 +9,13 @@ import de.chat2u.authentication.AuthenticationService;
 import de.chat2u.authentication.UserRepository;
 import de.chat2u.cucumber.selenium.TestServer;
 import de.chat2u.model.AuthenticationUser;
-import de.chat2u.model.Chat;
 import de.chat2u.model.Message;
+import de.chat2u.model.User;
 import de.chat2u.utils.MessageBuilder;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -46,8 +49,8 @@ public class PrivatChat {
         String msg = "Eine Nachricht";
 
         //chat erstellen
-        Chat chat = new Chat(user1, user2);
-        String chatID = ChatServer.createChat(chat.getUsers());
+        Collection<User> users = Arrays.asList(user1, user2);
+        String chatID = ChatServer.createChat(users, "test");
 
         //nachricht senden
         this.msg = new Message(user1.getUsername(), msg, chatID);

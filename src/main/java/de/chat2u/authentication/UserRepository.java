@@ -114,4 +114,10 @@ public class UserRepository<U extends User> implements Iterable<U> {
     public synchronized int hashCode() {
         return users.keySet().hashCode();
     }
+
+    public Collection<User> toCollection() {
+        Collection<User> users = new ArrayList<>();
+        this.users.values().forEach(users::add);
+        return users;
+    }
 }

@@ -3,8 +3,6 @@ package de.chat2u.network;
 import de.chat2u.ChatServer;
 import de.chat2u.authentication.UserRepository;
 import de.chat2u.model.User;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
@@ -15,7 +13,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * Created ChatWebsocketHandler in de.chat2u
@@ -101,16 +101,15 @@ public class ChatWebSocketHandler {
                 ChatServer.sendTextMessageToChat(sender, (String) params.get("message"), (String) params.get("chatID"));
                 break;
             case "openChat":
-                UserRepository<User> users;
-                users = new UserRepository<>();
+                Collection<User> users = new ArrayList<>();
                 JSONArray userList = (JSONArray) params.get("users");
                 for (int i = 0; i < userList.length(); i++) {
                     String username = (String) ((JSONObject) userList.get(i)).get("name");
                     if (ChatServer.getOnlineUsers().getUsernameList().contains(username))
-                        users.addUser(ChatServer.getOnlineUsers().getByUsername(username));
+                        users.add(ChatServer.getOnlineUsers().getByUsername(username));
                 }
-                String chatID = ChatServer.createChat(users);
-                if (chatID != null) ChatServer.inviteUser(users, chatID);
+                String chatID = ChatServer.createChat(users, (String) params.get("chatName"));
+                if (chatID != null) ChatServer.inviteUser(chatID);
                 break;
         }
     }
