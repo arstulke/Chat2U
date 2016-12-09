@@ -10,10 +10,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import static de.chat2u.utils.MessageBuilder.buildMessage;
+import static de.chat2u.utils.MessageBuilder.buildTextMessage;
+import static j2html.TagCreator.*;
 
 /**
  * Bevor der {@link ChatServer} benutzt werden kann, muss die {@link ChatServer#initialize(AuthenticationService)}
@@ -39,7 +42,7 @@ public class ChatServer {
      */
     public static void initialize(AuthenticationService authenticationService) {
         ChatServer.authenticationService = authenticationService;
-        chats.overwrite(GLOBAL, onlineUsers, true);
+        chats.overwrite(GLOBAL, onlineUsers.toCollection());
     }
 
     private static void checksIllegalState() {
@@ -94,9 +97,31 @@ public class ChatServer {
                 user.setSession(userSession);
                 User simpleUser = user.getSimpleUser();
                 onlineUsers.addUser(simpleUser);
-                chats.overwrite(GLOBAL, onlineUsers, true);
                 msg = buildMessage("statusLogin", true, null).toString();
                 sendMessageToSession(msg, userSession);
+                chats.forEach(chat -> {
+                    try {
+                        if (chat.isPermanent()) {
+                            chats.overwrite(chat.getID(), onlineUsers.toCollection());
+
+                            String chatID = chat.getID();
+                            JSONObject json = buildMessage("tabControl", new JSONObject().put("chatID", chatID).put("name", chat.getName()), "open");
+                            sendMessageToSession(json.toString(), userSession);
+                        }
+
+                        if (chat.getID().equals(ChatServer.GLOBAL)) {
+                            String textMessage = article().with(
+                                    b("Chat2U"),
+                                    p("Herzlich Willkommen! Vielen Dank, dass du Chat2U benutzt.")
+                            ).render() + hr().render();
+                            JSONObject primeData = new JSONObject().put("chatID", ChatServer.GLOBAL).put("message", textMessage);
+                            JSONObject message = buildMessage("textMessage", primeData, onlineUsers.getUsernameList());
+                            sendMessageToSession(message.toString(), userSession);
+                        }
+                    } catch (JSONException | IOException e) {
+                        e.printStackTrace();
+                    }
+                });
                 sendTextMessageToChat("Server:", user.getUsername() + " joined the Server", GLOBAL);
                 return msg;
             } else {
@@ -131,12 +156,12 @@ public class ChatServer {
 
         containedChats.entrySet().forEach(chat -> {
             String chatID = chat.getKey();
-            if (!chatID.equals(GLOBAL) && chat.getValue().size() == 1) {
+            if (!chats.getChat(chatID).isPermanent() && chat.getValue().size() == 1) {
                 JSONObject json = buildMessage("tabControl", chatID, "close");
                 sendMessageToChat(json, chatID);
                 chats.removeChat(chatID);
             } else if (!chatID.equals(GLOBAL)) {
-                sendTextMessageToChat("Server", username + "left the Chat.", chatID);
+                sendTextMessageToChat("Server", username + " left the Chat.", chatID);
             }
         });
 
@@ -168,7 +193,7 @@ public class ChatServer {
      */
     public static void sendTextMessageToChat(String senderName, String message, String chatID) {
         Message msg = new Message(senderName, message, chatID);
-        JSONObject json = MessageBuilder.buildTextMessage(msg);
+        JSONObject json = buildTextMessage(msg);
         chats.getChat(chatID).forEach(user -> {
             try {
                 user.addMessageToHistory(msg);
@@ -220,17 +245,18 @@ public class ChatServer {
      *
      * @param users sind die User, die zu dem neuen Chat hinzugefügt werden sollen
      *              <p>
+     * @param name
      * @return die ChatID
      */
-    public static String createChat(UserRepository<User> users) {
-        return chats.createNewChat(users);
+    public static String createChat(Collection<User> users, String name) {
+        return chats.createNewChat(users, name);
     }
 
-    public static void inviteUser(UserRepository<User> users, String chatID) throws JSONException {
-        String name = users.getUsernameList().toString().replace("[", "").replace("]", "");
+    public static void inviteUser(String chatID) throws JSONException {
+        String name = chats.getChat(chatID).getName();
         JSONObject json = buildMessage("tabControl", new JSONObject().put("chatID", chatID).put("name", name), "open");
         String message = json.toString();
-        users.forEach(user -> {
+        chats.getChat(chatID).forEach(user -> {
             try {
                 sendMessageToSession(message, user.getSession());
             } catch (IOException e) {

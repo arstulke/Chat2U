@@ -1,12 +1,8 @@
 package de.chat2u.model;
 
 import de.chat2u.ChatServer;
-import de.chat2u.authentication.UserRepository;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -17,14 +13,16 @@ public class ChatContainer implements Iterable<Chat> {
     private final Map<String, Chat> chats = new HashMap<>();
 
     public ChatContainer() {
-        chats.put(ChatServer.GLOBAL, new Chat(true));
+        chats.put(ChatServer.GLOBAL, new Chat("Global", ChatServer.GLOBAL));
+        chats.put("global2", new Chat("Global2", "global2"));
+
     }
 
     /**
-     * @see ChatServer#createChat(UserRepository)
+     * @see ChatServer#createChat(Collection, String)
      */
-    public String createNewChat(UserRepository<User> users) {
-        Chat chat = new Chat(users, false);
+    public String createNewChat(Collection<User> users, String name) {
+        Chat chat = new Chat(users, name, "_");
         if (!chats.containsKey(chat.getID())) {
             chats.put(chat.getID(), chat);
             return chat.getID();
@@ -35,13 +33,12 @@ public class ChatContainer implements Iterable<Chat> {
     /**
      * Überschreibt einen Chat
      * <p>
-     *
-     * @param chatID ist die zu überschreibende ChatID
+     *  @param chatID ist die zu überschreibende ChatID
      * @param users  ist die neue benutzerliste des Chats
-     * @param global zeigt an ob der Chat der Globale Chat ist
      */
-    public void overwrite(String chatID, UserRepository<User> users, boolean global) {
-        chats.put(chatID, new Chat(users ,global));
+    public void overwrite(String chatID, Collection<User> users) {
+        Chat chat = chats.get(chatID);
+        chats.put(chatID, new Chat(users, chat.getName(), chatID));
     }
 
     /**
