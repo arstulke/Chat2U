@@ -1,8 +1,8 @@
 package de.chat2u.network;
 
 import de.chat2u.ChatServer;
-import de.chat2u.authentication.UserRepository;
 import de.chat2u.model.User;
+import de.chat2u.utils.MessageBuilder;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
@@ -36,6 +36,7 @@ public class ChatWebSocketHandler {
 
     /**
      * Wenn der Client die Verbindung schließt wird dieser {@link ChatServer#logout(String) ausgeloggt}
+     *
      * @param reason ist ein Grund
      */
     @OnWebSocketClose
@@ -108,8 +109,16 @@ public class ChatWebSocketHandler {
                     if (ChatServer.getOnlineUsers().getUsernameList().contains(username))
                         users.add(ChatServer.getOnlineUsers().getByUsername(username));
                 }
-                String chatID = ChatServer.createChat(users, (String) params.get("chatName"));
-                if (chatID != null) ChatServer.inviteUser(chatID);
+
+                if (users.contains(ChatServer.getUserBySession(webSocketSession))) {
+                    synchronized (this) {
+                        String chatID = ChatServer.createChat(users, (String) params.get("chatName"));
+                        if (chatID != null) ChatServer.inviteUser(chatID);
+                    }
+                } else {
+                    JSONObject msg = MessageBuilder.buildMessage("other", "blocked", "Du bist nicht in dem Chat enthalten.");
+                    ChatServer.sendMessageToSession(msg.toString(), webSocketSession);
+                }
                 break;
         }
     }

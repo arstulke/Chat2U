@@ -35,12 +35,12 @@ public class SearchUserSteps {
     public void istDieAnmeldeaufforderungVerschwunden(String clientName) throws Throwable {
         WebDriverWait wait = new WebDriverWait(client.get(clientName), 2);
         wait.until(ExpectedConditions.invisibilityOfElementLocated((By.id("loginBox"))));
-        Assert.assertThat(client.get(clientName).findElement(By.id("loginBox")).getAttribute("style"), is("visibility: hidden; cursor: auto;"));
+        Assert.assertThat(client.get(clientName).findElement(By.id("loginBox")).getAttribute("style"), is("visibility: hidden; display: none;"));
     }
 
     @Und("^\"([^\"]*)\" erscheint in der Liste der Benutzer, welche online sind$")
     public void erErscheintInDerListeDerBenutzerWelcheOnlineSind(String username) throws Throwable {
-        client.get(username).findElement(By.id("ul_userList")).findElement(By.id("user_" + username));
+        client.get(username).findElement(By.id("ul_userList")).findElement(By.id("user_" + username.hashCode()));
     }
 
 

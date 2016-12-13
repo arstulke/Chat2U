@@ -74,7 +74,7 @@ public class SendMessageSteps {
     @Und("^\"([^\"]*)\" die Nachricht \"([^\"]*)\" an \"([^\"]*)\" sendet$")
     public void dieNachrichtAnSendet(String username, String message, String toUser) throws Throwable {
         final WebDriver webDriver = client.get(username);
-        webDriver.findElement(By.id("user_" + toUser)).click();
+        webDriver.findElement(By.id("user_" + toUser.hashCode())).click();
 
         WebDriverWait wait = new WebDriverWait(webDriver, 10);
 

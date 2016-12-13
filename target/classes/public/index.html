@@ -1,164 +1,198 @@
 ﻿<!DOCTYPE html>
 <html>
-<head>
-    <link rel="apple-touch-icon" sizes="57x57" href="/assets/img/favicon/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="/assets/img/favicon/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="/assets/img/favicon/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/favicon/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="/assets/img/favicon/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="/assets/img/favicon/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="/assets/img/favicon/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="/assets/img/favicon/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/assets/img/favicon/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicon/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon/favicon-16x16.png">
-    <!--link rel="manifest" href="/assets/img/favicon/manifest.json"-->
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="/assets/img/favicon/ms-icon-144x144.png">
-    <meta name="theme-color" content="#ffffff">
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-    <meta name="description" content=""/>
-    <meta name="author" content=""/>
-    <title>Chat2U</title>
-    <link href="assets/css/bootstrap.css" rel="stylesheet"/>
+    <head>
+        <link rel="apple-touch-icon" sizes="57x57" href="/assets/img/favicon/apple-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="/assets/img/favicon/apple-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="/assets/img/favicon/apple-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/favicon/apple-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="/assets/img/favicon/apple-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="/assets/img/favicon/apple-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="/assets/img/favicon/apple-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="/assets/img/favicon/apple-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicon/apple-icon-180x180.png">
+        <link rel="icon" type="image/png" sizes="192x192" href="/assets/img/favicon/android-icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicon/favicon-96x96.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicon/favicon-16x16.png">
+        <!--link rel="manifest" href="/assets/img/favicon/manifest.json"-->
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileImage" content="/assets/img/favicon/ms-icon-144x144.png">
+        <meta name="theme-color" content="#ffffff">
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Chat2U</title>
+        <link href="assets/css/bootstrap.css" rel="stylesheet" />
 
-    <script src="assets/js/jquery-1.12.4.js"></script>
-    <script src="utils.js"></script>
-    <script src="dispatcher.js"></script>
-    <script src="doc.js"></script>
-    <script src="tabs.js"></script>
-</head>
+        <script src="assets/js/jquery-1.12.4.js"></script>
+        <script src="dispatcher.js"></script>
+        <script src="doc.js"></script>
+        <script src="popup.js"></script>
+        <script src="tabs.js"></script>
+        <script src="documentReady.js"></script>
+    </head>
 
-<body style="font-family:Verdana">
-
-<div id="loginBox">
-    <div class="row " style="padding-top:40px;">
-        <div class="col-md-4"></div>
-        <form class="col-md-4" name="login" action="" method="post"
-              style="margin-top: 12%;background: rgba(255, 255, 255, 0);margin-left: 5px;margin-right: 5px;">
-            <div class="panel panel-primary">
-                <div id="loginPanelHead" class="panel-heading" style="cursor: pointer">LOGIN<p style="float:right;">&#10224;</p></div>
-                <div id="loginPanelBody" style="display: block; height: 222px;" class="panel-body">
-                    <div id="loginAlert" style="visibility: visible; padding-left: 15px; color: #ff0000;">
-                    </div>
-                    <div class="col-md-12" style="margin-bottom:10px">
-                        Username:
-                        <input id="loginUsername" name="user" style="margin-bottom:10px; width: 100%"><br>
-                        Password:
-                        <input id="loginPassword" name="password" type="password" style="width: 100%">
-                    </div>
-                    <div class="col-md-9" style="margin-bottom:10px">
-                        <button id="login" class="btn btn-info" type="button">Login
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="panel panel-primary">
-                <div id="registerPanelHead" class="panel-heading" style="cursor: pointer">REGISTER<p style="float:right;">&#10225;</p></div>
-                <div id="registerPanelBody" class="panel-body" style="height: 222px; padding-top: 10px; display: none;">
-                    <div id="registerAlert" style="visibility: visible; padding-left: 15px; color: #ff0000;">
-                    </div>
-                    <div class="col-md-12" style="margin-bottom:10px">
-                        Username: <input id="registerUsername" name="user" style="margin-bottom:10px; width: 100%"><br>
-                        Password: <input id="registerPassword" name="password" type="password"
-                                         style="margin-bottom:10px; width: 100%">
-                        <input id="registerSecPassword" name="password2" type="password" style="width: 100%">
-                    </div>
-
-                    <div class="col-md-9" style="margin-bottom:10px">
-                        <button id="register" class="btn btn-info" type="button">Sign Up
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </form>
-        <div class="col-md-4"></div>
-    </div>
-</div>
-
-<div class="container">
-    <div class="row " style="padding-top:40px;">
-        <center><img src="assets/img/header.png" alt="Chat2U" style="height:150px; "></center>
-        <br/><br/>
-        <div class="col-md-2">
-            <div class="panel panel-primary">
-                <div class="panel-heading">Channel</div>
-                <div class="panel-body">
-                    <ul id="channellist" class="media-list">
-                        <li class="media">
-                            <div class="media-body">
-                                <a href="">
-                                    <div class="media"
-                                         style="border-radius: 5px; border: 2px solid #428bca; background:#cce7ff">
-                                        <div class="media-body" style="padding-left: 5px;">
-                                            <h5 style="margin-bottom: 0px;margin-top: 5px;">Shout Out</h5>
-                                            <small class="text-muted">Public</small>
-                                        </div>
-                                    </div>
-                                </a>
+    <body style="font-family:Verdana">
+        <div id="popup">
+            <div class="row " style="padding-top:40px;">
+                <div class="col-md-4"></div>
+                <form class="col-md-4Popup" method="post">
+                    <div id="loginBox">
+                        <div class="panel panel-primary">
+                            <div id="loginPanelHead" class="panel-heading" style="cursor: pointer">LOGIN
+                                <p style="float:right;">
+                                    &#10224;</p>
                             </div>
-                        </li>
-                        <li class="media">
-                            <div class="media-body">
-                                <a href="">
-                                    <div class="media" style="border-radius: 5px; border: 2px solid #428bca;">
-                                        <div class="media-body" style="padding-left: 5px;">
-                                            <h5 style="margin-bottom: 0px;margin-top: 5px;">Comming Soon</h5>
-                                            <small class="text-muted">Private</small>
-                                        </div>
-                                    </div>
-                                </a>
+                            <div id="loginPanelBody" style="display: block; height: 222px;" class="panel-body">
+                                <div id="loginAlert" style="visibility: visible; padding-left: 15px; color: #ff0000;">
+                                </div>
+                                <div class="col-md-12" style="margin-bottom:10px">
+                                    Username:
+                                    <input id="loginUsername" name="user" style="margin-bottom:10px; width: 100%">
+                                    <br> Password:
+                                    <input id="loginPassword" name="password" type="password" style="width: 100%">
+                                </div>
+                                <div class="col-md-9" style="margin-bottom:10px">
+                                    <button id="login" class="btn btn-info" type="button">Login
+                                    </button>
+                                </div>
                             </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="panel panel-info">
-                <div class="panel-heading">CHAT HISTORY</div>
-                <div class="panel-body" style=" padding-bottom: 0px;">
-                    <ul class="nav nav-tabs tab" id="tabContainer"></ul>
-                </div>
-                <div class="panel-body" style="overflow-y: scroll; height:500px;">
-                    <div id="chatContainer">
-                    </div>
-                </div>
-                <div class="panel-footer">
-                    <div class="input-group">
-                        <input type="text" id="chatMessage" class="form-control" placeholder="Enter Message"/>
-                        <span class="input-group-btn"><button id="chatSendMessage" class="btn btn-info" type="button">SEND</button></span>
-                    </div>
-                </div>
-            </div>
-            <label class="switch">
-                <input id="checkBox_notifications" type="checkbox" checked>
-                <span class="slider"></span>
-            </label>
-            Use notifications
-            <h6>BTW Thanks to
-                <a href="https://notificationsounds.com/notification-sounds/something-you-dont-mess-with-120">notificationsounds.com</a>
-            </h6>
-        </div>
-        <div class="col-md-4">
-            <div class="panel panel-primary">
-                <div class="panel-heading">ONLINE USERS</div>
-                <div class="panel-body">
-                    <input type="text" id="searchUser" class="form-control" placeholder="Search User"
-                           style=" margin-bottom: 16px;">
-                    <ul id="ul_userList" class="media-list">
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                        </div>
+                        <div class="panel panel-primary">
+                            <div id="registerPanelHead" class="panel-heading" style="cursor: pointer">REGISTER
+                                <p style="float:right;">&#10225;</p>
+                            </div>
+                            <div id="registerPanelBody" class="panel-body" style="height: 222px; padding-top: 10px; display: none;">
+                                <div id="registerAlert" style="visibility: visible; padding-left: 15px; color: #ff0000;">
+                                </div>
+                                <div class="col-md-12" style="margin-bottom:10px">
+                                    Username:
+                                    <input id="registerUsername" name="user" style="margin-bottom:10px; width: 100%">
+                                    <br> Password:
+                                    <input id="registerPassword" name="password" type="password" style="margin-bottom:10px; width: 100%">
+                                    <input id="registerSecPassword" name="password2" type="password" style="width: 100%">
+                                </div>
 
-<script src="localOps.js"></script>
-<script src="webSocket.js"></script>
-<script src="events.js"></script>
-</body>
+                                <div class="col-md-9" style="margin-bottom:10px">
+                                    <button id="register" class="btn btn-info" type="button">Sign Up
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="createGroupBox" style="visibility: hidden; display: none;">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">Create Group</div>
+                            <div style="display: block; height: 325px;" class="panel-body">
+                                <div class="col-md-12" style="margin-bottom:10px">
+                                    <div id="createGroupBoxAlert" style="color: #ff0000;">
+                                    </div>
+                                    Gruppenname:
+                                    <input id="groupName" name="user" style="margin-bottom:10px; width: 100%">
+                                    <br> Gruppenmitglieder:
+                                    <input id="searchGroupUser" placeholder="Suche..." name="user" style="margin-bottom:10px; width: 100%">
+                                    <br>
+                                    <div style="height: 130px; overflow:scroll; width: 100%;overflow-x: hidden;">
+                                        <ul id="groupUsers" class="media-list">
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-9" style="margin-bottom:10px">
+                                    <button id="cancelCreateGroup" class="btn btn-info" onclick="popup.closeCreateGroupBox()" type="button">Abbrechen</button>
+                                    <button id="createGroup" class="btn btn-info" type="button">Gruppe Erstellen</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="col-md-4"></div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row " style="padding-top:40px;">
+                <center><img src="assets/img/header.png" alt="Chat2U" style="height:150px; ">
+                </center>
+                <br/>
+                <br/>
+                <div class="col-md-2">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">Channel</div>
+                        <div class="panel-body">
+                            <ul id="channellist" class="media-list">
+                                <li class="media">
+                                    <div class="media-body">
+                                        <a href="">
+                                            <div class="media" style="border-radius: 5px; border: 2px solid #428bca; background:#cce7ff">
+                                                <div class="media-body" style="padding-left: 5px;">
+                                                    <h5 style="margin-bottom: 0px;margin-top: 5px;">Shout Out</h5>
+                                                    <small class="text-muted">Public</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </li>
+                                <li class="media">
+                                    <div class="media-body">
+                                        <a href="">
+                                            <div class="media" style="border-radius: 5px; border: 2px solid #428bca;">
+                                                <div class="media-body" style="padding-left: 5px;">
+                                                    <h5 style="margin-bottom: 0px;margin-top: 5px;">Comming Soon</h5>
+                                                    <small class="text-muted">Private</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">CHAT HISTORY</div>
+                        <div class="panel-body" style=" padding-bottom: 0px;">
+                            <ul class="nav nav-tabs tab" id="tabContainer">
+                                <li><a href="javascript:void(0)" class="tablinks" onclick="popup.openCreateGroupBox()" id="addGroup"><strong>+</strong></a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="panel-body" style="overflow-y: scroll; height:500px;">
+                            <div id="chatContainer">
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="input-group">
+                                <input type="text" id="chatMessage" class="form-control" placeholder="Enter Message" />
+                                <span class="input-group-btn"><button id="chatSendMessage" class="btn btn-info" type="button">SEND</button></span>
+                            </div>
+                        </div>
+                    </div>
+                    <label class="switch">
+                        <input id="checkBox_notifications" type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                    Use notifications
+                    <h6>BTW Thanks to
+                        <a href="https://notificationsounds.com/notification-sounds/something-you-dont-mess-with-120">notificationsounds.com</a>
+                    </h6>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">ONLINE USERS</div>
+                        <div class="panel-body">
+                            <input type="text" id="searchUser" class="form-control" placeholder="Search User" style=" margin-bottom: 16px;">
+                            <ul id="ul_userList" class="media-list">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="localOps.js"></script>
+        <script src="webSocket.js"></script>
+        <script src="events.js"></script>
+    </body>
 </html>

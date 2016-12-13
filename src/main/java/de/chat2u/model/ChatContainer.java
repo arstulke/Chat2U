@@ -21,11 +21,19 @@ public class ChatContainer implements Iterable<Chat> {
      */
     public String createNewChat(Collection<User> users, String name) {
         Chat chat = new Chat(users, name, "_");
-        if (!chats.containsKey(chat.getID())) {
+        if (!containsChat(chat)) {
             chats.put(chat.getID(), chat);
             return chat.getID();
         }
         return null;
+    }
+
+    private boolean containsChat(Chat chat) {
+        for(Chat chat1 : chats.values()) {
+            if(chat1.equals(chat))
+                return true;
+        }
+        return false;
     }
 
     /**

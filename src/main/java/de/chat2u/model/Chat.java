@@ -123,9 +123,9 @@ public class Chat implements Iterable<User> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Chat users1 = (Chat) o;
+        Chat chat = (Chat) o;
 
-        return users.equals(users1.users) && name.equals(users1.name);
+        return users.equals(chat.users) && name.equals(chat.name);
 
     }
 
