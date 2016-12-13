@@ -8,7 +8,10 @@ import cucumber.api.java.de.Und;
 import cucumber.api.java.de.Wenn;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import javax.annotation.Nullable;
@@ -19,7 +22,6 @@ import java.net.URL;
 import java.util.List;
 
 import static de.chat2u.cucumber.selenium.SeleniumHelper.*;
-import static org.hamcrest.CoreMatchers.is;
 
 /**
  * Chat2U:
@@ -78,10 +80,10 @@ public class SendMessageSteps {
 
         WebDriverWait wait = new WebDriverWait(webDriver, 10);
 
-        Alert alert = webDriver.switchTo().alert();
         String chatName = "Test123";
-        alert.sendKeys(chatName);
-        alert.accept();
+        fillInput(webDriver, "groupName", chatName);
+
+        webDriver.findElement(By.id("createGroup")).click();
 
         wait.until((Function<? super WebDriver, Boolean>) webDriver1 ->
                 webDriver1.findElements(By.xpath("//*[@id=\"tabContainer\"]/li/a")).size() >= 2);
@@ -107,10 +109,10 @@ public class SendMessageSteps {
     private void assertCreatedChat(WebDriver webDriver, String name) {
         List<WebElement> links = webDriver.findElements(By.xpath("//*[@id=\"tabContainer\"]/li/a"));
         boolean contained = false;
-        for(WebElement element : links){
+        for (WebElement element : links) {
             contained = contained || element.getText().contains(name);
         }
-        if(!contained)
+        if (!contained)
             Assert.fail("The tabContainer does not contains a tabLink with the give name.");
     }
 }
