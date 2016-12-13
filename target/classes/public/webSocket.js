@@ -17,15 +17,10 @@ function connect(firstMessage) {
                 doc.ul_userList().html("");
                 doc.ul_groupUsers().html("");
                 msg.secondData.forEach(function(user) {
-                    var userListItem = "<li id='user_" + user.id + "' class='media' username='" + user.name + "' style='display: block'><div class='media-body'><div class='media'><div class='pull-left'><img class='media-object img-circle' style='max-height:40px;' src='assets/img/newuser.png' /></div><div class='media-body' ><h5>" + user.name + "</h5><small class='text-muted'>DEIN STATUS</small></div></div></div></li>";
+                    var userListItem = '<li id="user_' + user.id + '" class="media" username="' + user.name + '" style="display: block"><div class="media-body"><div class="media"><div class="pull-left"><img class="media-object img-circle" style="max-height:40px;" src="assets/img/newuser.png" /></div><div class="media-body" ><h5>' + user.name + '</h5><small class="text-muted">DEIN STATUS</small></div></div></div></li>';
                     doc.ul_userList().html(doc.ul_userList().html() + userListItem);
                     if (myUsername !== user.name) {
-                        var users = [myUsername, user.name];
-                        //$("#user_" + user.id).attr("onclick", 'inviteToChat("' + users + '", prompt("Chat Name: "))');
-                        $("#user_" + user.id).click(function(){
-                            inviteToChat(users, prompt("Chat Name: "));
-                        });
-
+                        $("#user_" + user.id).attr("onclick", 'popup.openCreateGroupBox(["' + user.name + '"])');
 
                         var groupUserItem = '<li><input type="checkbox" value="' + user.name + '"/> ' + user.name + ' </li>';
                         doc.ul_groupUsers().html(doc.ul_groupUsers().html() + groupUserItem);

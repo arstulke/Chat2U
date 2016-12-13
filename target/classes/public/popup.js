@@ -23,11 +23,28 @@ var popup = (function(){
                 doc.div.loginBox().css('display', 'none');
              },
 
-            openCreateGroupBox: function() {
+            openCreateGroupBox: function(users) {
                 doc.alert_createGroupBox().html("");
 
                 doc.div.popup().css('visibility', 'visible');
                 doc.div.createGroupBox().css('visibility', 'visible');
+
+                if(users !== undefined && users.length > 0 && users[0] !== undefined) {
+                    for(var i = 0; i < users.length; i++) {
+                        var userItems = doc.ul_groupUsers().children();
+                        console.log(userItems);
+                        for(var j = 0; j < userItems.length; j++) {
+                            var checkbox = userItems[j].childNodes[0];
+                            console.log(checkbox);
+                            if(checkbox.value === users[i]) {
+                                checkbox.checked = true;
+                            }
+                        }
+                    }
+
+                    doc.input.groupName().val((users.concat(applicationData.username) + "").replace(",", ", "));
+                }
+
                 doc.div.createGroupBox().css('display', 'block');
             },
 
