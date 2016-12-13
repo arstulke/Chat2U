@@ -1,7 +1,8 @@
-var tabManager = {
-    currentChatID: null,
-    openTab: function(eventTarget, tabID) {
-        this.currentChatID = tabID;
+var tabManager = (function(global){
+    var localTabManager;
+
+    var openTab = function (eventTarget, tabID) {
+        localTabManager.currentChatID = tabID;
         var i;
 
         //set all tabLinks inactive
@@ -33,25 +34,45 @@ var tabManager = {
             nAttr += " active";
             element.setAttribute("class", nAttr);
         }
-    },
+    };
 
-    createTab: function(chatID, chatName){
-        var tabLink = "<li><a href='javascript:void(0)' class='tablinks' onclick=\"tabManager.openTab(event.currentTarget, '" + chatID + "')\">" + chatName + "</a></li>";
-        doc.div.tabContainer().html(doc.div.tabContainer().html() + tabLink);
+    localTabManager = {
+        currentChatID: null,
+        global: global,
+        openTab: openTab,
 
-        var chatContent = "<div id=\"" + chatID + "\" class=\"tabcontent\" style=\"display: none;\"><div class=\"media-body\">Du wurdest zum Chat <b>" + chatName + "</b> hinzugefügt.<hr></div></div>";
-        doc.div.chatContainer().html(doc.div.chatContainer().html() + chatContent);
-    },
+        createTab: function(chatID, chatName, type) {
+            var add = "";
+            if(type === this.global)
+                add += 'id="a_defaultTab"';
+            var tabLink = "<li><a href='javascript:void(0)' class='tablinks' onclick=\"tabManager.openTab(event.currentTarget, '" + chatID + "')\" " + add + ">" + chatName + "</a></li>";
+            doc.div.tabContainer().html(doc.div.tabContainer().html() + tabLink);
 
-    closeTab: function(chatID) {
-        var chatLinks = $(".tablinks");
-        for(i = 0; i < chatLinks.length; i++) {
-            if(chatLinks[i].getAttribute("onclick").includes(chatID)) {
-                chatLinks[i].parentElement.remove();
-                break;
+            var chatContent = "<div id=\"" + chatID + "\" class=\"tabcontent\" style=\"display: none;\"><div class=\"media-body\">Du wurdest zum Chat <b>" + chatName + "</b> hinzugefügt.<hr></div></div>";
+            doc.div.chatContainer().html(doc.div.chatContainer().html() + chatContent);
+
+            if(this.currentChatID === null && type === this.global)
+                doc.a_defaultTab().ready(function(){
+                    openTab(doc.a_defaultTab()[0], chatID);
+                });
+        },
+
+        closeTab: function(chatID) {
+            if(this.currentChatID === chatID && doc.a_defaultTab()[0] !== undefined) {
+                var id = doc.a_defaultTab().attr("onclick")
+                this.openTab(doc.a_defaultTab()[0], id.substring(id.indexOf(", '") + 3, id.indexOf("')")));
             }
-        }
 
-        $("#" + chatID).remove();
+            var chatLinks = $(".tablinks");
+            for(i = 0; i < chatLinks.length; i++) {
+                if(chatLinks[i].getAttribute("onclick").includes(chatID)) {
+                    chatLinks[i].parentElement.remove();
+                    break;
+                }
+            }
+
+            $("#" + chatID).remove();
+        }
     }
-};
+    return localTabManager;
+})("global");

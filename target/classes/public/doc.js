@@ -26,5 +26,6 @@ var doc = {
     },
 
     ul_userList: function(){ return $("#ul_userList"); },
+    a_defaultTab: function(){ return $("#a_defaultTab"); },
     checkBox_notifications: function(){ return $("#checkBox_notifications"); }
 };

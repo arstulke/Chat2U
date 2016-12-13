@@ -2,6 +2,7 @@ package de.chat2u.utils;
 
 import de.chat2u.ChatServer;
 import de.chat2u.model.Message;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,9 +21,9 @@ public class MessageBuilder {
         JSONObject output = new JSONObject();
         try {
             output.put("type", type);
-            if(primeData != null)
+            if (primeData != null)
                 output.put("primeData", primeData);
-            if(secondData != null)
+            if (secondData != null)
                 output.put("secondData", secondData);
             return output;
         } catch (JSONException e) {
@@ -32,12 +33,12 @@ public class MessageBuilder {
     }
 
     /**
-     *
      * <p>
-     * @param msg    textMessage
+     *
+     * @param msg textMessage
      */
     public static JSONObject buildTextMessage(Message msg) {
-        return buildMessage("textMessage", msg.getPrimeData(), ChatServer.getOnlineUsers().getUsernameList());
+        return buildMessage("textMessage", msg.getPrimeData(), getUserList());
     }
 
     /**
@@ -62,5 +63,20 @@ public class MessageBuilder {
      */
     public static String getTimestamp(Date date) {
         return new SimpleDateFormat("HH:mm dd.MM.yyyy").format(date);
+    }
+
+    public static Object getUserList() {
+        JSONArray users = new JSONArray();
+        ChatServer.getOnlineUsers().forEach(user -> {
+            JSONObject u = new JSONObject();
+            try {
+                u.put("name", user.getUsername());
+                u.put("id", user.getUsername().hashCode());
+            } catch (JSONException ignore) {
+            }
+            users.put(u);
+        });
+
+        return users;
     }
 }

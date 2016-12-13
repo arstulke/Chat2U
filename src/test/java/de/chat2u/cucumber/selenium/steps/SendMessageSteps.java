@@ -8,10 +8,7 @@ import cucumber.api.java.de.Und;
 import cucumber.api.java.de.Wenn;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import javax.annotation.Nullable;
@@ -22,6 +19,7 @@ import java.net.URL;
 import java.util.List;
 
 import static de.chat2u.cucumber.selenium.SeleniumHelper.*;
+import static org.hamcrest.CoreMatchers.is;
 
 /**
  * Chat2U:
@@ -74,26 +72,45 @@ public class SendMessageSteps {
     }
 
     @Und("^\"([^\"]*)\" die Nachricht \"([^\"]*)\" an \"([^\"]*)\" sendet$")
-    public void dieNachrichtAnSendet(String webdriver, String message, String toUser) throws Throwable {
-        client.get(webdriver).findElement(By.id("user_" + toUser)).click();
+    public void dieNachrichtAnSendet(String username, String message, String toUser) throws Throwable {
+        final WebDriver webDriver = client.get(username);
+        webDriver.findElement(By.id("user_" + toUser)).click();
 
-        WebDriverWait wait = new WebDriverWait(client.get(webdriver), 10);
+        WebDriverWait wait = new WebDriverWait(webDriver, 10);
 
-        wait.until((Function<? super WebDriver, Boolean>) webDriver ->
-                client.get(webdriver).findElements(By.xpath("//*[@id=\"tabContainer\"]/li/a")).size() >= 2);
+        Alert alert = webDriver.switchTo().alert();
+        String chatName = "Test123";
+        alert.sendKeys(chatName);
+        alert.accept();
 
-        List<WebElement> children = client.get(webdriver).findElements(By.xpath("//*[@id=\"tabContainer\"]/li/a"));
+        wait.until((Function<? super WebDriver, Boolean>) webDriver1 ->
+                webDriver1.findElements(By.xpath("//*[@id=\"tabContainer\"]/li/a")).size() >= 2);
+
+        assertCreatedChat(webDriver, chatName);
+
+
+        List<WebElement> children = webDriver.findElements(By.xpath("//*[@id=\"tabContainer\"]/li/a"));
         children.get(1).click();
         String chatID = getChatID(children.get(1));
         currentChatID = chatID;
-        sendMessage(webdriver, message);
+        sendMessage(username, message);
 
         wait.until(new Function<WebDriver, Boolean>() {
             @Nullable
             @Override
             public Boolean apply(@Nullable WebDriver webDriver) {
-                return client.get(webdriver).findElement(By.id(chatID)).getText().contains(message);
+                return webDriver.findElement(By.id(chatID)).getText().contains(message);
             }
         });
+    }
+
+    private void assertCreatedChat(WebDriver webDriver, String name) {
+        List<WebElement> links = webDriver.findElements(By.xpath("//*[@id=\"tabContainer\"]/li/a"));
+        boolean contained = false;
+        for(WebElement element : links){
+            contained = contained || element.getText().contains(name);
+        }
+        if(!contained)
+            Assert.fail("The tabContainer does not contains a tabLink with the give name.");
     }
 }

@@ -105,7 +105,10 @@ public class ChatServer {
                             chats.overwrite(chat.getID(), onlineUsers.toCollection());
 
                             String chatID = chat.getID();
-                            JSONObject json = buildMessage("tabControl", new JSONObject().put("chatID", chatID).put("name", chat.getName()), "open");
+                            JSONObject primeData = new JSONObject().put("chatID", chatID).put("name", chat.getName());
+                            if(chat.getID().equals(ChatServer.GLOBAL))
+                                primeData.put("type", "global");
+                            JSONObject json = buildMessage("tabControl", primeData, "open");
                             sendMessageToSession(json.toString(), userSession);
                         }
 
@@ -115,7 +118,7 @@ public class ChatServer {
                                     p("Herzlich Willkommen! Vielen Dank, dass du Chat2U benutzt.")
                             ).render() + hr().render();
                             JSONObject primeData = new JSONObject().put("chatID", ChatServer.GLOBAL).put("message", textMessage);
-                            JSONObject message = buildMessage("textMessage", primeData, onlineUsers.getUsernameList());
+                            JSONObject message = buildMessage("textMessage", primeData, MessageBuilder.getUserList());
                             sendMessageToSession(message.toString(), userSession);
                         }
                     } catch (JSONException | IOException e) {

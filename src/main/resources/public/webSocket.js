@@ -54,11 +54,11 @@ function connect(firstMessage) {
                 var myUsername = applicationData.username;
                 doc.ul_userList().html("");
                 msg.secondData.forEach(function(user) {
-                    var userListItem = "<li id='user_" + user + "' class='media' style='display: block'><div class='media-body'><div class='media'><div class='pull-left'><img class='media-object img-circle' style='max-height:40px;' src='assets/img/newuser.png' /></div><div class='media-body' ><h5>" + user + "</h5><small class='text-muted'>DEIN STATUS</small></div></div></div></li>";
+                    var userListItem = "<li id='user_" + user.id + "' class='media' style='display: block'><div class='media-body'><div class='media'><div class='pull-left'><img class='media-object img-circle' style='max-height:40px;' src='assets/img/newuser.png' /></div><div class='media-body' ><h5>" + user.name + "</h5><small class='text-muted'>DEIN STATUS</small></div></div></div></li>";
                     doc.ul_userList().html(doc.ul_userList().html() + userListItem);
-                    if (myUsername !== user) {
-                        var users = [myUsername, user];
-                        $("#user_" + user).attr("onclick", 'inviteToChat("' + users + '", prompt("Chat Name: "))');
+                    if (myUsername !== user.name) {
+                        var users = [myUsername, user.name];
+                        $("#user_" + user.id).attr("onclick", 'inviteToChat("' + users + '", prompt("Chat Name: "))');
                     }
                 });
                 updateChat(msg.primeData);
@@ -66,7 +66,7 @@ function connect(firstMessage) {
             dispatcher.createType("tabControl", function(msg){
                 if(msg.secondData === "open") {
                     notify();
-                    tabManager.createTab(msg.primeData.chatID, msg.primeData.name);
+                    tabManager.createTab(msg.primeData.chatID, msg.primeData.name, msg.primeData.type);
                 }
                 else {
                      notify();
