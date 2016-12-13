@@ -14,8 +14,6 @@ public class ChatContainer implements Iterable<Chat> {
 
     public ChatContainer() {
         chats.put(ChatServer.GLOBAL, new Chat("Global", ChatServer.GLOBAL));
-        chats.put("global2", new Chat("Global2", "global2"));
-
     }
 
     /**
