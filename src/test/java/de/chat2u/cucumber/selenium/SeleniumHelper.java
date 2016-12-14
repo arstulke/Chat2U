@@ -1,11 +1,13 @@
 package de.chat2u.cucumber.selenium;
 
+import com.google.common.base.Function;
 import de.chat2u.model.AuthenticationUser;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,12 +43,22 @@ public class SeleniumHelper {
         fillInput(driver, "registerSecPassword", user.getPassword());
         clickButton(driver, "register");
 
+        wait = new WebDriverWait(driver, 10);
+        wait.until(new Function<WebDriver, Boolean>() {
+            @Nullable
+            @Override
+            public Boolean apply(@Nullable WebDriver input) {
+                return input.findElement(By.id("popup")).getCssValue("visibility").equals("hidden");
+            }
+        });
+
         return driver;
     }
 
 
-    private static void fillInput(WebDriver driver, String id, CharSequence value) {
+    public static void fillInput(WebDriver driver, String id, CharSequence value) {
         WebElement input = driver.findElement(By.id(id));
+        input.clear();
         input.sendKeys(value);
     }
 
@@ -59,7 +71,7 @@ public class SeleniumHelper {
     public static List<String> getUserList(String webdriver) {
         List<String> userList = new ArrayList<>();
         List<WebElement> webElementList = client.get(webdriver).findElements(By.xpath("//*[@id=\"ul_userList\"]/li"));
-        webElementList.forEach(webElement -> userList.add(webElement.getAttribute("id").replace("user_", "")));
+        webElementList.forEach(webElement -> userList.add(webElement.getAttribute("username")));
 
         return userList;
     }

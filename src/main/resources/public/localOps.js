@@ -23,8 +23,16 @@ $(document).ready(function(){
     doc.input.searchUser().on('input', function() {
         var userList = doc.ul_userList().children();
         for(var i = 0; i < userList.length; i++) {
-            var matches = userList[i].id.includes('user_' + doc.input.searchUser().val());
+            var matches = userList[i].getAttribute("username").includes(doc.input.searchUser().val());
             userList[i].style.display  = matches ? "block" : "none";
         }
     });
+
+    doc.input.searchGroupUser().on('input', function() {
+            var userList = doc.ul_groupUsers().children();
+            for(var i = 0; i < userList.length; i++) {
+                var matches = userList[i].children[0].value.includes(doc.input.searchGroupUser().val());
+                userList[i].style.display  = matches ? "block" : "none";
+            }
+        });
 }());
