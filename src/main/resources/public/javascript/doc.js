@@ -34,6 +34,8 @@ var doc = {
     alert_createGroupBox: function(){ return $("#createGroupBoxAlert"); },
     ul_userList: function(){ return $("#ul_userList"); },
     ul_groupUsers: function(){ return $("#groupUsers"); },
+    ul_channelList: function(){ return $("#channelList"); },
+    ul_groupList: function(){ return $("#groupList"); },
     a_defaultTab: function(){ return $("#a_defaultTab"); },
     checkBox_notifications: function(){ return $("#checkBox_notifications"); }
 };
