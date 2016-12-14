@@ -6,6 +6,7 @@ import cucumber.api.java.Before;
 import cucumber.api.java.de.Dann;
 import cucumber.api.java.de.Und;
 import cucumber.api.java.de.Wenn;
+import de.chat2u.ChatServer;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.openqa.selenium.By;
@@ -36,13 +37,13 @@ public class SendMessageSteps {
     public void dieNachrichtAnAlleSendet(String webdriver, String msg) throws Throwable {
         sendMessage(webdriver, msg);
 
-        currentChatID = "global";
+        currentChatID = ChatServer.LobbyID;
         WebDriverWait wait = new WebDriverWait(client.get(webdriver), 10);
         wait.until(new Function<WebDriver, Boolean>() {
             @Nullable
             @Override
             public Boolean apply(@Nullable WebDriver webDriver) {
-                return client.get(webdriver).findElement(By.id("global")).getText().contains(msg);
+                return client.get(webdriver).findElement(By.id(ChatServer.LobbyID)).getText().contains(msg);
             }
         });
     }

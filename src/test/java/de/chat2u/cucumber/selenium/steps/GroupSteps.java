@@ -9,7 +9,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 import static de.chat2u.cucumber.selenium.SeleniumHelper.client;

@@ -1,4 +1,4 @@
-package de.chat2u.model;
+package de.chat2u.model.users;
 
 
 /**
@@ -12,7 +12,11 @@ public class AuthenticationUser extends User {
      * @see User
      */
     public AuthenticationUser(String username, String password) {
-        super(username);
+        this(new User(username), password);
+    }
+
+    public AuthenticationUser(User user, String password) {
+        super(user.getUsername(), user.getGroups());
         this.password = password;
     }
 
@@ -27,6 +31,6 @@ public class AuthenticationUser extends User {
      * @return einen neuen {@link User} ohne Passwort
      */
     public User getSimpleUser() {
-        return new User(getUsername(), getHistory(), getSession());
+        return new User(getUsername(), getGroups());
     }
 }

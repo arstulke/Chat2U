@@ -2,7 +2,14 @@ package de.chat2u;
 
 import de.chat2u.authentication.AuthenticationService;
 import de.chat2u.authentication.UserRepository;
-import de.chat2u.model.*;
+import de.chat2u.model.ChatContainer;
+import de.chat2u.model.Message;
+import de.chat2u.model.chats.Channel;
+import de.chat2u.model.chats.Chat;
+import de.chat2u.model.chats.Group;
+import de.chat2u.model.users.AuthenticationUser;
+import de.chat2u.model.users.OnlineUser;
+import de.chat2u.model.users.User;
 import de.chat2u.utils.MessageBuilder;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
@@ -11,8 +18,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import static de.chat2u.utils.MessageBuilder.buildMessage;
 import static de.chat2u.utils.MessageBuilder.buildTextMessage;
@@ -25,13 +30,14 @@ import static j2html.TagCreator.*;
  * <p>{@code ChatServer.initialize(new AuthenticationService(#YourFooRepository));}
  */
 public class ChatServer {
-
     private final static Logger LOGGER = Logger.getLogger(ChatServer.class);
 
-    private final static UserRepository<User> onlineUsers = new UserRepository<>();
-    private final static ChatContainer chats = new ChatContainer();
-    public static final String GLOBAL = "global";
     private static AuthenticationService authenticationService;
+    private final static UserRepository<OnlineUser> onlineUsers = new UserRepository<>();
+    public final static ChatContainer chats = new ChatContainer();
+
+    private static final String Lobby = "Lobby";
+    public static final String LobbyID = String.valueOf(Lobby.hashCode());
 
     /**
      * Initialiesiert die Inneren statischen Objekte
@@ -42,7 +48,8 @@ public class ChatServer {
      */
     public static void initialize(AuthenticationService authenticationService) {
         ChatServer.authenticationService = authenticationService;
-        chats.overwrite(GLOBAL, onlineUsers.toCollection());
+        chats.createNewChannel(Lobby);
+        chats.createNewChannel("Informatik");
     }
 
     private static void checksIllegalState() {
@@ -63,18 +70,18 @@ public class ChatServer {
      * @return eine Nachricht über erfolg, die angezeigt werden kann
      * @see AuthenticationService#addUser(AuthenticationUser) AuthenticationService für weitere Infos.
      */
-    public static String register(String username, String password) {
+    public static JSONObject register(String username, String password) {
         checksIllegalState();
 
         if (username == null || username.length() <= 3) {
-            return buildMessage("statusRegister", false, "Benutzername ist zu kurz.").toString();
+            return buildMessage("statusRegister", false, "Benutzername ist zu kurz.");
         }
 
         if (authenticationService.userExist(username))
-            return buildMessage("statusRegister", false, "Benutzername bereits vergeben.").toString();
+            return buildMessage("statusRegister", false, "Benutzername bereits vergeben.");
         AuthenticationUser authUser = new AuthenticationUser(username, password);
         authenticationService.addUser(authUser);
-        return buildMessage("statusRegister", true, null).toString();
+        return buildMessage("statusRegister", true, null);
     }
 
     /**
@@ -87,55 +94,64 @@ public class ChatServer {
      * @param userSession ist die Session des Users zum abspeichern
      * @return die Antwort der Datenbank über erfolg ("Gültige Zugangsdaten")
      */
-    public static String login(String username, String password, Session userSession) throws IOException {
+    public static String login(String username, String password, Session userSession) {
         checksIllegalState();
 
-        String msg;
+        JSONObject msg;
         if (!onlineUsers.containsUsername(username)) {
-            AuthenticationUser user = authenticationService.authenticate(username, password);
+            User offlineUser = authenticationService.authenticate(username, password);
+            OnlineUser user = offlineUser.toOnlineUser(userSession);
             if (user != null) {
-                user.setSession(userSession);
-                User simpleUser = user.getSimpleUser();
-                onlineUsers.addUser(simpleUser);
-                msg = buildMessage("statusLogin", true, null).toString();
+                onlineUsers.addUser(user);
+                msg = buildMessage("statusLogin", true, null);
                 sendMessageToSession(msg, userSession);
-                chats.forEach(chat -> {
-                    try {
-                        if (chat.isPermanent()) {
-                            chats.overwrite(chat.getID(), onlineUsers.toCollection());
 
-                            String chatID = chat.getID();
-                            JSONObject primeData = new JSONObject().put("chatID", chatID).put("name", chat.getName());
-                            if(chat.getID().equals(ChatServer.GLOBAL))
-                                primeData.put("type", "global");
-                            JSONObject json = buildMessage("tabControl", primeData, "open");
-                            sendMessageToSession(json.toString(), userSession);
-                        }
+                Channel chat = (Channel) chats.getChatByID(LobbyID);
+                try {
+                    chat.addUser(user);
+                    sendOpenChatCommand(user, chat);
 
-                        if (chat.getID().equals(ChatServer.GLOBAL)) {
-                            String textMessage = article().with(
-                                    b("Chat2U"),
-                                    p("Herzlich Willkommen! Vielen Dank, dass du Chat2U benutzt.")
-                            ).render() + hr().render();
-                            JSONObject primeData = new JSONObject().put("chatID", ChatServer.GLOBAL).put("message", textMessage);
-                            JSONObject message = buildMessage("textMessage", primeData, MessageBuilder.getUserList());
-                            sendMessageToSession(message.toString(), userSession);
-                        }
-                    } catch (JSONException | IOException e) {
-                        e.printStackTrace();
-                    }
+
+                    String textMessage = article().with(
+                            b("Chat2U"),
+                            p("Herzlich Willkommen! Vielen Dank, dass du Chat2U benutzt.")
+                    ).render() + hr().render();
+                    JSONObject primeData = new JSONObject().put("chatID", ChatServer.LobbyID).put("message", textMessage);
+                    JSONObject message = buildMessage("textMessage", primeData, MessageBuilder.getUserList());
+                    sendMessageToSession(message, userSession);
+
+                    message = MessageBuilder.buildTextMessage(new Message("Server", user.getUsername() + " joined the Server.", LobbyID));
+                    sendMessageToChat(message, LobbyID);
+                } catch (JSONException e) {
+                    LOGGER.debug(e);
+                }
+
+                user.getGroups().forEach(chatID -> {
+                    Group group = (Group) chats.getChatByID(chatID);
+
+                    //sendOpenChatCommand
+                    sendOpenChatCommand(user, group);
+                    group.getHistory().forEach(message -> {
+                        JSONObject json = MessageBuilder.buildTextMessage(message);
+                        sendMessageToSession(json, userSession);
+                    });
+
+                    Message messageObject = new Message("Server", user.getUsername() + " goes online.", chatID);
+                    JSONObject message = MessageBuilder.buildTextMessage(messageObject);
+                    sendMessageToChat(message, chatID);
+                    group.getHistory().add(messageObject);
                 });
-                sendTextMessageToChat("Server:", user.getUsername() + " joined the Server", GLOBAL);
-                return msg;
+
+                return msg.toString();
             } else {
-                msg = MessageBuilder.buildMessage("statusLogin", false, "Ungültige Zugangsdaten.").toString();
+                msg = buildMessage("statusLogin", false, "Ungültige Zugangsdaten.");
             }
         } else {
-            msg = MessageBuilder.buildMessage("statusLogin", "occupied", "Benutzer bereits angemeldet.").toString();
+            msg = buildMessage("statusLogin", "occupied", "Benutzer bereits angemeldet.");
         }
 
         sendMessageToSession(msg, userSession);
-        return msg;
+        return msg.toString();
     }
 
     /**
@@ -145,46 +161,47 @@ public class ChatServer {
      * @param username ist der eindeutige username des Benutzers.
      */
     public static void logout(String username) {
-        User user = onlineUsers.getByUsername(username);
+        OnlineUser user = onlineUsers.getByUsername(username);
         onlineUsers.removeUser(user);
 
-        Map<String, Chat> containedChats = new HashMap<>();
-        chats.forEach(chat -> {
-            if (chat.contains(user)) {
-                String chatID = chat.getID();
-                chat.removeUser(user);
-                containedChats.put(chatID, chat);
-            }
+        user.getGroups().forEach(chatID -> {
+            Chat chat = chats.getChatByID(chatID);
+            if (chat instanceof Group)
+                sendTextMessageToChat("Server", username + " goes offline.", chatID);
         });
 
-        containedChats.entrySet().forEach(chat -> {
-            String chatID = chat.getKey();
-            if (!chats.getChat(chatID).isPermanent() && chat.getValue().size() == 1) {
-                JSONObject json = buildMessage("tabControl", chatID, "close");
-                sendMessageToChat(json, chatID);
-                chats.removeChat(chatID);
-            } else if (!chatID.equals(GLOBAL)) {
-                sendTextMessageToChat("Server", username + " left the Chat.", chatID);
-            }
-        });
+        chats.getChannels().forEach(channel -> ((Channel) channel).removeUser(user));
 
-        sendTextMessageToChat("Server:", username + " left the Server", GLOBAL);
+        authenticationService.logout(user);
+
+        sendTextMessageToChat("Server:", username + " left the Server", LobbyID);
     }
 
     private static void sendMessageToChat(JSONObject json, String chatID) {
-        String msg = json.toString();
-        chats.getChat(chatID).forEach(user -> {
-            try {
-                sendMessageToSession(msg, user.getSession());
-            } catch (IOException e) {
-                LOGGER.debug(e);
-            }
-        });
+        Chat chat = chats.getChatByID(chatID);
+        chat.forEach(user -> sendMessageToUser(json, user));
     }
 
     //endregion
 
-    //region send Messages
+    //region SendMessageTo
+    private static void sendMessageToUser(JSONObject msg, User user) {
+        OnlineUser onlineUser = onlineUsers.getByUsername(user.getUsername());
+        if (onlineUser != null)
+            sendMessageToSession(msg, onlineUser.getSession());
+    }
+
+    private static void sendOpenChatCommand(OnlineUser user, Chat chat) {
+        try {
+            JSONObject primeData = new JSONObject().put("chatID", chat.getID()).put("name", chat.getName());
+            if (chat.getID().equals(LobbyID))
+                primeData.put("type", "global");
+            JSONObject json = buildMessage("tabControl", primeData, "open");
+            sendMessageToUser(json, user);
+        } catch (JSONException e) {
+            LOGGER.debug(e);
+        }
+    }
 
     /**
      * Sendet eine Nachricht an alle Benutzer in einem Chat
@@ -197,13 +214,10 @@ public class ChatServer {
     public static void sendTextMessageToChat(String senderName, String message, String chatID) {
         Message msg = new Message(senderName, message, chatID);
         JSONObject json = buildTextMessage(msg);
-        chats.getChat(chatID).forEach(user -> {
-            try {
-                user.addMessageToHistory(msg);
-            } catch (Exception e) {
-                LOGGER.debug(e);
-            }
-        });
+
+        Chat chat = chats.getChatByID(chatID);
+        if (chat instanceof Group)
+            ((Group) chat).getHistory().add(msg);
         sendMessageToChat(json, chatID);
     }
 
@@ -213,14 +227,43 @@ public class ChatServer {
      *
      * @param session ist die WebSocketSession an welche das gesendet wird.
      * @param msg     ist die zu sendene Nachricht.
-     * @throws IOException wenn das senden fehlschlägt.
      */
-    public static void sendMessageToSession(String msg, Session session) throws IOException {
+    public static void sendMessageToSession(JSONObject msg, Session session) {
         if (session != null)
-            session.getRemote().sendString(msg);
+            try {
+                session.getRemote().sendString(msg.toString());
+            } catch (IOException e) {
+                LOGGER.debug(e);
+            }
+    }
+    //endregion
+
+    //region Chats
+
+    /**
+     * Erstellt einen neuen Chat
+     * <p>
+     *
+     * @param name  ist der Name den der neue Chat haben soll
+     * @param users sind die User, die zu dem neuen Chat hinzugefügt werden sollen
+     *              <p>
+     * @return die ChatID
+     */
+    public static String createGroup(String name, Collection<User> users) {
+        return chats.createGroup(name, users);
     }
 
+    public static void inviteUserToChat(String chatID) {
+        Chat chat = chats.getChatByID(chatID);
+        chats.getChatByID(chatID).forEach(user -> {
+            sendOpenChatCommand(onlineUsers.get(user), chat);
+            if (chat instanceof Group)
+                user.getGroups().add(chatID);
+        });
+    }
     //endregion
+
+    //region Other
 
     /**
      * Gibt die Liste der User, welche online sind zurück.
@@ -228,7 +271,7 @@ public class ChatServer {
      *
      * @return die {@link User} in einem {@link UserRepository}
      */
-    public static UserRepository<User> getOnlineUsers() {
+    public static UserRepository<OnlineUser> getOnlineUsers() {
         return onlineUsers;
     }
 
@@ -242,29 +285,5 @@ public class ChatServer {
         return onlineUsers.getBySession(webSocketSession);
     }
 
-    /**
-     * Erstellt einen neuen Chat
-     * <p>
-     *
-     * @param users sind die User, die zu dem neuen Chat hinzugefügt werden sollen
-     *              <p>
-     * @param name
-     * @return die ChatID
-     */
-    public static String createChat(Collection<User> users, String name) {
-        return chats.createNewChat(users, name);
-    }
-
-    public static void inviteUser(String chatID) throws JSONException {
-        String name = chats.getChat(chatID).getName();
-        JSONObject json = buildMessage("tabControl", new JSONObject().put("chatID", chatID).put("name", name), "open");
-        String message = json.toString();
-        chats.getChat(chatID).forEach(user -> {
-            try {
-                sendMessageToSession(message, user.getSession());
-            } catch (IOException e) {
-                LOGGER.debug(e);
-            }
-        });
-    }
+    //endregion
 }
