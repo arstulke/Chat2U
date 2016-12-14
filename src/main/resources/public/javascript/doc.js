@@ -9,6 +9,7 @@ var doc = {
         registerPanelBody: function(){ return $("#registerPanelBody"); },
         chatContainer: function(){ return $("#chatContainer"); },
         tabContainer: function(){ return $("#tabContainer"); },
+		searchUser: function(){ return $("#userList"); },
     },
 
     input: {

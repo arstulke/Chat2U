@@ -5,7 +5,7 @@ $(document).ready(function(){
         window.blurred = true;
     });
     $(window).focus(function() {
-        document.title = "Chat2U";
+        document.title = "Sí - Dein Chatdienst";
         window.blurred = false;
     });
 

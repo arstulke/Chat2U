@@ -10,6 +10,7 @@ var popup = (function(){
                 doc.div.popup().css('visibility', 'visible');
                 doc.div.loginBox().css('visibility', 'visible');
                 doc.div.loginBox().css('display', 'block');
+                doc.div.popup().css('display', 'block');
             },
 
             openLoginAlert: function(alertID, message) {
@@ -21,6 +22,7 @@ var popup = (function(){
                 doc.div.popup().css('visibility', 'hidden');
                 doc.div.loginBox().css('visibility', 'hidden');
                 doc.div.loginBox().css('display', 'none');
+                doc.div.popup().css('display', 'none');
              },
 
             openCreateGroupBox: function(users) {
@@ -32,10 +34,8 @@ var popup = (function(){
                 if(users !== undefined && users.length > 0 && users[0] !== undefined) {
                     for(var i = 0; i < users.length; i++) {
                         var userItems = doc.ul_groupUsers().children();
-                        console.log(userItems);
                         for(var j = 0; j < userItems.length; j++) {
                             var checkbox = userItems[j].childNodes[0];
-                            console.log(checkbox);
                             if(checkbox.value === users[i]) {
                                 checkbox.checked = true;
                             }
@@ -46,6 +46,7 @@ var popup = (function(){
                 }
 
                 doc.div.createGroupBox().css('display', 'block');
+                doc.div.popup().css('display', 'block');
             },
 
             openCreateGroupBoxAlert: function(message) {
@@ -57,6 +58,7 @@ var popup = (function(){
                 doc.div.popup().css('visibility', 'hidden');
                 doc.div.createGroupBox().css('visibility', 'hidden');
                 doc.div.createGroupBox().css('display', 'none');
+                doc.div.popup().css('display', 'none');
             }
     }
     return popup;

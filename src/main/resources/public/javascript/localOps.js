@@ -21,9 +21,16 @@ $(document).ready(function(){
 
     //Search User in Userlist
     doc.input.searchUser().on('input', function() {
+		if(doc.input.searchUser().val().length === 0){
+			//hide
+			doc.div.searchUser().css("display", "none")
+		} else if(doc.input.searchUser().val().length === 1 && doc.div.searchUser().css("display") === "none"){
+			//show
+			doc.div.searchUser().css("display", "block")
+		}
         var userList = doc.ul_userList().children();
         for(var i = 0; i < userList.length; i++) {
-            var matches = userList[i].getAttribute("username").includes(doc.input.searchUser().val());
+            var matches = userList[i].children[1].children[0].getAttribute("username").includes(doc.input.searchUser().val());
             userList[i].style.display  = matches ? "block" : "none";
         }
     });

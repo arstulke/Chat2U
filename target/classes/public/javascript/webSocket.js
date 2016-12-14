@@ -17,7 +17,7 @@ function connect(firstMessage) {
                 doc.ul_userList().html("");
                 doc.ul_groupUsers().html("");
                 msg.secondData.forEach(function(user) {
-                    var userListItem = '<li id="user_' + user.id + '" class="media" username="' + user.name + '" style="display: block"><div class="media-body"><div class="media"><div class="pull-left"><img class="media-object img-circle" style="max-height:40px;" src="assets/img/newuser.png" /></div><div class="media-body" ><h5>' + user.name + '</h5><small class="text-muted">DEIN STATUS</small></div></div></div></li>';
+                    var userListItem = '<li id="user_' + user.id + '" class="media" style="display: block"> <i class="fa fa-user fa-4x pull-left"></i><div class="news-item-info"><div class="name" username="' + user.name + '"><a href="#">' + user.name + '</a></div><div class="position"> </div><div class="time">Last logged-in: Mar 12, 19:02</div></div></li>'
                     doc.ul_userList().html(doc.ul_userList().html() + userListItem);
                     if (myUsername !== user.name) {
                         $("#user_" + user.id).attr("onclick", 'popup.openCreateGroupBox(["' + user.name + '"])');
@@ -149,7 +149,7 @@ function sendMessageToChat(message) {
 function notify() {
     if (window.blurred && doc.checkBox_notifications()[0].checked) {
         audio.play();
-        document.title = "Chat2U ( ! )";
+        document.title = "Sí ( ! )";
     }
 }
 
