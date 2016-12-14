@@ -51,7 +51,7 @@ public class ChatWebSocketHandler {
     @OnWebSocketMessage
     public void onMessage(Session webSocketSession, String message) {
         try {
-            handleCommandFromClient(webSocketSession, message);
+            handleCommandFromClient(webSocketSession, new JSONObject(message));
         } catch (JSONException e) {
             LOGGER.debug(String.format("Fehler beim Verarbeiten der Nachricht(%s): %s", message.replaceAll("\n", ""), e.getMessage()));
         } catch (Exception e) {
@@ -74,16 +74,14 @@ public class ChatWebSocketHandler {
      * <p>
      *
      * @param webSocketSession ist die Session des Clients
-     * @param message          ist die Nachricht des Clients
+     * @param messageObject          ist die Nachricht des Clients im JSOn Format
      * @throws JSONException wenn die Nachricht kein JSON ist oder ein falsches Format hat
      * @throws IOException   wenn keine Nachricht zurück an den Client gesenet werden kann.
      */
-    private void handleCommandFromClient(Session webSocketSession, String message) throws IOException, JSONException {
-        JSONObject object = new JSONObject(message);
-        JSONObject params = (JSONObject) object.get("params");
+    private void handleCommandFromClient(Session webSocketSession, JSONObject messageObject) throws IOException, JSONException {
+        JSONObject params = (JSONObject) messageObject.get("params");
 
-
-        String cmd = (String) object.get("cmd");
+        String cmd = (String) messageObject.get("cmd");
         switch (cmd) {
             case "register": {
                 JSONObject msg = ChatServer.register((String) params.get("username"), (String) params.get("passwort"));
@@ -99,7 +97,10 @@ public class ChatWebSocketHandler {
                 break;
             case "sendMessage":
                 String sender = ChatServer.getUserBySession(webSocketSession).getUsername();
-                ChatServer.sendTextMessageToChat(sender, params.getString("message"), params.getString("chatID"));
+                String message = params.getString("message");
+                if(message.trim().length() > 0) {
+                    ChatServer.sendTextMessageToChat(sender, message, params.getString("chatID"));
+                }
                 break;
             case "openChat":
                 Collection<User> users = new ArrayList<>();

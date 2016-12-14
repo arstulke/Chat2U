@@ -100,4 +100,18 @@ $(document).ready(function(){
             popup.closeCreateGroupBox();
         }
     });
+
+
+    //notification Cookie
+    doc.checkBox_notifications().click(function() {
+        Cookie.set("notificationsAllowed", doc.checkBox_notifications().prop("checked"), new Date());
+    });
+
+    if(Cookie.get("notificationsAllowed").length > 0) {
+        var value = Cookie.get("notificationsAllowed").toString();
+        doc.checkBox_notifications().prop("checked", value == "true");
+    } else {
+        doc.checkBox_notifications().prop("checked", true);
+        Cookie.set("notificationsAllowed", doc.checkBox_notifications().prop("checked"), new Date());
+    }
 });
