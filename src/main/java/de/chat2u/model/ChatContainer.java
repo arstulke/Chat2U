@@ -1,9 +1,14 @@
 package de.chat2u.model;
 
 import de.chat2u.ChatServer;
+import de.chat2u.model.chats.Channel;
+import de.chat2u.model.chats.Chat;
+import de.chat2u.model.chats.Group;
+import de.chat2u.model.users.User;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * Created ChatContainer in de.chat2u.model
@@ -12,62 +17,29 @@ import java.util.function.Consumer;
 public class ChatContainer implements Iterable<Chat> {
     private final Map<String, Chat> chats = new HashMap<>();
 
-    public ChatContainer() {
-        chats.put(ChatServer.GLOBAL, new Chat("Global", ChatServer.GLOBAL));
-    }
-
     /**
-     * @see ChatServer#createChat(Collection, String)
+     * @see ChatServer#createGroup(String, Collection)
      */
-    public String createNewChat(Collection<User> users, String name) {
-        Chat chat = new Chat(users, name, "_");
-        if (!containsChat(chat)) {
-            chats.put(chat.getID(), chat);
-            return chat.getID();
+    public String createGroup(String name, Collection<User> users) {
+        Group groupChat = new Group(name, new HashSet<>(users));
+        if (!chats.containsKey(groupChat.getID())) {
+            chats.put(groupChat.getID(), groupChat);
+            return groupChat.getID();
         }
+
         return null;
     }
 
-    private boolean containsChat(Chat chat) {
-        for(Chat chat1 : chats.values()) {
-            if(chat1.equals(chat))
-                return true;
+    public void createNewChannel(String name) {
+        String chatID = String.valueOf(name.hashCode());
+        Chat chat = new Channel(name, chatID);
+        if (!chats.containsKey(chatID)) {
+            chats.put(chatID, chat);
         }
-        return false;
     }
 
-    /**
-     * Überschreibt einen Chat
-     * <p>
-     *  @param chatID ist die zu überschreibende ChatID
-     * @param users  ist die neue benutzerliste des Chats
-     */
-    public void overwrite(String chatID, Collection<User> users) {
-        Chat chat = chats.get(chatID);
-        chats.put(chatID, new Chat(users, chat.getName(), chatID));
-    }
-
-    /**
-     * Entfernt einen Chat aus der Liste der Chats
-     * <p>
-     *
-     * @param chatID ist die ID des zu löschenden Chats
-     */
-    public void removeChat(String chatID) {
-        chats.remove(chatID);
-    }
-
-    /**
-     * Gibt den Chat zur gegebenen ChatID zurück.
-     * <p>
-     *
-     * @param chatID ist die ID des zu suchenden Chats
-     *               <p>
-     * @return das Chat Objekt zur dazugehörigen ChatID
-     * <p>
-     */
-    public Chat getChat(String chatID) {
-        return chats.get(chatID);
+    public Chat getChatByID(String id) {
+        return chats.get(id);
     }
 
     @Override
@@ -83,5 +55,9 @@ public class ChatContainer implements Iterable<Chat> {
     @Override
     public Spliterator<Chat> spliterator() {
         return chats.values().spliterator();
+    }
+
+    public Stream<Chat> getChannels() {
+        return chats.values().stream().filter(chat -> chat instanceof Channel && chat.getID().equals(ChatServer.LobbyID));
     }
 }

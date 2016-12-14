@@ -4,7 +4,7 @@ import cucumber.api.java.de.Dann;
 import cucumber.api.java.de.Und;
 import cucumber.api.java.de.Wenn;
 import de.chat2u.cucumber.selenium.SeleniumHelper;
-import de.chat2u.model.AuthenticationUser;
+import de.chat2u.model.users.AuthenticationUser;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.openqa.selenium.By;
@@ -12,7 +12,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static de.chat2u.cucumber.selenium.SeleniumHelper.client;
 import static de.chat2u.cucumber.selenium.SeleniumHelper.registerUser;

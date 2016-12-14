@@ -1,7 +1,7 @@
 package de.chat2u.cucumber.selenium;
 
 import com.google.common.base.Function;
-import de.chat2u.model.AuthenticationUser;
+import de.chat2u.model.users.AuthenticationUser;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * by ARSTULKE on 23.11.2016.
  */
 public class SeleniumHelper {
-    public static Map<String, WebDriver> client = new ConcurrentHashMap<>();
+    public final static Map<String, WebDriver> client = new ConcurrentHashMap<>();
 
     public static WebDriver loginUser(AuthenticationUser user, WebDriver driver) {
         fillInput(driver, "user", user.getUsername());

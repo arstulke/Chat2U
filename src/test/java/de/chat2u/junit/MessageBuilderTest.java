@@ -24,10 +24,10 @@ public class MessageBuilderTest {
         Date date = new Date();
 
         //when
-        String builtMessage = MessageBuilder.buildTextMessage(new Message(sender, msg, ChatServer.GLOBAL)).toString();
+        String builtMessage = MessageBuilder.buildTextMessage(new Message(sender, msg, ChatServer.LobbyID)).toString();
 
         //then
-        String expectedMessage = "{\"secondData\":[],\"type\":\"textMessage\",\"primeData\":{\"chatID\":\"" + ChatServer.GLOBAL + "\",\"message\":\"<article><b>User1<\\/b> Hallo, wie geht es dir ?<p><small class=\\\"text-muted\\\">" + MessageBuilder.getTimestamp(date) + "<\\/small><\\/p><\\/article>\"}}";
+        String expectedMessage = "{\"secondData\":[],\"type\":\"textMessage\",\"primeData\":{\"chatID\":\"" + ChatServer.LobbyID + "\",\"message\":\"<article><b>User1<\\/b> Hallo, wie geht es dir ?<p><small class=\\\"text-muted\\\">" + MessageBuilder.getTimestamp(date) + "<\\/small><\\/p><\\/article>\"}}";
         assertThat(builtMessage, is(expectedMessage));
     }
 }

@@ -1,6 +1,7 @@
 package de.chat2u.authentication;
 
-import de.chat2u.model.User;
+import de.chat2u.model.users.OnlineUser;
+import de.chat2u.model.users.User;
 import org.eclipse.jetty.websocket.api.Session;
 
 import java.util.*;
@@ -68,20 +69,15 @@ public class UserRepository<U extends User> implements Iterable<U> {
         return users.containsKey(username);
     }
 
-    public User getBySession(Session webSocketSession) {
+    public OnlineUser getBySession(Session webSocketSession) {
         for (User user : users.values()) {
-            if (user.getSession().equals(webSocketSession))
-                return user;
+            if (user instanceof OnlineUser) {
+                OnlineUser onlineUser = (OnlineUser) user;
+                if (onlineUser.getSession().equals(webSocketSession))
+                    return onlineUser;
+            }
         }
         return null;
-    }
-
-    public synchronized boolean contains(U user) {
-        return users.values().contains(user);
-    }
-
-    public synchronized int size() {
-        return users.size();
     }
 
     @Override
@@ -119,5 +115,9 @@ public class UserRepository<U extends User> implements Iterable<U> {
         Collection<User> users = new ArrayList<>();
         this.users.values().forEach(users::add);
         return users;
+    }
+
+    public U get(User user) {
+        return users.get(user.getUsername());
     }
 }

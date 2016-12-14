@@ -8,9 +8,9 @@ import de.chat2u.ChatServer;
 import de.chat2u.authentication.AuthenticationService;
 import de.chat2u.authentication.UserRepository;
 import de.chat2u.cucumber.selenium.TestServer;
-import de.chat2u.model.AuthenticationUser;
+import de.chat2u.model.users.AuthenticationUser;
 import de.chat2u.model.Message;
-import de.chat2u.model.User;
+import de.chat2u.model.users.User;
 import de.chat2u.utils.MessageBuilder;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 
@@ -50,7 +50,7 @@ public class PrivatChat {
 
         //chat erstellen
         Collection<User> users = Arrays.asList(user1, user2);
-        String chatID = ChatServer.createChat(users, "test");
+        String chatID = ChatServer.createGroup("test", users);
 
         //nachricht senden
         this.msg = new Message(user1.getUsername(), msg, chatID);

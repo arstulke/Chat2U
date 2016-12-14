@@ -1,6 +1,7 @@
 package de.chat2u.authentication;
 
-import de.chat2u.model.AuthenticationUser;
+import de.chat2u.model.users.AuthenticationUser;
+import de.chat2u.model.users.User;
 
 /**
  * Created AuthenticationService in de.chat2u
@@ -22,10 +23,10 @@ public class AuthenticationService {
      * @param password ist das Passwort, des einzuloggenden Benutzers
      * @return den Datenbankuser aus dem {@link UserRepository}.
      */
-    public AuthenticationUser authenticate(String username, String password) {
+    public User authenticate(String username, String password) {
         AuthenticationUser authenticationUser = repo.getByUsername(username);
         if (authenticationUser != null && authenticationUser.getPassword().equals(password)) {
-            return authenticationUser;
+            return authenticationUser.getSimpleUser();
         }
         return null;
     }
@@ -52,4 +53,8 @@ public class AuthenticationService {
         return repo.containsUsername(username);
     }
 
+    public void logout(User user) {
+        String password = repo.getByUsername(user.getUsername()).getPassword();
+        repo.addUser(new AuthenticationUser(user, password));
+    }
 }

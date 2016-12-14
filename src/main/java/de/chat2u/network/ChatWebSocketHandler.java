@@ -1,7 +1,7 @@
 package de.chat2u.network;
 
 import de.chat2u.ChatServer;
-import de.chat2u.model.User;
+import de.chat2u.model.users.User;
 import de.chat2u.utils.MessageBuilder;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
@@ -86,7 +86,7 @@ public class ChatWebSocketHandler {
         String cmd = (String) object.get("cmd");
         switch (cmd) {
             case "register": {
-                String msg = ChatServer.register((String) params.get("username"), (String) params.get("passwort"));
+                JSONObject msg = ChatServer.register((String) params.get("username"), (String) params.get("passwort"));
                 ChatServer.sendMessageToSession(msg, webSocketSession);
                 break;
             }
@@ -99,25 +99,25 @@ public class ChatWebSocketHandler {
                 break;
             case "sendMessage":
                 String sender = ChatServer.getUserBySession(webSocketSession).getUsername();
-                ChatServer.sendTextMessageToChat(sender, (String) params.get("message"), (String) params.get("chatID"));
+                ChatServer.sendTextMessageToChat(sender, params.getString("message"), params.getString("chatID"));
                 break;
             case "openChat":
                 Collection<User> users = new ArrayList<>();
                 JSONArray userList = (JSONArray) params.get("users");
                 for (int i = 0; i < userList.length(); i++) {
-                    String username = (String) ((JSONObject) userList.get(i)).get("name");
+                    String username = userList.getJSONObject(i).getString("name");
                     if (ChatServer.getOnlineUsers().getUsernameList().contains(username))
                         users.add(ChatServer.getOnlineUsers().getByUsername(username));
                 }
 
                 if (users.contains(ChatServer.getUserBySession(webSocketSession))) {
                     synchronized (this) {
-                        String chatID = ChatServer.createChat(users, (String) params.get("chatName"));
-                        if (chatID != null) ChatServer.inviteUser(chatID);
+                        String chatID = ChatServer.createGroup((String) params.get("chatName"), users);
+                        if (chatID != null) ChatServer.inviteUserToChat(chatID);
                     }
                 } else {
                     JSONObject msg = MessageBuilder.buildMessage("other", "blocked", "Du bist nicht in dem Chat enthalten.");
-                    ChatServer.sendMessageToSession(msg.toString(), webSocketSession);
+                    ChatServer.sendMessageToSession(msg, webSocketSession);
                 }
                 break;
         }

@@ -7,7 +7,8 @@ import cucumber.api.java.de.Wenn;
 import de.chat2u.ChatServer;
 import de.chat2u.authentication.AuthenticationService;
 import de.chat2u.authentication.UserRepository;
-import de.chat2u.model.AuthenticationUser;
+import de.chat2u.model.users.AuthenticationUser;
+import org.json.JSONObject;
 
 import static de.chat2u.ChatServer.register;
 import static org.hamcrest.CoreMatchers.is;
@@ -19,7 +20,7 @@ import static org.junit.Assert.assertThat;
  */
 public class RegisterSteps {
 
-    private String response;
+    private JSONObject response;
 
     private void initialize(UserRepository<AuthenticationUser> repo) {
         AuthenticationService authenticationService = new AuthenticationService(repo);
@@ -59,12 +60,12 @@ public class RegisterSteps {
 
     @Dann("^wird das Registrieren abgeschlossen$")
     public void wirdDasRegistrierenAbgeschlossen() throws Throwable {
-        assertThat(response, is("{\"type\":\"statusRegister\",\"primeData\":true}"));
+        assertThat(response.toString(), is("{\"type\":\"statusRegister\",\"primeData\":true}"));
     }
 
     @Dann("^wird das Registrieren abgeschlossen mit der Nachricht \"([^\"]*)\"$")
     public void wirdDasRegistrierenGenehmigtMitDerNachricht(String message) throws Throwable {
-        assertThat(response, is("{\"secondData\":\"" + message + "\",\"type\":\"statusRegister\",\"primeData\":false}"));
+        assertThat(response.toString(), is("{\"secondData\":\"" + message + "\",\"type\":\"statusRegister\",\"primeData\":false}"));
     }
 
     //endregion

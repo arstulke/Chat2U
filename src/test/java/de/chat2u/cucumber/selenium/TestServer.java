@@ -4,20 +4,15 @@ import de.chat2u.ChatServer;
 import de.chat2u.Server;
 import de.chat2u.authentication.AuthenticationService;
 import de.chat2u.authentication.UserRepository;
-import de.chat2u.model.AuthenticationUser;
-import de.chat2u.network.ChatWebSocketHandler;
+import de.chat2u.model.users.AuthenticationUser;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
-import org.openqa.selenium.WebDriver;
-import spark.Spark;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -42,13 +37,7 @@ public class TestServer {
 
         ChatServer.initialize(authenticationService);
 
-        userData.forEach((username, pw) -> {
-            try {
-                ChatServer.login(username, pw, getMockSession());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        userData.forEach((username, pw) -> ChatServer.login(username, pw, getMockSession()));
 
         Server.start();
     }

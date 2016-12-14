@@ -2,7 +2,7 @@ package de.chat2u;
 
 import de.chat2u.authentication.AuthenticationService;
 import de.chat2u.authentication.UserRepository;
-import de.chat2u.model.AuthenticationUser;
+import de.chat2u.model.users.AuthenticationUser;
 import de.chat2u.network.ChatWebSocketHandler;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
