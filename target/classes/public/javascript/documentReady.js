@@ -55,10 +55,13 @@ $(document).ready(function() {
     doc.input.searchUser().on('input', function() {
         if(doc.input.searchUser().val().length === 0){
             //hide
-            doc.div.searchUser().css("display", "none")
-        } else if(doc.input.searchUser().val().length === 1 && doc.div.searchUser().css("display") === "none"){
+            doc.div.searchUser().slideUp();
+            doc.div.searchUser().css("visibility", "hidden");
+        } else if(doc.input.searchUser().val().length === 1 && doc.div.searchUser().css("visibility") === "hidden"){
             //show
-            doc.div.searchUser().css("display", "block")
+            doc.div.searchUser().css("visibility", "visible");
+            doc.div.searchUser().slideDown();
+
         }
         var userList = doc.ul_userList().children();
         for(var i = 0; i < userList.length; i++) {

@@ -100,8 +100,8 @@ public class ChatServer {
         JSONObject msg;
         if (!onlineUsers.containsUsername(username)) {
             User offlineUser = authenticationService.authenticate(username, password);
-            OnlineUser user = offlineUser.toOnlineUser(userSession);
-            if (user != null) {
+            if (offlineUser != null) {
+                OnlineUser user = offlineUser.toOnlineUser(userSession);
                 onlineUsers.addUser(user);
                 msg = buildMessage("statusLogin", true, null);
                 sendMessageToSession(msg, userSession);
