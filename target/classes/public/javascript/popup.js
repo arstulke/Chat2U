@@ -59,6 +59,7 @@ var popup = (function(){
                 doc.div.createGroupBox().css('visibility', 'hidden');
                 doc.div.createGroupBox().css('display', 'none');
                 doc.div.popup().css('display', 'none');
+                doc.input.searchUser().html("");
             }
     }
     return popup;
