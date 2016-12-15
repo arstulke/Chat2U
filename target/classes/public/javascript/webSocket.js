@@ -32,8 +32,8 @@ function connect(firstMessage) {
                     var chat = $("#" + msg.chatID).children()[0];
                     chat.innerHTML += "\n" + msg.message;
 
-                    var scrollBar = doc.div.chatContainer().parent();
-                    scrollBar.scrollTop = scrollBar.scrollHeight;
+                    var scroll = doc.div.chatContainer().parent();
+                    scroll.scrollTop(scroll.scrollHeight);
                 })(msg.primeData);
             });
             dispatcher.createType("tabControl", function(msg){
