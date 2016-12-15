@@ -93,7 +93,8 @@ function connect(firstMessage) {
             popup.openLoginAlert("loginAlert", "<p style='color:#F70505'>Client disconnected!</p>"); //show login Dialog
         };
         setInterval(function(){
-            webSocket.send(".");
+            if(webSocket.readyState === 1)
+                webSocket.send(".");
         }, 1000*((60*4) + 50));
     }
 }
