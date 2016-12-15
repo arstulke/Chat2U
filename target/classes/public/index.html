@@ -113,7 +113,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="index.html"
+            <a class="navbar-brand" href=""
                style="padding-top: 0px; padding-left: 0px; padding-bottom: 0px; padding-right: 0px;">
                 <img src="assets/img/dark2.png" alt="Logo" style="height:40px; margin-top: 5px; margin-left: 5px;">
             </a>
@@ -128,7 +128,7 @@
                         Profil</a>
                 </li>
                 <li>
-                    <a href="#"><i class="fa fa-power-off"></i> Logout</a>
+                    <a style="cursor: pointer" onclick="webSocket.close()"><i class="fa fa-power-off"></i> Logout</a>
                 </li>
                 <li class="divider-vertical"></li>
                 <li>
@@ -188,7 +188,7 @@
                             <ul id="groupList" class="news-list">
                                 <li>
                                     <div class='name'>
-                                        <a href='javascript:void(0)' class='tablinks' onclick='popup.openCreateGroupBox()' id='addGroup'>
+                                        <a href='javascript:void(0)' onclick='popup.openCreateGroupBox()' id='addGroup'>
                                             <span class="badge">+</span><b>  Füge eine Gruppe hinzu</b>
                                         </a>
                                     </div>

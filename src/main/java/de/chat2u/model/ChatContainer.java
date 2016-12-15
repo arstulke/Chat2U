@@ -31,10 +31,9 @@ public class ChatContainer implements Iterable<Chat> {
     }
 
     public void createNewChannel(String name) {
-        String chatID = String.valueOf(name.hashCode());
-        Chat chat = new Channel(name, chatID);
-        if (!chats.containsKey(chatID)) {
-            chats.put(chatID, chat);
+        Chat chat = new Channel(name);
+        if (!chats.containsKey(chat.getID())) {
+            chats.put(chat.getID(), chat);
         }
     }
 
@@ -58,6 +57,6 @@ public class ChatContainer implements Iterable<Chat> {
     }
 
     public Stream<Chat> getChannels() {
-        return chats.values().stream().filter(chat -> chat instanceof Channel && chat.getID().equals(ChatServer.LobbyID));
+        return chats.values().stream().filter(chat -> chat instanceof Channel);
     }
 }

@@ -1,6 +1,7 @@
 package de.chat2u.network;
 
 import de.chat2u.ChatServer;
+import de.chat2u.model.users.OnlineUser;
 import de.chat2u.model.users.User;
 import de.chat2u.utils.MessageBuilder;
 import org.apache.log4j.Logger;
@@ -16,6 +17,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+
+import static de.chat2u.ChatServer.chats;
 
 /**
  * Created ChatWebsocketHandler in de.chat2u
@@ -53,7 +56,8 @@ public class ChatWebSocketHandler {
         try {
             handleCommandFromClient(webSocketSession, new JSONObject(message));
         } catch (JSONException e) {
-            LOGGER.debug(String.format("Fehler beim Verarbeiten der Nachricht(%s): %s", message.replaceAll("\n", ""), e.getMessage()));
+            if(!message.equals("."))
+                LOGGER.debug(String.format("Fehler beim Verarbeiten der Nachricht(%s): %s", message.replaceAll("\n", ""), e.getMessage()));
         } catch (Exception e) {
             LOGGER.error(e);
 
@@ -74,12 +78,13 @@ public class ChatWebSocketHandler {
      * <p>
      *
      * @param webSocketSession ist die Session des Clients
-     * @param messageObject          ist die Nachricht des Clients im JSOn Format
+     * @param messageObject    ist die Nachricht des Clients im JSOn Format
      * @throws JSONException wenn die Nachricht kein JSON ist oder ein falsches Format hat
      * @throws IOException   wenn keine Nachricht zurück an den Client gesenet werden kann.
      */
     private void handleCommandFromClient(Session webSocketSession, JSONObject messageObject) throws IOException, JSONException {
         JSONObject params = (JSONObject) messageObject.get("params");
+        OnlineUser user = ChatServer.getUserBySession(webSocketSession);
 
         String cmd = (String) messageObject.get("cmd");
         switch (cmd) {
@@ -96,10 +101,23 @@ public class ChatWebSocketHandler {
                 ChatServer.logout((String) params.get("username"));
                 break;
             case "sendMessage":
-                String sender = ChatServer.getUserBySession(webSocketSession).getUsername();
-                String message = params.getString("message");
-                if(message.trim().length() > 0) {
-                    ChatServer.sendTextMessageToChat(sender, message, params.getString("chatID"));
+                if (chats.getChatByID(params.getString("chatID")).getUsers().contains(user)) {
+                    String sender = user.getUsername();
+                    String message = params.getString("message");
+                    if (message.trim().length() > 0) {
+                        ChatServer.sendTextMessageToChat(sender, message, params.getString("chatID"));
+                    }
+                }
+                break;
+            case "channelOp":
+                switch (params.getString("op")) {
+                    case "join":
+                        ChatServer.joinChannel(params.getString("chatID"), user);
+                        break;
+
+                    case "left":
+                        ChatServer.leftChannel(params.getString("chatID"), user);
+                        break;
                 }
                 break;
             case "openChat":
@@ -111,7 +129,7 @@ public class ChatWebSocketHandler {
                         users.add(ChatServer.getOnlineUsers().getByUsername(username));
                 }
 
-                if (users.contains(ChatServer.getUserBySession(webSocketSession))) {
+                if (users.contains(user)) {
                     synchronized (this) {
                         String chatID = ChatServer.createGroup((String) params.get("chatName"), users);
                         if (chatID != null) ChatServer.inviteUserToChat(chatID);
