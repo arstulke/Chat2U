@@ -74,7 +74,7 @@ function connect(firstMessage) {
                     popup.closeLogin();
 
                     doc.input.chatMessage().focus();
-                    doc.div.tabContainer().html("<li><a href='javascript:void(0)' class='tablinks' onclick='popup.openCreateGroupBox()' id='addGroup'><strong>+</strong></a></li>");
+
                     doc.div.chatContainer().html("");
                 } else if(msg.primeData === false || msg.primeData === "occupied") {
                     popup.openLoginAlert("loginAlert", msg.secondData);

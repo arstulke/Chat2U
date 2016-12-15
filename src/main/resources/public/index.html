@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sí - Dein Chatdienst</title>
 
-    <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="assets/font-awesome/css/font-awesome.min.css" />
-    <link rel="stylesheet" type="text/css" href="assets/css/local.css" />
+    <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/font-awesome/css/font-awesome.min.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/local.css"/>
 
     <script src="assets/js/jquery-1.12.4.js"></script>
     <script src="javascript/dispatcher.js"></script>
@@ -19,173 +19,198 @@
 </head>
 
 <body>
-    <div id="popup">
-        <div class="row " style="padding-top:40px;">
-            <form class="col-md-4Popup" method="post">
-			<center><img src="assets/img/light.png" alt="Logo" style="height:170px; margin-bottom: 5px; margin-top: 5px; margin-left: 5px;"></center>
-                <div id="loginBox">
-                    <div class="panel panel-primary" style="background-color: rgba(42, 159, 214, 0); color:#525252; border-color: #6d6d6d;">
-                        <div id="loginPanelHead" class="panel-heading" style="cursor: pointer;background-color: rgba(42, 159, 214, 0);color:#525252;border-bottom-width: 0px;">LOGIN
-                            <p style="float:right;"> &#10224;</p>
-                        </div>
-                        <div id="loginPanelBody" style="display: block; height: 222px;" class="panel-body">
-                            <div id="loginAlert" style="visibility: visible; padding-left: 15px; color: #ff0000;">
-                            </div>
-                            <div class="col-md-12" style="margin-bottom:10px">
-                                Username:
-                                <input id="loginUsername" name="user" style="margin-bottom:10px; width: 100%">
-                                <br> Password:
-                                <input id="loginPassword" name="password" type="password" style="width: 100%">
-                            </div>
-                            <div class="col-md-9" style="margin-bottom:10px">
-                                <button id="login" class="btn btn-primary" type="button">Login
-                                </button>
-                            </div>
-                        </div>
+<div id="popup">
+    <div class="row " style="padding-top:40px;">
+        <form class="col-md-4Popup" method="post">
+            <center><img src="assets/img/light.png" alt="Logo"
+                         style="height:170px; margin-bottom: 5px; margin-top: 5px; margin-left: 5px;"></center>
+            <div id="loginBox">
+                <div class="panel panel-primary"
+                     style="background-color: rgba(42, 159, 214, 0); color:#525252; border-color: #6d6d6d;">
+                    <div id="loginPanelHead" class="panel-heading"
+                         style="cursor: pointer;background-color: rgba(42, 159, 214, 0);color:#525252;border-bottom-width: 0px;">
+                        LOGIN
+                        <p style="float:right;"> &#10224;</p>
                     </div>
-                    <div class="panel panel-primary" style="background-color: rgba(42, 159, 214, 0); color:#525252; border-color: #6d6d6d;">
-						<div id="registerPanelHead" class="panel-heading" style="cursor: pointer;background-color: rgba(42, 159, 214, 0);color:#525252;border-bottom-width: 0px;">REGISTER
-                            <p style="float:right;">&#10225;</p>
+                    <div id="loginPanelBody" style="display: block; height: 222px;" class="panel-body">
+                        <div id="loginAlert" style="visibility: visible; padding-left: 15px; color: #ff0000;">
                         </div>
-                        <div id="registerPanelBody" class="panel-body" style="height: 222px; padding-top: 10px; display: none;">
-                            <div id="registerAlert" style="visibility: visible; padding-left: 15px; color: #ff0000;">
-                            </div>
-                            <div class="col-md-12" style="margin-bottom:10px">
-                                Username:
-                                <input id="registerUsername" name="user" style="margin-bottom:10px; width: 100%">
-                                <br> Password:
-                                <input id="registerPassword" name="password" type="password" style="margin-bottom:10px; width: 100%">
-                                <input id="registerSecPassword" name="password2" type="password" style="width: 100%">
-                            </div>
-
-                            <div class="col-md-9" style="margin-bottom:10px">
-                                <button id="register" class="btn btn-primary" type="button">Sign Up
-                                </button>
-                            </div>
+                        <div class="col-md-12" style="margin-bottom:10px">
+                            Username:
+                            <input id="loginUsername" name="user" style="margin-bottom:10px; width: 100%">
+                            <br> Password:
+                            <input id="loginPassword" name="password" type="password" style="width: 100%">
+                        </div>
+                        <div class="col-md-9" style="margin-bottom:10px">
+                            <button id="login" class="btn btn-primary" type="button">Login
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div id="createGroupBox" style="visibility: hidden; display: none;">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">Create Group</div>
-                        <div style="display: block; height: 325px;" class="panel-body">
-                            <div class="col-md-12" style="margin-bottom:10px">
-                                <div id="createGroupBoxAlert" style="color: #ff0000;">
-                                </div>
-                                Gruppenname:
-                                <input id="groupName" name="user" style="margin-bottom:10px; width: 100%">
-                                <br> Gruppenmitglieder:
-                                <input id="searchGroupUser" placeholder="Suche..." name="user" style="margin-bottom:10px; width: 100%">
-                                <br>
-                                <div style="height: 130px; overflow:scroll; width: 100%;overflow-x: hidden;">
-                                    <ul id="groupUsers" class="media-list">
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="col-md-9" style="margin-bottom:10px">
-                                <button id="cancelCreateGroup" class="btn btn-primary" onclick="popup.closeCreateGroupBox()" type="button">Abbrechen</button>
-                                <button id="createGroup" class="btn btn-primary" type="button">Gruppe Erstellen</button>
-                            </div>
+                <div class="panel panel-primary"
+                     style="background-color: rgba(42, 159, 214, 0); color:#525252; border-color: #6d6d6d;">
+                    <div id="registerPanelHead" class="panel-heading"
+                         style="cursor: pointer;background-color: rgba(42, 159, 214, 0);color:#525252;border-bottom-width: 0px;">
+                        REGISTER
+                        <p style="float:right;">&#10225;</p>
+                    </div>
+                    <div id="registerPanelBody" class="panel-body"
+                         style="height: 222px; padding-top: 10px; display: none;">
+                        <div id="registerAlert" style="visibility: visible; padding-left: 15px; color: #ff0000;">
+                        </div>
+                        <div class="col-md-12" style="margin-bottom:10px">
+                            Username:
+                            <input id="registerUsername" name="user" style="margin-bottom:10px; width: 100%">
+                            <br> Password:
+                            <input id="registerPassword" name="password" type="password"
+                                   style="margin-bottom:10px; width: 100%">
+                            <input id="registerSecPassword" name="password2" type="password" style="width: 100%">
+                        </div>
+
+                        <div class="col-md-9" style="margin-bottom:10px">
+                            <button id="register" class="btn btn-primary" type="button">Sign Up
+                            </button>
                         </div>
                     </div>
-                </div>
-            </form>
-        </div>
-    </div>
-    <div id="wrapper">
-        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="index.html" style="padding-top: 0px; padding-left: 0px; padding-bottom: 0px; padding-right: 0px;">
-                    <img src="assets/img/dark2.png" alt="Logo" style="height:40px; margin-top: 5px; margin-left: 5px;">
-                </a>
-            </div>
-            <div class="collapse navbar-collapse navbar-ex1-collapse">
-                <ul id="channelList" class="nav navbar-nav side-nav">
-
-                </ul>
-                <ul class="nav navbar-nav navbar-right navbar-user">
-                    <li>
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> Dein Profil</a>
-                    </li>
-                    <li>
-                        <a href="#"><i class="fa fa-power-off"></i> Logout</a>
-                    </li>
-                    <li class="divider-vertical"></li>
-                    <li><form class="navbar-search">
-                            <input type="text" id="searchUser" placeholder="Suche Benuzer..." class="form-control">
-							<div id= "userList" style="display:none;">
-							<div class="panel-body feed" style="height: 100%;">
-								<div class="tab-pane clearfix active">
-									<ul id="ul_userList" class="news-list">
-									</ul>
-								</div>
-							</div>
-						</div>
-                        </form>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-        <div id="page-wrapper">
-            <div class="row">
-                <div class="col-lg-12">
-                    <h1>Sí <small>Online anywhere.</small></h1>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h3 class="panel-title"><i class="fa fa-comment"></i> Deine Chat</h3>
-                        </div>
-                        <div class="panel-body" style=" padding-bottom: 0px;">
-                            <ul class="nav nav-tabs tab" id="tabContainer"></ul>
-                        </div>
-                        <div class="panel-body" style="overflow-y: scroll; height:500px;">
-                            <div id="chatContainer">
+            <div id="createGroupBox" style="visibility: hidden; display: none;">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">Create Group</div>
+                    <div style="display: block; height: 325px;" class="panel-body">
+                        <div class="col-md-12" style="margin-bottom:10px">
+                            <div id="createGroupBoxAlert" style="color: #ff0000;">
                             </div>
-                        </div>
-                        <div class="panel-footer">
-                            <div class="input-group">
-                                <input type="text" id="chatMessage" class="form-control" placeholder="Enter Message" />
-                                <span class="input-group-btn"><button id="chatSendMessage" class="btn btn-primary" type="button">SEND</button></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h3 class="panel-title"><i class="fa fa-rss"></i> Gruppen</h3>
-                        </div>
-                        <div class="panel-body feed" style="overflow-y: scroll; height:615px;">
-                            <div class="tab-pane clearfix active" id="stats">
-                                <ul id="groupList" class="news-list">
-
+                            Gruppenname:
+                            <input id="groupName" name="user" style="margin-bottom:10px; width: 100%">
+                            <br> Gruppenmitglieder:
+                            <input id="searchGroupUser" placeholder="Suche..." name="user"
+                                   style="margin-bottom:10px; width: 100%">
+                            <br>
+                            <div style="height: 130px; overflow:scroll; width: 100%;overflow-x: hidden;">
+                                <ul id="groupUsers" class="media-list">
                                 </ul>
                             </div>
                         </div>
+                        <div class="col-md-9" style="bottom: 0; margin-bottom:10px; position: absolute;">
+                            <button id="cancelCreateGroup" class="btn btn-primary" onclick="popup.closeCreateGroupBox()"
+                                    type="button">Abbrechen
+                            </button>
+                            <button id="createGroup" class="btn btn-primary" type="button">Gruppe Erstellen</button>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-12">
-                    <label class="switch">
-                        <input id="checkBox_notifications" type="checkbox" checked="">
-                        <span class="slider"></span>
-                    </label>
-                    Use notifications
-                    <h6>BTW Thanks to
-                        <a href="https://notificationsounds.com/notification-sounds/something-you-dont-mess-with-120">notificationsounds.com</a>
-                    </h6>
-                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="wrapper">
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html"
+               style="padding-top: 0px; padding-left: 0px; padding-bottom: 0px; padding-right: 0px;">
+                <img src="assets/img/dark2.png" alt="Logo" style="height:40px; margin-top: 5px; margin-left: 5px;">
+            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul id="channelList" class="nav navbar-nav side-nav">
+
+            </ul>
+            <ul class="nav navbar-nav navbar-right navbar-user">
+                <li>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> Dein
+                        Profil</a>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-power-off"></i> Logout</a>
+                </li>
+                <li class="divider-vertical"></li>
+                <li>
+                    <form class="navbar-search">
+                        <input type="text" id="searchUser" placeholder="Suche Benuzer..." class="form-control">
+                        <div id="userList"
+                             style="visibility: hidden;margin-top: 6px;border-left-width: 2px;border-bottom-width: 2px;">
+                            <div class="panel-body feed" style="height: 100%;padding-bottom: 5px;padding-top: 7px;">
+                                <div class="tab-pane clearfix active">
+                                    <ul id="ul_userList" class="news-list">
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>Sí
+                    <small>Online anywhere.</small>
+                </h1>
             </div>
         </div>
-	</div>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><i class="fa fa-comment"></i> Deine Chats</h3>
+                    </div>
+                    <div class="panel-body" style=" padding-bottom: 0px;">
+                        <ul class="nav nav-tabs tab" id="tabContainer"></ul>
+                    </div>
+                    <div class="panel-body" style="overflow-y: scroll; height:500px;">
+                        <div id="chatContainer">
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="input-group">
+                            <input type="text" id="chatMessage" class="form-control" placeholder="Enter Message"/>
+                            <span class="input-group-btn"><button id="chatSendMessage" class="btn btn-primary"
+                                                                  type="button">SEND</button></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><i class="fa fa-rss"></i> Gruppen</h3>
+                    </div>
+                    <div class="panel-body feed" style="overflow-y: scroll; height:615px;">
+                        <div class="tab-pane clearfix active" id="stats">
+                            <ul id="groupList" class="news-list">
+                                <li>
+                                    <div class='name'>
+                                        <a href='javascript:void(0)' class='tablinks' onclick='popup.openCreateGroupBox()' id='addGroup'>
+                                            <span class="badge">+</span><b>  Füge eine Gruppe hinzu</b>
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <label class="switch">
+                    <input id="checkBox_notifications" type="checkbox" checked="">
+                    <span class="slider"></span>
+                </label>
+                Use notifications
+                <h6>BTW Thanks to
+                    <a href="https://notificationsounds.com/notification-sounds/something-you-dont-mess-with-120">notificationsounds.com</a>
+                </h6>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 
 <script src="javascript/webSocket.js"></script>
