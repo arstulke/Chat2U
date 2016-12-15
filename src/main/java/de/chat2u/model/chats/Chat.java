@@ -86,4 +86,8 @@ public class Chat implements Iterable<User> {
     public Spliterator<User> spliterator() {
         throw new UnsupportedOperationException("Not implemented.");
     }
+
+    public Set<User> getUsers() {
+        return users;
+    }
 }

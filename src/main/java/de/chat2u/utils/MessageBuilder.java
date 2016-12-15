@@ -55,7 +55,7 @@ public class MessageBuilder {
         return article()
                 .with(
                         b(sender),
-                        unsafeHtml(" " + message),
+                        text(" " + message),
                         p().with(small(timestamp).withClass("text-muted")))
                 .render();
     }

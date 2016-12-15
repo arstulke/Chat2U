@@ -7,32 +7,60 @@ var tabManager = (function(global) {
 
         //set all tabLinks inactive
         var chatLinks = $(".tablinks");
-        for (i = 0; i < chatLinks.length; i++) {
+        var exists = (function() {
+            for (i = 0; i < chatLinks.length; i++) {
+                var id = chatLinks[i].getAttribute("onclick");
+                id = id.substring(id.indexOf("Target, '") + "Target, '".length, id.indexOf("')"));
+                if (tabID === id)
+                    return true;
+            }
+            return false;
+        })();
+
+        if (exists) {
+            for (i = 0; i < chatLinks.length; i++) {
+                var chatLink = chatLinks[i].parentElement;
+                var classAttr = chatLink.getAttribute("class");
+                if (classAttr == null)
+                    classAttr = "";
+                classAttr = classAttr.replace(" active", "");
+                chatLink.setAttribute("class", classAttr);
+            }
+
+            //hide all chat contents
+            var chatContents = doc.div.chatContainer().children();
+            for (i = 0; i < chatContents.length; i++) {
+                chatContents[i].style.display = "none";
+            }
+
+            //display chat box
+            $("#" + tabID).css("display", "block");
+
+            //set link active
+            //tabManager.openTab(event.currentTarget, '73591734')
+            var chatLinks = $(".tablinks");
+            for (i = 0; i < chatLinks.length; i++) {
+                var id = chatLinks[i].getAttribute("onclick");
+                id = id.substring(id.indexOf("currentTarget, '") + "currentTarget, '".length, id.indexOf("')"));
+                if (id === tabID) {
+                    break;
+                }
+            }
             var chatLink = chatLinks[i].parentElement;
             var classAttr = chatLink.getAttribute("class");
             if (classAttr == null)
                 classAttr = "";
-            classAttr = classAttr.replace(" active", "");
+            classAttr += " active";
             chatLink.setAttribute("class", classAttr);
-        }
+            /*if (eventTarget != null && eventTarget != undefined) {
+                var element = eventTarget.parentElement;
+                var nAttr = element.getAttribute("class");
+                if (nAttr === null)
+                    nAttr = "";
+                nAttr += " active";
+                element.setAttribute("class", nAttr);
+            }*/
 
-        //hide all chat contents
-        var chatContents = doc.div.chatContainer().children();
-        for (i = 0; i < chatContents.length; i++) {
-            chatContents[i].style.display = "none";
-        }
-
-        //display chat box
-        $("#" + tabID).css("display", "block");
-
-        //set link active
-        if (eventTarget != null && eventTarget != undefined) {
-            var element = eventTarget.parentElement;
-            var nAttr = element.getAttribute("class");
-            if (nAttr === null)
-                nAttr = "";
-            nAttr += " active";
-            element.setAttribute("class", nAttr);
         }
     };
 
@@ -47,11 +75,13 @@ var tabManager = (function(global) {
                 if (type.includes(this.global))
                     add += 'id="a_defaultTab"';
                 //var tabLink = '<li><div class="name"><span class="badge">2</span><a href="javascript:void(0)" class="tablinks" onclick="tabManager.openTab(event.currentTarget, "' + chatID + '")"' + add + '>' + chatName + '"</a></div></li>';
-                var tabLink = "<li class='selected'><a href='javascript:void(0)' class='tablinks' onclick=\"tabManager.addTab('" + chatID + "', '" + chatName + "','global')\" " + add + "><i class='fa fa-globe'></i> " + chatName + "</a></li>";
+                var tabLink = "<li class='selected'><a href='javascript:void(0)' onclick=\"tabManager.addTab('" + chatID + "', '" + chatName + "','" + type + "')\" " + add + "><i class='fa fa-globe'></i> " + chatName + "</a></li>";
                 doc.ul_channelList().html(doc.ul_channelList().html() + tabLink);
 
-                var chatContent = "<div id=\"" + chatID + "\" class=\"tabcontent\" style=\"display: none;\"><div class=\"media-body\">Du wurdest zum Chat <b>" + chatName + "</b> hinzugefügt.<hr></div></div>";
-                doc.div.chatContainer().html(doc.div.chatContainer().html() + chatContent);
+                if (type.includes(this.global)) {
+                    var chatContent = "<div id=\"" + chatID + "\" class=\"tabcontent\" style=\"display: none;\"><div class=\"media-body\">Du wurdest zum Chat <b>" + chatName + "</b> hinzugefügt.<hr></div></div>";
+                    doc.div.chatContainer().html(doc.div.chatContainer().html() + chatContent);
+                }
 
                 if (this.currentChatID === null && type === this.global) {
                     doc.a_defaultTab().ready(function() {
@@ -60,9 +90,11 @@ var tabManager = (function(global) {
                 }
 
                 if (type.includes(this.global))
-                    doc.a_defaultTab().trigger("click", {currentTarget: doc.a_defaultTab()[0]});
+                    doc.a_defaultTab().trigger("click", {
+                        currentTarget: doc.a_defaultTab()[0]
+                    });
             } else {
-                var tabLink = "<li><div class='name'><a href='javascript:void(0)' class='tablinks' onclick=\"tabManager.addTab('" + chatID + "', '" + chatName + "','')\"" + add + "><b>" + chatName + '</b></a></div></li>';
+                var tabLink = "<li><div class='name'><a href='javascript:void(0)' onclick=\"tabManager.addTab('" + chatID + "', '" + chatName + "','')\"" + add + "><b>" + chatName + '</b></a></div></li>';
                 //<i class="fa fa-globe"></i>
                 doc.ul_groupList().html(doc.ul_groupList().html() + tabLink);
 
@@ -91,11 +123,16 @@ var tabManager = (function(global) {
                 return false;
             })();
 
-
             if (!created) {
-                var tabLink = "<li><a href='javascript:void(0)' class='tablinks' onclick=\"tabManager.openTab(event.currentTarget, '" + chatID + "')\" >" + chatName + "</a></li>";
-                doc.div.tabContainer().html(doc.div.tabContainer().html() + tabLink);
-
+                if (!type.includes(this.global) && type.includes("channel")) {
+                    var msg = "{\"cmd\":\"channelOp\",\"params\":{\"chatID\":\"" + chatID + "\", \"op\":\"join\"}}";
+                    sendMessage(msg);
+                    var tabLink = "<li><a href='javascript:void(0)' class='tablinks' onclick=\"tabManager.openTab(event.currentTarget, '" + chatID + "')\" >" + chatName + "&nbsp;&nbsp;<i onclick='tabManager.closeTab(\"c_2056968094\")' class='fa fa-times'></i> </a></li>";
+                    doc.div.tabContainer().html(doc.div.tabContainer().html() + tabLink);
+                } else {
+                    var tabLink = "<li><a href='javascript:void(0)' class='tablinks' onclick=\"tabManager.openTab(event.currentTarget, '" + chatID + "')\" >" + chatName + "</a></li>";
+                    doc.div.tabContainer().html(doc.div.tabContainer().html() + tabLink);
+                }
                 var chatContent = "<div id=\"" + chatID + "\" class=\"tabcontent\" style=\"display: none;\"><div class=\"media-body\">Du wurdest zum Chat <b>" + chatName + "</b> hinzugefügt.<hr></div></div>";
                 doc.div.chatContainer().html(doc.div.chatContainer().html() + chatContent);
 
@@ -140,8 +177,9 @@ var tabManager = (function(global) {
 
         closeTab: function(chatID) {
             if (this.currentChatID === chatID && doc.a_defaultTab()[0] !== undefined) {
-                var id = doc.a_defaultTab().attr("onclick")
-                this.openTab(doc.a_defaultTab()[0], id.substring(id.indexOf(", '") + 3, id.indexOf("')")));
+                var id = doc.a_defaultTab().attr("onclick");
+                id = id.substring(id.indexOf("('") + 2, id.indexOf("', '"));
+                this.openTab(doc.a_defaultTab()[0], id);
             }
 
             var chatLinks = $(".tablinks");
@@ -152,7 +190,8 @@ var tabManager = (function(global) {
                 }
             }
 
-            $("#" + chatID).remove();
+
+            //$("#" + chatID).remove();
         }
     }
     return localTabManager;

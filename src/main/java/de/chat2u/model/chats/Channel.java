@@ -1,5 +1,6 @@
 package de.chat2u.model.chats;
 
+import de.chat2u.ChatServer;
 import de.chat2u.model.users.User;
 
 import java.util.HashSet;
@@ -10,8 +11,12 @@ import java.util.HashSet;
  */
 public class Channel extends Chat {
 
-    public Channel(String name, String chatID) {
-        super(name, chatID, new HashSet<>());
+    public Channel(String name) {
+        super(name, new HashSet<>());
+        if(!String.valueOf(hashCode()).equals(ChatServer.LobbyID))
+            super.id = "c_" + hashCode();
+        else
+            super.id = String.valueOf(hashCode());
     }
 
     @Override

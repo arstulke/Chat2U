@@ -106,25 +106,30 @@ public class ChatServer {
                 msg = buildMessage("statusLogin", true, null);
                 sendMessageToSession(msg, userSession);
 
-                Channel chat = (Channel) chats.getChatByID(LobbyID);
-                try {
-                    chat.addUser(user);
-                    sendOpenChatCommand(user, chat);
+                chats.getChannels().forEach(chat -> {
+                    Channel channel = ((Channel) chat);
 
+                    sendOpenChatCommand(user, channel);
 
-                    String textMessage = article().with(
-                            b("Chat2U"),
-                            p("Herzlich Willkommen! Vielen Dank, dass du Chat2U benutzt.")
-                    ).render() + hr().render();
-                    JSONObject primeData = new JSONObject().put("chatID", ChatServer.LobbyID).put("message", textMessage);
-                    JSONObject message = buildMessage("textMessage", primeData, MessageBuilder.getUserList());
-                    sendMessageToSession(message, userSession);
+                    if (channel.getID().equals(LobbyID)) {
+                        channel.addUser(user);
+                        try {
+                            String textMessage = article().with(
+                                    b("Server"),
+                                    p().withText("Sage ").with(b("Sí")).withText(" zu deinen Freunden! Danke, dass du mal wieder reinschaust.")
+                            ).render();
+                            JSONObject primeData = null;
+                            primeData = new JSONObject().put("chatID", ChatServer.LobbyID).put("message", textMessage);
+                            JSONObject message = buildMessage("textMessage", primeData, MessageBuilder.getUserList());
+                            sendMessageToSession(message, userSession);
 
-                    message = MessageBuilder.buildTextMessage(new Message("Server", user.getUsername() + " joined the Server.", LobbyID));
-                    sendMessageToChat(message, LobbyID);
-                } catch (JSONException e) {
-                    LOGGER.debug(e);
-                }
+                            message = MessageBuilder.buildTextMessage(new Message("Server", user.getUsername() + " joined the Server.", LobbyID));
+                            sendMessageToChat(message, LobbyID);
+                        } catch (JSONException e) {
+                            LOGGER.debug(e);
+                        }
+                    }
+                });
 
                 user.getGroups().forEach(chatID -> {
                     Group group = (Group) chats.getChatByID(chatID);
@@ -194,8 +199,12 @@ public class ChatServer {
     private static void sendOpenChatCommand(OnlineUser user, Chat chat) {
         try {
             JSONObject primeData = new JSONObject().put("chatID", chat.getID()).put("name", chat.getName());
-            if (chat.getID().equals(LobbyID))
-                primeData.put("type", "global");
+            if (chat instanceof Channel) {
+                String type = "channel";
+                if (chat.getID().equals(LobbyID))
+                    type += " global";
+                primeData.put("type", type);
+            }
             JSONObject json = buildMessage("tabControl", primeData, "open");
             sendMessageToUser(json, user);
         } catch (JSONException e) {
@@ -280,9 +289,23 @@ public class ChatServer {
      *                         <p>
      * @return einen {@link User Benutzer}
      */
-    public static User getUserBySession(Session webSocketSession) {
+    public static OnlineUser getUserBySession(Session webSocketSession) {
         checksIllegalState();
         return onlineUsers.getBySession(webSocketSession);
+    }
+
+    public static void joinChannel(String chatID, OnlineUser user) {
+        Chat chat = chats.getChatByID(chatID);
+        if (chat instanceof Channel) {
+            ((Channel) chat).addUser(user);
+        }
+    }
+
+    public static void leftChannel(String chatID, OnlineUser user) {
+        Chat chat = chats.getChatByID(chatID);
+        if (chat instanceof Channel) {
+            ((Channel) chat).removeUser(user);
+        }
     }
 
     //endregion
