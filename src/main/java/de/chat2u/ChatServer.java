@@ -194,8 +194,12 @@ public class ChatServer {
     private static void sendOpenChatCommand(OnlineUser user, Chat chat) {
         try {
             JSONObject primeData = new JSONObject().put("chatID", chat.getID()).put("name", chat.getName());
-            if (chat.getID().equals(LobbyID))
-                primeData.put("type", "global");
+            if (chat instanceof Channel) {
+                String type = "channel";
+                if (chat.getID().equals(LobbyID))
+                    type += " global";
+                primeData.put("type", type);
+            }
             JSONObject json = buildMessage("tabControl", primeData, "open");
             sendMessageToUser(json, user);
         } catch (JSONException e) {
