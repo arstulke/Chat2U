@@ -52,6 +52,12 @@ var tabManager = (function(global) {
                 classAttr = "";
             classAttr += " active";
             chatLink.setAttribute("class", classAttr);
+            if(chatLink.children[0].children[0] != undefined){
+                chatLink.children[0].children[0].remove()
+            }
+            if($("#g"+chatLink.getAttribute("id").substring(1)).length > 0 && $("#g"+chatLink.getAttribute("id").substring(1)).children().children().html().includes('<span class="badge">!</span> ')){
+                $("#g"+chatLink.getAttribute("id").substring(1)).children().children().children()[0].remove()
+            }
             /*if (eventTarget != null && eventTarget != undefined) {
                 var element = eventTarget.parentElement;
                 var nAttr = element.getAttribute("class");
@@ -75,7 +81,7 @@ var tabManager = (function(global) {
                 if (type.includes(this.global))
                     add += 'id="a_defaultTab"';
                 //var tabLink = '<li><div class="name"><span class="badge">2</span><a href="javascript:void(0)" class="tablinks" onclick="tabManager.openTab(event.currentTarget, "' + chatID + '")"' + add + '>' + chatName + '"</a></div></li>';
-                var tabLink = "<li class='selected'><a href='javascript:void(0)' onclick=\"tabManager.addTab('" + chatID + "', '" + chatName + "','" + type + "')\" " + add + "><i class='fa fa-globe'></i> " + chatName + "</a></li>";
+                var tabLink = "<li class='selected' id='c-" + chatID + "'><a href='javascript:void(0)' onclick=\"tabManager.addTab('" + chatID + "', '" + chatName + "','" + type + "')\" " + add + "><i class='fa fa-globe'></i> " + chatName + "</a></li>";
                 doc.ul_channelList().html(doc.ul_channelList().html() + tabLink);
 
                 if (type.includes(this.global)) {
@@ -94,7 +100,7 @@ var tabManager = (function(global) {
                         currentTarget: doc.a_defaultTab()[0]
                     });
             } else {
-                var tabLink = "<li><div class='name'><a href='javascript:void(0)' onclick=\"tabManager.addTab('" + chatID + "', '" + chatName + "','')\"" + add + "><b>" + chatName + '</b></a></div></li>';
+                var tabLink = "<li id='g-" + chatID + "' ><div class='name'><a href='javascript:void(0)' onclick=\"tabManager.addTab('" + chatID + "', '" + chatName + "','')\"" + add + "><b>" + chatName + '</b></a></div></li>';
                 //<i class="fa fa-globe"></i>
                 doc.ul_groupList().html(doc.ul_groupList().html() + tabLink);
 
@@ -127,10 +133,10 @@ var tabManager = (function(global) {
                 if (!type.includes(this.global) && type.includes("channel")) {
                     var msg = "{\"cmd\":\"channelOp\",\"params\":{\"chatID\":\"" + chatID + "\", \"op\":\"join\"}}";
                     sendMessage(msg);
-                    var tabLink = "<li><a href='javascript:void(0)' class='tablinks' onclick=\"tabManager.openTab(event.currentTarget, '" + chatID + "')\" >" + chatName + "&nbsp;&nbsp;<i onclick='tabManager.closeTab(\"c_2056968094\")' class='fa fa-times'></i> </a></li>";
+                    var tabLink = "<li id='t-" + chatID + "'><a href='javascript:void(0)' class='tablinks' onclick=\"tabManager.openTab(event.currentTarget, '" + chatID + "')\" >" + chatName + "&nbsp;&nbsp;<i onclick='tabManager.closeTab(\"c_2056968094\")' class='fa fa-times'></i> </a></li>";
                     doc.div.tabContainer().html(doc.div.tabContainer().html() + tabLink);
                 } else {
-                    var tabLink = "<li><a href='javascript:void(0)' class='tablinks' onclick=\"tabManager.openTab(event.currentTarget, '" + chatID + "')\" >" + chatName + "</a></li>";
+                    var tabLink = "<li id='t-" + chatID + "'><a href='javascript:void(0)' class='tablinks' onclick=\"tabManager.openTab(event.currentTarget, '" + chatID + "')\" >" + chatName + "</a></li>";
                     doc.div.tabContainer().html(doc.div.tabContainer().html() + tabLink);
                 }
                 var chatContent = "<div id=\"" + chatID + "\" class=\"tabcontent\" style=\"display: none;\"><div class=\"media-body\">Du wurdest zum Chat <b>" + chatName + "</b> hinzugefügt.<hr></div></div>";
