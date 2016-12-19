@@ -6308,7 +6308,7 @@ border-bottom-left-radius: 5px;
 background-color: #fff; 
 position:fixed;
 width:400px;
-height:150px;
+max-height: 70%;
 overflow: scroll;
 overflow-x: hidden;
 right:0;									

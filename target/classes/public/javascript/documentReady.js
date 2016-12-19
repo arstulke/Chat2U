@@ -53,20 +53,26 @@ $(document).ready(function() {
 
     //Search User in Userlist
     doc.input.searchUser().on('input', function() {
+        var listedUser = 0;
+        var userList = doc.ul_userList().children();
+        for(var i = 0; i < userList.length; i++) {
+            var matches = userList[i].children[1].children[0].getAttribute("username").includes(doc.input.searchUser().val());
+            userList[i].style.display  = matches ? "block" : "none";
+            listedUser = matches ? (listedUser + 1) : listedUser;
+        }
+        if(listedUser === 0){
+            //show "keine Benutzer gefunden"
+        }
+
         if(doc.input.searchUser().val().length === 0){
             //hide
-            doc.div.searchUser().slideUp();
+             doc.div.searchUser().slideUp();
             doc.div.searchUser().css("visibility", "hidden");
         } else if(doc.input.searchUser().val().length === 1 && doc.div.searchUser().css("visibility") === "hidden"){
             //show
             doc.div.searchUser().css("visibility", "visible");
             doc.div.searchUser().slideDown();
 
-        }
-        var userList = doc.ul_userList().children();
-        for(var i = 0; i < userList.length; i++) {
-            var matches = userList[i].children[1].children[0].getAttribute("username").includes(doc.input.searchUser().val());
-            userList[i].style.display  = matches ? "block" : "none";
         }
     });
 

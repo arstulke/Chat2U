@@ -11,7 +11,7 @@ function connect(firstMessage) {
         var dispatcher = (function() {
             var dispatcher = new Dispatcher();
             dispatcher.createType("textMessage", function(msg){
-                notify();
+                notify(msg.primeData.chatID);
 
                 var myUsername = applicationData.username;
                 doc.ul_userList().html("");
@@ -40,12 +40,8 @@ function connect(firstMessage) {
             });
             dispatcher.createType("tabControl", function(msg){
                 if(msg.secondData === "open") {
-                    notify();
                     tabManager.createTab(msg.primeData.chatID, msg.primeData.name, msg.primeData.type);
-                }
-                else {
-                     notify();
-                     tabManager.closeTab(msg.primeData);
+                    notify(msg.primeData.chatID);
                 }
             });
             dispatcher.createType("statusRegister", function(msg){
@@ -149,10 +145,28 @@ function sendMessageToChat(message) {
     doc.input.chatMessage().val("");
 }
 
-function notify() {
-    if (window.blurred && doc.checkBox_notifications()[0].checked) {
-        audio.play();
-        document.title = "Sí ( ! )";
+function notify(ChatId) {
+    var tabElement = $("#t-"+ ChatId);
+    var channelElement = $("#c-"+ ChatId);
+    var groupElement = $("#g-"+ ChatId);
+    var notificationElement = '<span class="badge">!</span> ';
+
+    if(doc.checkBox_notifications()[0].checked) {
+        if (window.blurred){ //wenn ChromeTab geschlossen
+           document.title = "Sí ( ! )";
+        }
+
+        if(tabElement.attr("class")!= undefined){ //wenn tab existiert
+            if(tabElement.attr("class")!= " active" && tabElement.children()[0].children.length === 0) {  //wenn tab geschlossen und kein notificon da ist
+                tabElement.children().html(notificationElement + tabElement.children().text());
+                audio.play();
+            }
+        }
+
+        //wenn ein GruppenElement existiert und kein notificon da ist und tab=Gruppenelement geschlossen
+        if(groupElement.children().children().text() != "" && !groupElement.children().children().html().includes(notificationElement) && tabElement.attr("class")!= " active"){
+            groupElement.children().children().html(notificationElement + groupElement.children().children().html());
+        }
     }
 }
 
