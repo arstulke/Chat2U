@@ -1,7 +1,6 @@
 package de.chat2u.network;
 
 import de.chat2u.ChatServer;
-import de.chat2u.model.users.OnlineUser;
 import de.chat2u.model.users.User;
 import de.chat2u.utils.MessageBuilder;
 import org.apache.log4j.Logger;
@@ -14,9 +13,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import static de.chat2u.ChatServer.chats;
 
@@ -44,7 +43,7 @@ public class ChatWebSocketHandler {
      */
     @OnWebSocketClose
     public void onDisconnect(Session webSocketSession, int statusCode, String reason) {
-        String username = ChatServer.getUserBySession(webSocketSession).getUsername();
+        String username = ChatServer.getUsernameBySession(webSocketSession);
         ChatServer.logout(username);
     }
 
@@ -84,7 +83,7 @@ public class ChatWebSocketHandler {
      */
     private void handleCommandFromClient(Session webSocketSession, JSONObject messageObject) throws IOException, JSONException {
         JSONObject params = (JSONObject) messageObject.get("params");
-        OnlineUser user = ChatServer.getUserBySession(webSocketSession);
+        User user = ChatServer.userDataBase.getByUsername(ChatServer.getUsernameBySession(webSocketSession));
 
         String cmd = (String) messageObject.get("cmd");
         switch (cmd) {
@@ -101,7 +100,7 @@ public class ChatWebSocketHandler {
                 ChatServer.logout((String) params.get("username"));
                 break;
             case "sendMessage":
-                if (chats.getChatByID(params.getString("chatID")).getUsers().contains(user)) {
+                if (chats.getChatByID(params.getString("chatID")).contains(user.getUsername())) {
                     String sender = user.getUsername();
                     String message = params.getString("message");
                     if (message.trim().length() > 0) {
@@ -121,12 +120,12 @@ public class ChatWebSocketHandler {
                 }
                 break;
             case "openChat":
-                Collection<User> users = new ArrayList<>();
+                Set<User> users = new HashSet<>();
                 JSONArray userList = (JSONArray) params.get("users");
                 for (int i = 0; i < userList.length(); i++) {
                     String username = userList.getJSONObject(i).getString("name");
-                    if (ChatServer.getOnlineUsers().getUsernameList().contains(username))
-                        users.add(ChatServer.getOnlineUsers().getByUsername(username));
+                    if (ChatServer.getOnlineUsers().contains(username))
+                        users.add(ChatServer.userDataBase.getByUsername(username));
                 }
 
                 if (users.contains(user)) {

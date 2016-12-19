@@ -16,16 +16,18 @@ function connect(firstMessage) {
                 var myUsername = applicationData.username;
                 doc.ul_userList().html("");
                 doc.ul_groupUsers().html("");
-                msg.secondData.forEach(function(user) {
-                    var userListItem = '<li id="user_' + user.id + '" class="media" style="display: block"> <i class="fa fa-user fa-4x pull-left"></i><div class="news-item-info"><div class="name" username="' + user.name + '"><a href="#">' + user.name + '</a></div><div class="position"> </div><div class="time">Last logged-in: Mar 12, 19:02</div></div></li>'
-                    doc.ul_userList().html(doc.ul_userList().html() + userListItem);
-                    if (myUsername !== user.name) {
-                        $("#user_" + user.id).attr("onclick", 'popup.openCreateGroupBox(["' + user.name + '"])');
+                if(msg.secondData !== undefined) {
+                    msg.secondData.forEach(function(user) {
+                        var userListItem = '<li id="user_' + user.id + '" class="media" style="display: block"> <i class="fa fa-user fa-4x pull-left"></i><div class="news-item-info"><div class="name" username="' + user.name + '"><a href="#">' + user.name + '</a></div><div class="position"> </div><div class="time">Last logged-in: Mar 12, 19:02</div></div></li>'
+                        doc.ul_userList().html(doc.ul_userList().html() + userListItem);
+                        if (myUsername !== user.name) {
+                            $("#user_" + user.id).attr("onclick", 'popup.openCreateGroupBox(["' + user.name + '"])');
 
-                        var groupUserItem = '<li><input type="checkbox" value="' + user.name + '"/> ' + user.name + ' </li>';
-                        doc.ul_groupUsers().html(doc.ul_groupUsers().html() + groupUserItem);
-                    }
-                });
+                            var groupUserItem = '<li><input type="checkbox" value="' + user.name + '"/> ' + user.name + ' </li>';
+                            doc.ul_groupUsers().html(doc.ul_groupUsers().html() + groupUserItem);
+                        }
+                    });
+                }
 
                 //update chat window
                 (function (msg) {
@@ -93,7 +95,8 @@ function connect(firstMessage) {
             popup.openLoginAlert("loginAlert", "<p style='color:#F70505'>Client disconnected!</p>"); //show login Dialog
         };
         setInterval(function(){
-            webSocket.send(".");
+            if(webSocket.readyState === 1)
+                webSocket.send(".");
         }, 1000*((60*4) + 50));
     }
 }

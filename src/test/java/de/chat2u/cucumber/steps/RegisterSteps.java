@@ -5,9 +5,10 @@ import cucumber.api.java.de.Gegebensei;
 import cucumber.api.java.de.Gegebenseien;
 import cucumber.api.java.de.Wenn;
 import de.chat2u.ChatServer;
-import de.chat2u.authentication.AuthenticationService;
-import de.chat2u.authentication.UserRepository;
-import de.chat2u.model.users.AuthenticationUser;
+import de.chat2u.cucumber.selenium.OfflineChatContainer;
+import de.chat2u.persistence.users.DataBase;
+import de.chat2u.cucumber.selenium.OfflineDataBase;
+import de.chat2u.model.users.User;
 import org.json.JSONObject;
 
 import static de.chat2u.ChatServer.register;
@@ -22,22 +23,21 @@ public class RegisterSteps {
 
     private JSONObject response;
 
-    private void initialize(UserRepository<AuthenticationUser> repo) {
-        AuthenticationService authenticationService = new AuthenticationService(repo);
-        ChatServer.initialize(authenticationService);
+    private void initialize(DataBase repo) {
+        ChatServer.initialize(repo, new OfflineChatContainer());
     }
 
     //region Gegeben sei
     @Gegebensei("^der registrierte Teilnehmer \"([^\"]*)\"$")
     public void derRegistrierteTeilnehmerMitDemPasswort(String username) throws Throwable {
-        UserRepository<AuthenticationUser> userRepository = new UserRepository<>();
-        userRepository.addUser(new AuthenticationUser(username, "geheim"));
+        DataBase userRepository = new OfflineDataBase();
+        userRepository.addUser(new User(username), "geheim");
         initialize(userRepository);
     }
 
     @Gegebenseien("^keine registrierten Benutzer$")
     public void keineRegistriertenBenutzer() throws Throwable {
-        initialize(new UserRepository<>());
+        initialize(new OfflineDataBase());
     }
     //endregion
 

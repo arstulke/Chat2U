@@ -3,12 +3,11 @@ package de.chat2u.model.chats;
 import de.chat2u.ChatServer;
 import de.chat2u.model.users.User;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Spliterator;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+import java.util.function.*;
+import java.util.stream.Stream;
 
 /**
  * Created Chat in de.chat2u.model
@@ -16,20 +15,14 @@ import java.util.function.Predicate;
  */
 public class Chat implements Iterable<User> {
 
-    final Set<User> users;
+    final Set<String> userList;
     String id;
     final String name;
 
-    Chat(String name, Set<User> users) {
+    Chat(String name, Set<String> userList) {
         this.name = name;
-        this.users = users;
+        this.userList = userList;
         this.id = String.valueOf(hashCode());
-    }
-
-    public Chat(String name, String chatID, HashSet<User> users) {
-        this.name = name;
-        this.users = users;
-        this.id = chatID;
     }
 
     public String getID() {
@@ -47,47 +40,48 @@ public class Chat implements Iterable<User> {
 
         Chat users1 = (Chat) o;
 
-        return users.equals(users1.users) && name.equals(users1.name);
+        return userList.equals(users1.userList) && name.equals(users1.name);
     }
 
     @Override
     public int hashCode() {
-        int result = users.hashCode();
+        int result = userList.hashCode();
         result = 31 * result + name.hashCode();
         return result;
     }
 
     @Override
     public Iterator<User> iterator() {
-        throw new UnsupportedOperationException("Not implemented.");
+        return stream().iterator();
     }
 
-    @Override
-    public void forEach(Consumer<? super User> action) {
-        Set<User> onlineUsers = new HashSet<>();
-        ChatServer.getOnlineUsers().toCollection().stream().filter(new Predicate<User>() {
+    public Stream<User> stream() {
+        return ChatServer.getOnlineUsers().stream().filter(new Predicate<User>() {
             @Override
             public boolean test(User user) {
-                return contains(users, user);
+                return contains(userList, user);
             }
 
-            private boolean contains(Set<User> users, User user) {
-                for (User u : users)
-                    if (u.equals(user)) {
+            private boolean contains(Set<String> users, User user) {
+                for (String u : users)
+                    if (u.equals(user.getUsername())) {
                         return true;
                     }
                 return false;
             }
-        }).forEach(onlineUsers::add);
-        onlineUsers.forEach(action);
+        });
     }
 
     @Override
     public Spliterator<User> spliterator() {
-        throw new UnsupportedOperationException("Not implemented.");
+        return stream().spliterator();
     }
 
-    public Set<User> getUsers() {
-        return users;
+    public boolean contains(String username) {
+        return userList.contains(username);
+    }
+
+    public Set<String> getUsers() {
+        return userList;
     }
 }

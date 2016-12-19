@@ -1,9 +1,12 @@
 package de.chat2u.model.chats;
 
+import de.chat2u.ChatServer;
 import de.chat2u.model.Message;
-import de.chat2u.model.users.User;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+
+import static de.chat2u.ChatServer.chats;
 
 /**
  * Created Group in de.chat2u
@@ -13,25 +16,20 @@ public class Group extends Chat {
 
     private final List<Message> history;
 
-    private Group(String name, List<Message> history, Set<User> users) {
-        super(name, users);
+    public Group(String name, List<Message> history, Set<String> userList) {
+        super(name, userList);
         this.history = history;
         super.id = String.valueOf(hashCode());
     }
 
-    public Group(String name, List<Message> history) {
-        this(name, history, new HashSet<>());
-    }
-
-    public Group(String name, Set<User> users) {
-        this(name, new ArrayList<>(), users);
-    }
-
-    public Group(String name) {
-        this(name, new HashSet<>());
-    }
-
     public List<Message> getHistory() {
         return history;
+    }
+
+    public void addMessageToHistory(Message message) {
+        List<Message> history = ChatServer.chats.addMessageToHistory(message);
+
+        this.history.clear();
+        this.history.addAll(history);
     }
 }

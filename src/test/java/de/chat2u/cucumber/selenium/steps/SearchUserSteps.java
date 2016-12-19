@@ -4,7 +4,7 @@ import cucumber.api.java.de.Dann;
 import cucumber.api.java.de.Und;
 import cucumber.api.java.de.Wenn;
 import de.chat2u.cucumber.selenium.SeleniumHelper;
-import de.chat2u.model.users.AuthenticationUser;
+import de.chat2u.model.users.User;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.openqa.selenium.By;
@@ -26,7 +26,7 @@ public class SearchUserSteps {
     private List<String> userList;
     @Wenn("^\"([^\"]*)\" sich mit dem Passwort \"([^\"]*)\" registriert und einloggt$")
     public void sichMitDemPasswortRegistriertUndEinlogggt(String username, String password) throws Throwable {
-        client.put(username, registerUser(new AuthenticationUser(username, password)));
+        client.put(username, registerUser(new User(username), password));
     }
 
     @Dann("^ist die Anmeldeaufforderung für \"([^\"]*)\" verschwunden$")

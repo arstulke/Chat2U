@@ -13,11 +13,11 @@ public class User {
     private final String username;
     private final Set<String> groups;
 
-    User(String username) {
+    public User(String username) {
         this(username, new HashSet<>());
     }
 
-    User(String username, Set<String> groups) {
+    public User(String username, Set<String> groups) {
         this.username = username;
         this.groups = groups;
     }
@@ -31,12 +31,6 @@ public class User {
 
     public Set<String> getGroups() {
         return groups;
-    }
-
-    public OnlineUser toOnlineUser(Session userSession) {
-        OnlineUser onlineUser = new OnlineUser(username, groups);
-        onlineUser.setSession(userSession);
-        return onlineUser;
     }
 
     @Override

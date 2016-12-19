@@ -1,11 +1,13 @@
 package de.chat2u;
 
-import de.chat2u.authentication.AuthenticationService;
-import de.chat2u.authentication.UserRepository;
-import de.chat2u.model.users.AuthenticationUser;
+import de.chat2u.persistence.chats.OnlineChatContainer;
+import de.chat2u.persistence.users.DataBase;
+import de.chat2u.persistence.users.OnlineDataBase;
 import de.chat2u.network.ChatWebSocketHandler;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
+import org.sql2o.GenericDatasource;
+import org.sql2o.Sql2o;
 import spark.Spark;
 
 /**
@@ -35,10 +37,10 @@ public class Server {
     }
 
     private static void initialize() {
-        UserRepository<AuthenticationUser> repo = new UserRepository<>();
-        repo.addUser(new AuthenticationUser("Kito", "Test123"));
-        repo.addUser(new AuthenticationUser("Arne", "Test123"));
-        ChatServer.initialize(new AuthenticationService(repo));
+        Sql2o sql = new Sql2o(new GenericDatasource("mysql://localhost:3306/si", "root", ""));
+        DataBase repo = new OnlineDataBase(sql);
+        OnlineChatContainer chatContainer = new OnlineChatContainer(sql);
+        ChatServer.initialize(repo, chatContainer);
     }
 
     public static void start() {

@@ -5,17 +5,18 @@ import cucumber.api.java.de.Gegebenseien;
 import cucumber.api.java.de.Und;
 import cucumber.api.java.de.Wenn;
 import de.chat2u.ChatServer;
-import de.chat2u.authentication.AuthenticationService;
-import de.chat2u.authentication.UserRepository;
+import de.chat2u.cucumber.selenium.OfflineChatContainer;
+import de.chat2u.persistence.users.DataBase;
+import de.chat2u.cucumber.selenium.OfflineDataBase;
 import de.chat2u.cucumber.selenium.TestServer;
-import de.chat2u.model.users.AuthenticationUser;
 import de.chat2u.model.Message;
 import de.chat2u.model.users.User;
 import de.chat2u.utils.MessageBuilder;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -26,22 +27,22 @@ import static org.mockito.Mockito.verify;
  */
 public class PrivatChat {
 
-    private final AuthenticationUser user1 = new AuthenticationUser("user1", "user1_pass");
-    private final AuthenticationUser user2 = new AuthenticationUser("user2", "user2_pass");
-    private final AuthenticationUser user3 = new AuthenticationUser("user3", "user3_pass");
+    private final User user1 = new User("user1");
+    private final User user2 = new User("user2");
+    private final User user3 = new User("user3");
     private Message msg;
 
     @Gegebenseien("^drei angemeldete Benutzer$")
     public void dreiAngemeldeteBenutzer() throws Throwable {
-        UserRepository<AuthenticationUser> repo = new UserRepository<>();
-        repo.addUser(user1);
-        repo.addUser(user2);
-        repo.addUser(user3);
-        ChatServer.initialize(new AuthenticationService(repo));
+        DataBase repo = new OfflineDataBase();
+        repo.addUser(user1, "user1_pass");
+        repo.addUser(user2, "user2_pass");
+        repo.addUser(user3, "user3_pass");
+        ChatServer.initialize(repo, new OfflineChatContainer());
 
-        ChatServer.login(user1.getUsername(), user1.getPassword(), TestServer.getMockSession());
-        ChatServer.login(user2.getUsername(), user2.getPassword(), TestServer.getMockSession());
-        ChatServer.login(user3.getUsername(), user3.getPassword(), TestServer.getMockSession());
+        ChatServer.login(user1.getUsername(), "user1_pass", TestServer.getMockSession());
+        ChatServer.login(user2.getUsername(), "user1_pass", TestServer.getMockSession());
+        ChatServer.login(user3.getUsername(), "user1_pass", TestServer.getMockSession());
     }
 
     @Wenn("^der Erste dem Zweiten eine Nachricht im privat Chat sendet$")
@@ -49,7 +50,7 @@ public class PrivatChat {
         String msg = "Eine Nachricht";
 
         //chat erstellen
-        Collection<User> users = Arrays.asList(user1, user2);
+        Set<User> users = new HashSet<>(Arrays.asList(user1, user2));
         String chatID = ChatServer.createGroup("test", users);
 
         //nachricht senden
@@ -59,15 +60,15 @@ public class PrivatChat {
 
     @Dann("^wird diese nur im Chat des Ersten und des Zweiten sichtbar$")
     public void wirdDieseNurImChatDesErstenUndDesZweitenSichtbar() throws Throwable {
-        RemoteEndpoint remote1 = ChatServer.getOnlineUsers().getByUsername(user1.getUsername()).getSession().getRemote();
-        RemoteEndpoint remote2 = ChatServer.getOnlineUsers().getByUsername(user2.getUsername()).getSession().getRemote();
+        RemoteEndpoint remote1 = ChatServer.getOnlineUsers().getSessionByName(user1.getUsername()).getRemote();
+        RemoteEndpoint remote2 = ChatServer.getOnlineUsers().getSessionByName(user2.getUsername()).getRemote();
         verify(remote1).sendString(MessageBuilder.buildTextMessage(msg).toString());
         verify(remote2).sendString(MessageBuilder.buildTextMessage(msg).toString());
     }
 
     @Und("^nicht im Chat des Dritten$")
     public void nichtImChatDesDritten() throws Throwable {
-        RemoteEndpoint remote3 = ChatServer.getOnlineUsers().getByUsername(user3.getUsername()).getSession().getRemote();
+        RemoteEndpoint remote3 = ChatServer.getOnlineUsers().getSessionByName(user3.getUsername()).getRemote();
         verify(remote3, never()).sendString(MessageBuilder.buildTextMessage(msg).toString());
     }
 }
