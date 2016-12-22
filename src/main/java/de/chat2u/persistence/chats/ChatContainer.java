@@ -2,9 +2,10 @@ package de.chat2u.persistence.chats;
 
 import de.chat2u.ChatServer;
 import de.chat2u.model.Message;
+import de.chat2u.model.User;
 import de.chat2u.model.chats.Channel;
 import de.chat2u.model.chats.Chat;
-import de.chat2u.model.users.User;
+import de.chat2u.model.chats.Group;
 
 import java.util.List;
 import java.util.Set;
@@ -25,9 +26,11 @@ public interface ChatContainer extends AutoCloseable {
 
     Set<Channel> getChannels();
 
-    void addUserToChat(String id, String username);
+    Chat addUserToChat(String id, String username);
 
     void removeUserFromChat(String id, String username);
 
-    List<Message> addMessageToHistory(Message message);
+    void addMessageToHistory(Message message);
+
+    Set<Group> getGroupsFrom(String username);
 }

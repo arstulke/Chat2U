@@ -1,6 +1,6 @@
 package de.chat2u.model.users;
 
-import org.eclipse.jetty.websocket.api.Session;
+import de.chat2u.model.chats.Group;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +12,7 @@ import java.util.Set;
 public class User {
     private final String username;
     private final Set<String> groups;
+    private Set<Group> groupList;
 
     public User(String username) {
         this(username, new HashSet<>());
@@ -31,6 +32,10 @@ public class User {
 
     public Set<String> getGroups() {
         return groups;
+    }
+
+    public Set<Group> getGrouplist() {
+        return groupList;
     }
 
     @Override

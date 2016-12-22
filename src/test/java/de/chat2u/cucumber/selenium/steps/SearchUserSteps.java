@@ -4,7 +4,7 @@ import cucumber.api.java.de.Dann;
 import cucumber.api.java.de.Und;
 import cucumber.api.java.de.Wenn;
 import de.chat2u.cucumber.selenium.SeleniumHelper;
-import de.chat2u.model.users.User;
+import de.chat2u.model.User;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.openqa.selenium.By;

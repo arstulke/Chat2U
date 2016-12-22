@@ -7,7 +7,7 @@ import de.chat2u.ChatServer;
 import de.chat2u.cucumber.selenium.OfflineChatContainer;
 import de.chat2u.persistence.users.DataBase;
 import de.chat2u.cucumber.selenium.OfflineDataBase;
-import de.chat2u.model.users.User;
+import de.chat2u.model.User;
 import org.junit.Assert;
 
 import static org.hamcrest.CoreMatchers.is;

@@ -1,21 +1,36 @@
 package de.chat2u.model;
 
-import com.sun.javafx.binding.SelectBinding;
+import com.sun.istack.internal.NotNull;
 import de.chat2u.utils.MessageBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.persistence.*;
 import java.util.Date;
 
 /**
  * Created Message in de.chat2u.model
  * by ARSTULKE on 22.11.2016.
  */
+@Entity
+@Table(name = "message")
 public class Message implements Comparable<Message> {
-    private final String sender;
-    private final String message;
-    private final String chatID;
-    private final Date timestamp;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+
+    @Column(name = "sender")
+    private String sender;
+    @Column(name = "text")
+    private String message;
+    @Column(name = "chat_id")
+    private String chatID;
+    @Column(name = "timestamp")
+    private Date timestamp;
+
+    public Message() {
+    }
 
     public Message(String sender, String message, String chatID) {
         this(sender, message, chatID, new Date());
@@ -56,6 +71,10 @@ public class Message implements Comparable<Message> {
         return timestamp.compareTo(o.timestamp);
     }
 
+    public long getId() {
+        return id;
+    }
+
     public String getChatID() {
         return chatID;
     }
@@ -70,5 +89,29 @@ public class Message implements Comparable<Message> {
 
     public Date getTimestamp() {
         return timestamp;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setChatID(String chatID) {
+        this.chatID = chatID;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 }

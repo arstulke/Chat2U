@@ -2,7 +2,8 @@ package de.chat2u.utils;
 
 import de.chat2u.ChatServer;
 import de.chat2u.model.Message;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,7 +19,7 @@ import static j2html.TagCreator.*;
  */
 public class MessageBuilder {
 
-    private final static Logger LOGGER = Logger.getLogger(MessageBuilder.class);
+    private final static Logger LOGGER = LogManager.getLogger(MessageBuilder.class);
 
     public static JSONObject buildMessage(String type, Object primeData, Object secondData) {
         JSONObject output = new JSONObject();
@@ -38,7 +39,7 @@ public class MessageBuilder {
     /**
      * <p>
      *
-     * @param msg textMessage
+     * @param msg          textMessage
      */
     public static JSONObject buildTextMessage(Message msg) {
         return buildMessage("textMessage", msg.getPrimeData(), getUserList());

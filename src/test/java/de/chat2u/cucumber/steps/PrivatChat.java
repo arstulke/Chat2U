@@ -10,7 +10,7 @@ import de.chat2u.persistence.users.DataBase;
 import de.chat2u.cucumber.selenium.OfflineDataBase;
 import de.chat2u.cucumber.selenium.TestServer;
 import de.chat2u.model.Message;
-import de.chat2u.model.users.User;
+import de.chat2u.model.User;
 import de.chat2u.utils.MessageBuilder;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 
@@ -51,7 +51,7 @@ public class PrivatChat {
 
         //chat erstellen
         Set<User> users = new HashSet<>(Arrays.asList(user1, user2));
-        String chatID = ChatServer.createGroup("test", users);
+        String chatID = ChatServer.createGroup("Test", users);
 
         //nachricht senden
         this.msg = new Message(user1.getUsername(), msg, chatID);

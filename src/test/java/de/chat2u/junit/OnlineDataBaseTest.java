@@ -1,16 +1,13 @@
 package de.chat2u.junit;
 
+import de.chat2u.model.User;
 import de.chat2u.persistence.users.DataBase;
 import de.chat2u.persistence.users.OnlineDataBase;
-import de.chat2u.model.users.User;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.sql2o.GenericDatasource;
 import org.sql2o.Sql2o;
-
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -30,12 +27,7 @@ public class OnlineDataBaseTest {
             String username = RandomStringUtils.random(8, true, false);
             String password = RandomStringUtils.random(8, true, false);
 
-            Set<String> groups = new HashSet<>();
-            groups.add("Entwickler");
-            groups.add("Sylvester 2016");
-
-
-            User user1 = new User(username, groups);
+            User user1 = new User(username);
             dataBase.addUser(user1, password);
 
             User user2 = dataBase.getByUsername(username);
@@ -54,11 +46,8 @@ public class OnlineDataBaseTest {
         try (DataBase dataBase = new OnlineDataBase(sql2o)) {
             String username = "TestUser2";
             String password = "TestPassword2";
-            Set<String> groups = new HashSet<>();
-            groups.add("Party 2017");
-            groups.add("Geburtstag Karl");
 
-            User user1 = new User(username, groups);
+            User user1 = new User(username);
 
             User user2 = dataBase.authenticate(username, password);
             assertThat(user2, is(user1));

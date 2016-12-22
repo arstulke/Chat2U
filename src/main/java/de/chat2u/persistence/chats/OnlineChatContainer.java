@@ -1,14 +1,17 @@
 package de.chat2u.persistence.chats;
 
+import de.chat2u.ChatServer;
 import de.chat2u.model.Message;
+import de.chat2u.model.User;
 import de.chat2u.model.chats.Channel;
 import de.chat2u.model.chats.Chat;
 import de.chat2u.model.chats.Group;
-import de.chat2u.model.users.User;
 import org.sql2o.Connection;
 import org.sql2o.ResultSetHandler;
 import org.sql2o.Sql2o;
 
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,38 +32,42 @@ public class OnlineChatContainer implements ChatContainer {
     public OnlineChatContainer(Sql2o sql) {
         connection = sql.open();
 
-        messageResultSetHandler = resultSet -> new Message(resultSet.getString("sender"), resultSet.getString("text"), resultSet.getString("chatID"), resultSet.getDate("timestamp"));
+        messageResultSetHandler = resultSet -> {
+            Date datetime = new Date(resultSet.getObject("timestamp", Timestamp.class).getTime());
+            return new Message(resultSet.getString("sender"), resultSet.getString("text"), resultSet.getString("chat_id"), datetime);
+        };
         chatResultSetHandler = resultSet -> {
             String query = "SELECT `user`.`name` " +
                     "FROM `chat` " +
-                    "JOIN `group_user` " +
-                    "ON `chat`.`id` = `group_user`.`groupid` " +
+                    "JOIN `chat_user` " +
+                    "ON `chat`.`id` = `chat_user`.`chat_id` " +
                     "JOIN `user` " +
-                    "ON `group_user`.`username` = `user`.`name` " +
-                    "WHERE `chat`.`id` = :chatID";
+                    "ON `chat_user`.`username` = `user`.`name` " +
+                    "WHERE `chat`.`id` = :chat_id";
 
             Set<String> userList = new HashSet<>(connection
                     .createQuery(query)
-                    .addParameter("chatID", resultSet.getString("id"))
+                    .addParameter("chat_id", resultSet.getString("id"))
                     .executeAndFetch((ResultSetHandler<String>) resultSet1 -> resultSet1.getString("name")));
 
-            if (resultSet.getInt("channel") == 1) {
+            if (resultSet.getString("type").equals("ch")) {
                 return new Channel(resultSet.getString("name"), userList);
             } else {
-                query = "SELECT `message`.`sender`, `message`.`text`, `message`.`chatid`, `message`.`timestamp`" +
+                query = "SELECT *" +
                         "FROM `chat` " +
                         "JOIN `message` " +
-                        "ON `chat`.`id` = `message`.`chatID` " +
-                        "WHERE `chat`.`id` = :chatID";
+                        "ON `chat`.`id` = `message`.`chat_id` " +
+                        "WHERE `chat`.`id` = :chat_id";
 
                 List<Message> messages = new ArrayList<>(connection
                         .createQuery(query)
-                        .addParameter("chatID", resultSet.getString("id"))
+                        .addParameter("chat_id", resultSet.getString("id"))
                         .executeAndFetch(messageResultSetHandler));
 
-                messages.sort(Message::compareTo);
 
-                return new Group(resultSet.getString("name"), messages, userList);
+                Group group = new Group(resultSet.getString("name"), userList);
+                group.setHistory(messages);
+                return group;
             }
         };
     }
@@ -73,9 +80,9 @@ public class OnlineChatContainer implements ChatContainer {
                         (strings, user) -> strings.add(user.getUsername()),
                         (BiConsumer<Set<String>, Set<String>>) Set::addAll);
 
-        Group groupChat = new Group(name, new ArrayList<>(), userList);
+        Group groupChat = new Group(name, userList);
         if (insertChat(groupChat))
-            return groupChat.getID();
+            return groupChat.getId();
         else
             return null;
     }
@@ -87,20 +94,20 @@ public class OnlineChatContainer implements ChatContainer {
     }
 
     private boolean insertChat(Chat chat) {
-        String query = "SELECT `name` FROM `chat` WHERE `id` = :chatID";
+        String query = "SELECT `name` FROM `chat` WHERE `id` = :chat_id";
         List<String> result = connection
                 .createQuery(query)
-                .addParameter("chatID", chat.getID())
+                .addParameter("chat_id", chat.getId())
                 .executeAndFetch((ResultSetHandler<String>) resultSet -> resultSet.getString("name"));
         if (result.size() == 0) {
-            query = "INSERT INTO `chat` (`id`, `name`, `channel`) VALUES (:id, :name, :channel);";
+            query = "INSERT INTO `chat` (`id`, `name`, `type`) VALUES (:id, :name, :type);";
             connection.createQuery(query)
-                    .addParameter("id", chat.getID())
+                    .addParameter("id", chat.getId())
                     .addParameter("name", chat.getName())
-                    .addParameter("channel", chat instanceof Channel ? 1 : 0)
+                    .addParameter("type", chat instanceof Channel ? "ch" : "gr")
                     .executeUpdate();
 
-            chat.getUsers().forEach(username -> addUserToChat(chat.getID(), username));
+            chat.getUsers().forEach(username -> addUserToChat(chat.getId(), username));
             return true;
         }
         return false;
@@ -108,10 +115,10 @@ public class OnlineChatContainer implements ChatContainer {
 
     @Override
     public Chat getChatByID(String id) {
-        String query = "SELECT `id`, `name`, `channel` FROM `chat` WHERE `id`=:chatID;";
+        String query = "SELECT `id`, `name`, `type` FROM `chat` WHERE `id`=:chat_id;";
         List<Chat> result = new ArrayList<>(connection
                 .createQuery(query)
-                .addParameter("chatID", id)
+                .addParameter("chat_id", id)
                 .executeAndFetch(chatResultSetHandler));
 
         if (result.size() > 1) {
@@ -125,39 +132,41 @@ public class OnlineChatContainer implements ChatContainer {
 
     @Override
     public Set<Channel> getChannels() {
-        String query = "SELECT `id`, `name`, `channel` FROM `chat` WHERE `channel`='1';";
+        String query = "SELECT `id`, `name`, `type` FROM `chat` WHERE `type`='ch';";
 
         return new HashSet<>(connection
                 .createQuery(query)
                 .executeAndFetch(chatResultSetHandler)).stream()
                 .collect(
                         HashSet::new,
-                        (channels, chat) -> channels.add((Channel) chat),
+                        (channelSet, chat) -> channelSet.add((Channel) chat),
                         (BiConsumer<Set<Channel>, Set<Channel>>) Set::addAll);
     }
 
     @Override
-    public void addUserToChat(String id, String username) {
-        String query = "SELECT `groupid`, `username` FROM `group_user` WHERE `groupid` = :chatID AND `username` = :username";
+    public Chat addUserToChat(String id, String username) {
+        String query = "SELECT `chat_id`, `username` FROM `chat_user` WHERE `chat_id` = :chat_id AND `username` = :username";
         List<String> result = connection
                 .createQuery(query)
-                .addParameter("chatID", id)
+                .addParameter("chat_id", id)
                 .addParameter("username", username)
-                .executeAndFetch((ResultSetHandler<String>) resultSet -> resultSet.getString("groupid") + " | " + resultSet.getString("username"));
+                .executeAndFetch((ResultSetHandler<String>) resultSet -> resultSet.getString("chat_id") + " | " + resultSet.getString("username"));
 
         if (result.size() == 0) {
-            query = "INSERT INTO `group_user` (`groupid`, `username`) VALUES (:groupid, :username);";
+            query = "INSERT INTO `chat_user` (`chat_id`, `username`) VALUES (:groupid, :username);";
             connection
                     .createQuery(query)
                     .addParameter("groupid", id)
                     .addParameter("username", username)
                     .executeUpdate();
         }
+
+        return getChatByID(id);
     }
 
     @Override
     public void removeUserFromChat(String id, String username) {
-        String query = "DELETE FROM `group_user` WHERE `group_user`.`groupid` = :groupid AND `group_user`.`username` = :username;";
+        String query = "DELETE FROM `chat_user` WHERE `chat_user`.`chat_id` = :groupid AND `chat_user`.`username` = :username;";
 
         connection
                 .createQuery(query)
@@ -167,17 +176,41 @@ public class OnlineChatContainer implements ChatContainer {
     }
 
     @Override
-    public List<Message> addMessageToHistory(Message message) {
-        String query = "INSERT INTO `message` (`sender`, `text`, `chatid`, `timestamp`) VALUES (:sender, :text, :chatID, :timestamp);";
+    public void addMessageToHistory(Message message) {
+        String query = "INSERT INTO `message` (`sender`, `text`, `chat_id`, `timestamp`) VALUES (:sender, :text, :chat_id, :timestamp);";
         connection
                 .createQuery(query)
                 .addParameter("sender", message.getSender())
                 .addParameter("text", message.getText())
-                .addParameter("chatID", message.getChatID())
+                .addParameter("chat_id", message.getChatID())
                 .addParameter("timestamp", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(message.getTimestamp()))
                 .executeUpdate();
+    }
 
-        return ((Group) getChatByID(message.getChatID())).getHistory();
+
+    @Override
+    public Set<Group> getGroupsFrom(String username) {
+        String query = "SELECT `chat`.`name`, `chat`.`id` " +
+                "FROM `user` " +
+                "JOIN `chat_user` " +
+                "ON `user`.`name` = `chat_user`.`username` " +
+                "JOIN `chat` " +
+                "ON `chat_user`.`chat_id` = `chat`.`id` " +
+                "WHERE `user`.`name` = :username AND `chat`.`type` = 'gr';";
+
+        Set<String> groupIDs = new HashSet<>(connection
+                .createQuery(query)
+                .addParameter("username", username)
+                .executeAndFetch((ResultSetHandler<String>) resultSet1 -> resultSet1.getString("id")));
+
+        Set<Group> groups = new HashSet<>();
+        groupIDs.forEach(groupID -> {
+            Chat chat = ChatServer.chats.getChatByID(groupID);
+            if (chat instanceof Group)
+                groups.add((Group) chat);
+        });
+
+        return groups;
     }
 
     @Override

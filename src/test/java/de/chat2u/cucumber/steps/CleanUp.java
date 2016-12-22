@@ -2,7 +2,7 @@ package de.chat2u.cucumber.steps;
 
 import cucumber.api.java.After;
 import de.chat2u.ChatServer;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Created CleanUp in de.chat2u.cucumber.steps
@@ -15,7 +15,7 @@ public class CleanUp {
             try {
                 ChatServer.logout(user.getUsername());
             } catch (Exception e) {
-                Logger.getLogger(getClass()).debug(e);
+                LogManager.getLogger(getClass()).debug(e);
             }
         });
     }

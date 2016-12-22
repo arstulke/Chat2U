@@ -1,15 +1,15 @@
 package de.chat2u;
 
 import de.chat2u.model.Message;
+import de.chat2u.model.User;
 import de.chat2u.model.chats.Channel;
 import de.chat2u.model.chats.Chat;
-import de.chat2u.model.chats.Group;
-import de.chat2u.model.users.User;
 import de.chat2u.persistence.OnlineUserList;
 import de.chat2u.persistence.chats.ChatContainer;
 import de.chat2u.persistence.users.DataBase;
 import de.chat2u.utils.MessageBuilder;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,7 +28,7 @@ import static j2html.TagCreator.*;
  * <p>{@code ChatServer.initialize(new AuthenticationService(#YourFooRepository));}
  */
 public class ChatServer {
-    private final static Logger LOGGER = Logger.getLogger(ChatServer.class);
+    private final static Logger LOGGER = LogManager.getLogger(ChatServer.class);
 
     public static DataBase userDataBase;
     public static ChatContainer chats;
@@ -107,8 +107,8 @@ public class ChatServer {
                 chats.getChannels().forEach(channel -> {
                     sendOpenChatCommand(user, channel);
 
-                    if (channel.getID().equals(LobbyID)) {
-                        channel.addUser(user);
+                    if (channel.getId().equals(LobbyID)) {
+                        Chat ch = chats.addUserToChat(channel.getId(), user.getUsername());
                         try {
                             String textMessage = article().with(
                                     b("Server"),
@@ -120,16 +120,14 @@ public class ChatServer {
                             sendMessageToSession(message, userSession);
 
                             message = MessageBuilder.buildTextMessage(new Message("Server", user.getUsername() + " joined the Server.", LobbyID));
-                            sendMessageToChat(message, LobbyID);
+                            sendMessageToChat(message, ch);
                         } catch (JSONException e) {
                             LOGGER.debug(e);
                         }
                     }
                 });
 
-                user.getGroups().forEach(chatID -> {
-                    Group group = (Group) chats.getChatByID(chatID);
-
+                chats.getGroupsFrom(user.getUsername()).forEach(group -> {
                     //sendOpenChatCommand
                     sendOpenChatCommand(user, group);
                     group.getHistory().forEach(message -> {
@@ -137,10 +135,10 @@ public class ChatServer {
                         sendMessageToSession(json, userSession);
                     });
 
-                    Message messageObject = new Message("Server", user.getUsername() + " goes online.", chatID);
+                    Message messageObject = new Message("Server", user.getUsername() + " goes online.", group.getId());
                     JSONObject message = MessageBuilder.buildTextMessage(messageObject);
-                    sendMessageToChat(message, chatID);
-                    group.addMessageToHistory(messageObject);
+                    sendMessageToChat(message, group);
+                    chats.addMessageToHistory(messageObject);
                 });
 
                 return msg.toString();
@@ -162,23 +160,20 @@ public class ChatServer {
      * @param username ist der eindeutige username des Benutzers.
      */
     public static void logout(String username) {
-        User user = userDataBase.getByUsername(username);
-        onlineUsers.removeUser(user.getUsername());
+        onlineUsers.removeUser(username);
 
-        user.getGroups().forEach(chatID -> {
-            Chat chat = chats.getChatByID(chatID);
-            if (chat instanceof Group)
-                sendTextMessageToChat("Server", username + " goes offline.", chatID);
+        chats.getGroupsFrom(username).forEach(group -> {
+            if (group != null)
+                sendTextMessageToChat("Server", username + " goes offline.", group.getId());
         });
 
-        chats.getChannels().forEach(channel -> channel.removeUser(user.getUsername()));
+        chats.getChannels().forEach(channel -> chats.removeUserFromChat(channel.getId(), username));//channel.removeUser(user.getUsername()));
 
         sendTextMessageToChat("Server:", username + " left the Server", LobbyID);
     }
 
-    private static void sendMessageToChat(JSONObject json, String chatID) {
-        Chat chat = chats.getChatByID(chatID);
-        chat.stream().forEach(user -> sendMessageToUser(json, user));
+    private static void sendMessageToChat(JSONObject json, Chat chat) {
+        chat.forEach(user -> sendMessageToUser(json, user));
     }
 
     //endregion
@@ -190,10 +185,10 @@ public class ChatServer {
 
     private static void sendOpenChatCommand(User user, Chat chat) {
         try {
-            JSONObject primeData = new JSONObject().put("chatID", chat.getID()).put("name", chat.getName());
+            JSONObject primeData = new JSONObject().put("chatID", chat.getId()).put("name", chat.getName());
             if (chat instanceof Channel) {
                 String type = "channel";
-                if (chat.getID().equals(LobbyID))
+                if (chat.getId().equals(LobbyID))
                     type += " global";
                 primeData.put("type", type);
             }
@@ -217,9 +212,8 @@ public class ChatServer {
         JSONObject json = buildTextMessage(msg);
 
         Chat chat = chats.getChatByID(chatID);
-        if (chat instanceof Group)
-            ((Group) chat).addMessageToHistory(msg);
-        sendMessageToChat(json, chatID);
+        chats.addMessageToHistory(msg);
+        sendMessageToChat(json, chat);
     }
 
     /**
@@ -256,11 +250,7 @@ public class ChatServer {
 
     public static void inviteUserToChat(String chatID) {
         Chat chat = chats.getChatByID(chatID);
-        chats.getChatByID(chatID).stream().forEach(user -> {
-            sendOpenChatCommand(user, chat);
-            if (chat instanceof Group)
-                user.getGroups().add(chatID);
-        });
+        chats.getChatByID(chatID).stream().forEach(user -> sendOpenChatCommand(user, chat));
     }
     //endregion
 
@@ -279,14 +269,16 @@ public class ChatServer {
     public static void joinChannel(String chatID, User user) {
         Chat chat = chats.getChatByID(chatID);
         if (chat instanceof Channel) {
-            ((Channel) chat).addUser(user.getUsername());
+            chats.addUserToChat(chat.getId(), user.getUsername());
+            //((Channel) chat).addUser(user.getUsername());
         }
     }
 
     public static void leftChannel(String chatID, User user) {
         Chat chat = chats.getChatByID(chatID);
         if (chat instanceof Channel) {
-            ((Channel) chat).removeUser(user.getUsername());
+            chats.removeUserFromChat(chatID, user.getUsername());
+            //((Channel) chat).removeUser(user.getUsername());
         }
     }
 

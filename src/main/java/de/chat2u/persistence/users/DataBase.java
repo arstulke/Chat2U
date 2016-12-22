@@ -1,7 +1,6 @@
 package de.chat2u.persistence.users;
 
-import de.chat2u.model.users.User;
-
+import de.chat2u.model.User;
 /**
  * Created DataBase in de.chat2u
  * by ARSTULKE on 16.11.2016.
@@ -30,7 +29,9 @@ public interface DataBase extends AutoCloseable {
      */
     User getByUsername(String username);
 
-    boolean contains(String username);
+    default boolean contains(String username) {
+        return getByUsername(username) != null;
+    }
 
     void removeUser(User user);
 }

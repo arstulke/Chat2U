@@ -10,7 +10,7 @@ import de.chat2u.cucumber.selenium.OfflineDataBase;
 import de.chat2u.cucumber.selenium.TestServer;
 import de.chat2u.model.Message;
 import de.chat2u.model.chats.Group;
-import de.chat2u.model.users.User;
+import de.chat2u.model.User;
 import de.chat2u.utils.MessageBuilder;
 
 import java.util.List;

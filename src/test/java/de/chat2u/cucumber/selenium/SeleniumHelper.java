@@ -1,7 +1,7 @@
 package de.chat2u.cucumber.selenium;
 
 import com.google.common.base.Function;
-import de.chat2u.model.users.User;
+import de.chat2u.model.User;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;

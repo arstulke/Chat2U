@@ -1,36 +1,73 @@
 package de.chat2u.model.chats;
 
 import de.chat2u.ChatServer;
-import de.chat2u.model.users.User;
+import de.chat2u.model.User;
 
+import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Spliterator;
-import java.util.function.*;
+import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
  * Created Chat in de.chat2u.model
  * by ARSTULKE on 23.11.2016.
  */
+@Entity
+@Table(name = "chat")
+@DiscriminatorColumn(name = "type")
 public class Chat implements Iterable<User> {
 
-    final Set<String> userList;
+    @Id
+    @Column(name = "id")
     String id;
-    final String name;
 
-    Chat(String name, Set<String> userList) {
+    @ManyToMany(targetEntity = User.class, cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinTable(
+            name="chat_user",
+            joinColumns=@JoinColumn(name="chat_id", referencedColumnName="id"),
+            inverseJoinColumns=@JoinColumn(name="username", referencedColumnName="name"))
+    Set<User> userList;
+
+    @Column(name = "name")
+    String name;
+
+    public Chat() {
+    }
+
+    Chat(String name, Set<String> users) {
         this.name = name;
-        this.userList = userList;
+        this.userList = new HashSet<>();
+        users.forEach(username -> userList.add(ChatServer.userDataBase.getByUsername(username)));
+
         this.id = String.valueOf(hashCode());
     }
 
-    public String getID() {
+    public String getId() {
         return id;
     }
 
     public String getName() {
         return name;
+    }
+
+    public Set<User> getUserList() {
+        return userList;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setUserList(Set<User> userList) {
+        this.userList = userList;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
@@ -62,9 +99,9 @@ public class Chat implements Iterable<User> {
                 return contains(userList, user);
             }
 
-            private boolean contains(Set<String> users, User user) {
-                for (String u : users)
-                    if (u.equals(user.getUsername())) {
+            private boolean contains(Set<User> users, User user) {
+                for (User u : users)
+                    if (u.getUsername().equals(user.getUsername())) {
                         return true;
                     }
                 return false;
@@ -78,10 +115,13 @@ public class Chat implements Iterable<User> {
     }
 
     public boolean contains(String username) {
-        return userList.contains(username);
+        return userList.contains(ChatServer.userDataBase.getByUsername(username));
     }
 
     public Set<String> getUsers() {
-        return userList;
+        return userList.stream().collect(
+                HashSet::new,
+                (strings, user) -> strings.add(user.getUsername()),
+                (BiConsumer<Set<String>, Set<String>>) Set::addAll);
     }
 }

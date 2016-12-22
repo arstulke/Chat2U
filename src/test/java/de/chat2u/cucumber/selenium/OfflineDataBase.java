@@ -1,7 +1,7 @@
 package de.chat2u.cucumber.selenium;
 
+import de.chat2u.model.User;
 import de.chat2u.persistence.users.DataBase;
-import de.chat2u.model.users.User;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,7 +21,7 @@ public class OfflineDataBase implements DataBase {
      * @param user     ist der hinzu zufügende User.
      * @param password
      */
-    public synchronized void addUser(User user, String password) {
+    public void addUser(User user, String password) {
         users.put(user.getUsername(), user);
         passwords.put(user.getUsername(), password);
     }
@@ -31,10 +31,9 @@ public class OfflineDataBase implements DataBase {
      * <p>
      *
      * @param username ist der Benutzername, des Benutzers
-     * @return einen User, wenn dieser gefunden wurde oder {@code null} wenn
-     * dieser nicht gefunden werden konnte
+     * @return einen User
      */
-    public synchronized User getByUsername(String username) {
+    public User getByUsername(String username) {
         return users.get(username);
     }
 

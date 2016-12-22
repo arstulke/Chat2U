@@ -1,9 +1,10 @@
 package de.chat2u.network;
 
 import de.chat2u.ChatServer;
-import de.chat2u.model.users.User;
+import de.chat2u.model.User;
 import de.chat2u.utils.MessageBuilder;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
@@ -27,7 +28,7 @@ import static de.chat2u.ChatServer.chats;
 @WebSocket
 public class ChatWebSocketHandler {
 
-    private final static Logger LOGGER = Logger.getLogger(ChatWebSocketHandler.class);
+    private final static Logger LOGGER = LogManager.getLogger(ChatWebSocketHandler.class);
 
     //////////////////////////////////////////////////////////////////////////
     // ERGEBNISSE MIT CARSTEN 21.11.16                                      //
@@ -55,10 +56,10 @@ public class ChatWebSocketHandler {
         try {
             handleCommandFromClient(webSocketSession, new JSONObject(message));
         } catch (JSONException e) {
-            if(!message.equals("."))
+            if (!message.equals("."))
                 LOGGER.debug(String.format("Fehler beim Verarbeiten der Nachricht(%s): %s", message.replaceAll("\n", ""), e.getMessage()));
         } catch (Exception e) {
-            LOGGER.error(e);
+            LOGGER.error(e.getClass().getName() + " - " + e.getMessage());
 
             String stackTrace = Arrays.toString(e.getStackTrace()).replace("), ", ")\n\t[" + Thread.currentThread().getName() + "] ");
             stackTrace = stackTrace.substring(1, stackTrace.length() - 1);
@@ -83,9 +84,12 @@ public class ChatWebSocketHandler {
      */
     private void handleCommandFromClient(Session webSocketSession, JSONObject messageObject) throws IOException, JSONException {
         JSONObject params = (JSONObject) messageObject.get("params");
-        User user = ChatServer.userDataBase.getByUsername(ChatServer.getUsernameBySession(webSocketSession));
-
         String cmd = (String) messageObject.get("cmd");
+
+        User user = null;
+        if (!cmd.equals("register") && !cmd.equals("login"))
+            user = ChatServer.userDataBase.getByUsername(ChatServer.getUsernameBySession(webSocketSession));
+
         switch (cmd) {
             case "register": {
                 JSONObject msg = ChatServer.register((String) params.get("username"), (String) params.get("passwort"));

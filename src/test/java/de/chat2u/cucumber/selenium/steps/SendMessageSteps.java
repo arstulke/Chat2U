@@ -43,7 +43,7 @@ public class SendMessageSteps {
             @Nullable
             @Override
             public Boolean apply(@Nullable WebDriver webDriver) {
-                return client.get(webdriver).findElement(By.id(ChatServer.LobbyID)).getText().contains(msg);
+                return webDriver.findElement(By.id(ChatServer.LobbyID)).getText().contains(msg);
             }
         });
     }

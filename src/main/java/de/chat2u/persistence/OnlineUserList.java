@@ -1,7 +1,7 @@
 package de.chat2u.persistence;
 
 import de.chat2u.ChatServer;
-import de.chat2u.model.users.User;
+import de.chat2u.model.User;
 import org.eclipse.jetty.websocket.api.Session;
 
 import java.util.*;

@@ -2,13 +2,16 @@ package de.chat2u.cucumber.selenium;
 
 import de.chat2u.ChatServer;
 import de.chat2u.model.Message;
+import de.chat2u.model.User;
 import de.chat2u.model.chats.Channel;
 import de.chat2u.model.chats.Chat;
 import de.chat2u.model.chats.Group;
-import de.chat2u.model.users.User;
 import de.chat2u.persistence.chats.ChatContainer;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 /**
@@ -28,10 +31,10 @@ public class OfflineChatContainer implements ChatContainer {
                         (strings, user) -> strings.add(user.getUsername()),
                         (BiConsumer<Set<String>, Set<String>>) Set::addAll);
 
-        Group groupChat = new Group(name, new ArrayList<>(), userList);
-        if (!chats.containsKey(groupChat.getID())) {
-            chats.put(groupChat.getID(), groupChat);
-            return groupChat.getID();
+        Group groupChat = new Group(name, userList);
+        if (!chats.containsKey(groupChat.getId())) {
+            chats.put(groupChat.getId(), groupChat);
+            return groupChat.getId();
         }
 
         return null;
@@ -39,8 +42,8 @@ public class OfflineChatContainer implements ChatContainer {
 
     public void createNewChannel(String name) {
         Chat chat = new Channel(name);
-        if (!chats.containsKey(chat.getID())) {
-            chats.put(chat.getID(), chat);
+        if (!chats.containsKey(chat.getId())) {
+            chats.put(chat.getId(), chat);
         }
     }
 
@@ -55,8 +58,11 @@ public class OfflineChatContainer implements ChatContainer {
     }
 
     @Override
-    public void addUserToChat(String id, String username) {
-        ((Channel) chats.get(id)).addUser(username);
+    public Chat addUserToChat(String id, String username) {
+        Chat chat = ChatServer.chats.getChatByID(id);
+        chat.getUserList().add(ChatServer.userDataBase.getByUsername(username));
+
+        return getChatByID(id);
     }
 
     @Override
@@ -65,9 +71,22 @@ public class OfflineChatContainer implements ChatContainer {
     }
 
     @Override
-    public List<Message> addMessageToHistory(Message message) {
-        ((Group) getChatByID(message.getChatID())).getHistory().add(message);
-        return ((Group) getChatByID(message.getChatID())).getHistory();
+    public void addMessageToHistory(Message message) {
+        Chat chat = getChatByID(message.getChatID());
+        if (chat instanceof Group)
+            ((Group) chat).addMessageToHistory(message);
+    }
+
+    @Override
+    public Set<Group> getGroupsFrom(String username) {
+        Set<Group> groups = new HashSet<>();
+        chats.values().forEach(chat -> {
+            if (chat instanceof Group && chat.contains(username)) {
+                groups.add((Group) chat);
+            }
+        });
+
+        return groups;
     }
 
     @Override

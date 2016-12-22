@@ -3,7 +3,7 @@ package de.chat2u.cucumber.selenium;
 import de.chat2u.ChatServer;
 import de.chat2u.Server;
 import de.chat2u.persistence.users.DataBase;
-import de.chat2u.model.users.User;
+import de.chat2u.model.User;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
