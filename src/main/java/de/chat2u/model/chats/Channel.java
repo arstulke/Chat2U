@@ -35,8 +35,4 @@ public class Channel extends Chat {
         return super.name.hashCode();
     }
 
-    public void removeUser(String username) {
-        super.userList.remove(ChatServer.userDataBase.getByUsername(username));
-        ChatServer.chats.removeUserFromChat(this.getId(), username);
-    }
 }

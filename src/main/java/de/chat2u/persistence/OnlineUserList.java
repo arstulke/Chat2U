@@ -22,7 +22,7 @@ public class OnlineUserList implements Iterable<User> {
      *
      * @param username ist der Username des zu entfernende Benutzers
      */
-    public synchronized void removeUser(String username) {
+    public void removeUser(String username) {
         if (username != null && users.containsKey(username)) {
             users.remove(username);
         }
@@ -42,7 +42,7 @@ public class OnlineUserList implements Iterable<User> {
      *
      * @return alle Benutzername der Liste
      */
-    public synchronized Set<String> getUsernameList() {
+    public Set<String> getUsernameList() {
         return users.keySet();
     }
 

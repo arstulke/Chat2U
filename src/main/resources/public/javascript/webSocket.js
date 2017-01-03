@@ -74,6 +74,8 @@ function connect(firstMessage) {
                     doc.input.chatMessage().focus();
 
                     doc.div.chatContainer().html("");
+                    doc.ul_channelList().html("");
+                    doc.ul_groupList().html('<li><div class="name"><a href="javascript:void(0)" onclick="popup.openCreateGroupBox()" id="addGroup"><span class="badge">+</span><b>  Füge eine Gruppe hinzu</b></a></div></li>');
                 } else if(msg.primeData === false || msg.primeData === "occupied") {
                     popup.openLoginAlert("loginAlert", msg.secondData);
                 }

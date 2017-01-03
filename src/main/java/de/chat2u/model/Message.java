@@ -1,6 +1,5 @@
 package de.chat2u.model;
 
-import com.sun.istack.internal.NotNull;
 import de.chat2u.utils.MessageBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -52,12 +52,9 @@ public class GroupSteps {
     @Dann("^verschwindet das Fenster bei \"([^\"]*)\" zum Erstellen einer Gruppe$")
     public void verschwindetDasFensterBeiZumErstellenEinerGruppe(String username) throws Throwable {
         WebDriverWait wait = new WebDriverWait(client.get(username), 10);
-        wait.until(new Function<WebDriver, Boolean>() {
-            @Override
-            public Boolean apply(WebDriver input) {
-                WebElement element = client.get(username).findElement(By.id("popup"));
-                return element.getCssValue("visibility").equals("hidden");
-            }
+        wait.until((Function<WebDriver, Boolean>) input -> {
+            WebElement element = client.get(username).findElement(By.id("popup"));
+            return element.getCssValue("visibility").equals("hidden");
         });
     }
 
