@@ -1,6 +1,8 @@
 package de.chat2u.junit;
 
+import de.chat2u.ChatServer;
 import de.chat2u.model.User;
+import de.chat2u.persistence.chats.OnlineChatContainer;
 import de.chat2u.persistence.users.DataBase;
 import de.chat2u.persistence.users.OnlineDataBase;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -24,6 +26,7 @@ public class OnlineDataBaseTest {
     @Test
     public void addsAndRemovesUser() {
         try (DataBase dataBase = new OnlineDataBase(sql2o)) {
+            ChatServer.initialize(dataBase, new OnlineChatContainer(sql2o));
             String username = RandomStringUtils.random(8, true, false);
             String password = RandomStringUtils.random(8, true, false);
 
@@ -62,7 +65,7 @@ public class OnlineDataBaseTest {
             String username = "TestUser3";
 
             boolean contains = dataBase.contains(username);
-            Assert.assertTrue("User is not conatained in database", contains);
+            Assert.assertTrue("User is not contained in database", contains);
         } catch (Exception e) {
             e.printStackTrace();
         }

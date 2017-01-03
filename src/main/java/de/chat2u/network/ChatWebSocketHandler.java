@@ -133,10 +133,8 @@ public class ChatWebSocketHandler {
                 }
 
                 if (users.contains(user)) {
-                    synchronized (this) {
-                        String chatID = ChatServer.createGroup((String) params.get("chatName"), users);
-                        if (chatID != null) ChatServer.inviteUserToChat(chatID);
-                    }
+                    String chatID = ChatServer.createGroup((String) params.get("chatName"), users);
+                    if (chatID != null) ChatServer.inviteUserToChat(chatID);
                 } else {
                     JSONObject msg = MessageBuilder.buildMessage("other", "blocked", "Du bist nicht in dem Chat enthalten.");
                     ChatServer.sendMessageToSession(msg, webSocketSession);

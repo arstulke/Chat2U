@@ -19,7 +19,7 @@ public class OfflineDataBase implements DataBase {
      * <p>
      *
      * @param user     ist der hinzu zufügende User.
-     * @param password
+     * @param password ist das Passwort des neuen Users
      */
     public void addUser(User user, String password) {
         users.put(user.getUsername(), user);

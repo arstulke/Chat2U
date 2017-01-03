@@ -18,14 +18,10 @@ public class OnlineDataBase implements DataBase, AutoCloseable {
     private final ResultSetHandler<User> userResultSetHandler = resultSet -> {
         String user = resultSet.getString("name");
         return new User(user);
-    };;
+    };
 
     public OnlineDataBase(Sql2o sql) {
         connection = sql.open();
-    }
-
-    OnlineDataBase(Connection connection) {
-        this.connection = connection;
     }
 
     @Override

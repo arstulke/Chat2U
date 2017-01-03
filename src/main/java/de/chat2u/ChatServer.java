@@ -41,9 +41,9 @@ public class ChatServer {
      * Initialiesiert die Inneren statischen Objekte
      * <p>
      *
-     * @param userRepository ist der AuthentifizierungsService, welcher alle
+     * @param userRepository ist der Authentifizierungs-Service, welcher alle
      *                       registrierten User und Berechtigungsschlüssel enthält
-     * @param chatContainer
+     * @param chatContainer ist der Service, der alle Chats verwaltet
      */
     public static void initialize(DataBase userRepository, ChatContainer chatContainer) {
         ChatServer.userDataBase = userRepository;
@@ -114,8 +114,7 @@ public class ChatServer {
                                     b("Server"),
                                     p().withText("Sage ").with(b("Sí")).withText(" zu deinen Freunden! Danke, dass du mal wieder reinschaust.")
                             ).render();
-                            JSONObject primeData = null;
-                            primeData = new JSONObject().put("chatID", ChatServer.LobbyID).put("message", textMessage);
+                            JSONObject primeData = new JSONObject().put("chatID", ChatServer.LobbyID).put("message", textMessage);
                             JSONObject message = buildMessage("textMessage", primeData, MessageBuilder.getUserList());
                             sendMessageToSession(message, userSession);
 

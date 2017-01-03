@@ -30,7 +30,7 @@ public class Chat implements Iterable<User> {
             name="chat_user",
             joinColumns=@JoinColumn(name="chat_id", referencedColumnName="id"),
             inverseJoinColumns=@JoinColumn(name="username", referencedColumnName="name"))
-    Set<User> userList;
+    private Set<User> userList;
 
     @Column(name = "name")
     String name;

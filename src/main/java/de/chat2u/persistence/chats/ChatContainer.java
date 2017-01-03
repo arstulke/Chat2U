@@ -7,7 +7,6 @@ import de.chat2u.model.chats.Channel;
 import de.chat2u.model.chats.Chat;
 import de.chat2u.model.chats.Group;
 
-import java.util.List;
 import java.util.Set;
 
 /**
