@@ -17,11 +17,17 @@ function connect(firstMessage) {
                 doc.ul_userList().html("");
                 doc.ul_groupUsers().html("");
                 msg.secondData.forEach(function(user) {
+                    //für zum oberen Suchen hinzu
                     var userListItem = '<li id="user_' + user.id + '" class="media" style="display: block"> <i class="fa fa-user fa-4x pull-left"></i><div class="news-item-info"><div class="name" username="' + user.name + '"><a href="#">' + user.name + '</a></div><div class="position"> </div><div class="time">Last logged-in: Mar 12, 19:02</div></div></li>'
                     doc.ul_userList().html(doc.ul_userList().html() + userListItem);
+                    //füg zur linken Liste hinzu
+                    var userListItem = '<li id="user_' + user.id + '" class="media" style="color:#adacac; cursor:pointer;">' + user.name + '</li>'
+                    doc.ul_onlineUserList().html(doc.ul_onlineUserList().html() + userListItem);
+
                     if (myUsername !== user.name) {
                         $("#user_" + user.id).attr("onclick", 'popup.openCreateGroupBox(["' + user.name + '"])');
 
+                        //füg zu GruppenListe hinzu
                         var groupUserItem = '<li><input type="checkbox" value="' + user.name + '"/> ' + user.name + ' </li>';
                         doc.ul_groupUsers().html(doc.ul_groupUsers().html() + groupUserItem);
                     }
