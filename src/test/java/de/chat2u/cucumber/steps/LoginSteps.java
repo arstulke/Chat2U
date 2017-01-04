@@ -4,9 +4,10 @@ import cucumber.api.java.de.Dann;
 import cucumber.api.java.de.Gegebensei;
 import cucumber.api.java.de.Wenn;
 import de.chat2u.ChatServer;
-import de.chat2u.authentication.AuthenticationService;
-import de.chat2u.authentication.UserRepository;
-import de.chat2u.model.users.AuthenticationUser;
+import de.chat2u.cucumber.selenium.OfflineChatContainer;
+import de.chat2u.persistence.users.DataBase;
+import de.chat2u.cucumber.selenium.OfflineDataBase;
+import de.chat2u.model.User;
 import org.junit.Assert;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -22,9 +23,9 @@ public class LoginSteps {
 
     @Gegebensei("^der registrierte Teilnehmer \"([^\"]*)\" mit dem Passwort \"([^\"]*)\".$")
     public void derRegistrierteTeilnehmerMitDemPasswort(String username, String password) throws Throwable {
-        UserRepository<AuthenticationUser> userRepository = new UserRepository<>();
-        userRepository.addUser(new AuthenticationUser(username, password));
-        ChatServer.initialize(new AuthenticationService(userRepository));
+        DataBase userRepository = new OfflineDataBase();
+        userRepository.addUser(new User(username), password);
+        ChatServer.initialize(userRepository, new OfflineChatContainer());
     }
 
     @Wenn("^ich mich als Teilnehmer \"([^\"]*)\" mit dem Passwort \"([^\"]*)\" anmelde,$")

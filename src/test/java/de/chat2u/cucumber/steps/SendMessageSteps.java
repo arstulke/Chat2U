@@ -4,12 +4,13 @@ import cucumber.api.java.de.Dann;
 import cucumber.api.java.de.Gegebensei;
 import cucumber.api.java.de.Wenn;
 import de.chat2u.ChatServer;
-import de.chat2u.authentication.AuthenticationService;
-import de.chat2u.authentication.UserRepository;
+import de.chat2u.cucumber.selenium.OfflineChatContainer;
+import de.chat2u.persistence.users.DataBase;
+import de.chat2u.cucumber.selenium.OfflineDataBase;
 import de.chat2u.cucumber.selenium.TestServer;
-import de.chat2u.model.chats.Group;
-import de.chat2u.model.users.AuthenticationUser;
 import de.chat2u.model.Message;
+import de.chat2u.model.chats.Group;
+import de.chat2u.model.User;
 import de.chat2u.utils.MessageBuilder;
 
 import java.util.List;
@@ -26,11 +27,11 @@ public class SendMessageSteps {
 
     @Gegebensei("^ein Chat mit den Teilnehmern \"([^\"]*)\" und \"([^\"]*)\"$")
     public void einChatMitDenTeilnehmernUnd(String user1, String user2) throws Throwable {
-        UserRepository<AuthenticationUser> userRepository = new UserRepository<>();
+        DataBase userRepository = new OfflineDataBase();
         String password = "Test123";
-        userRepository.addUser(new AuthenticationUser(user1, password));
-        userRepository.addUser(new AuthenticationUser(user2, password));
-        ChatServer.initialize(new AuthenticationService(userRepository));
+        userRepository.addUser(new User(user1), password);
+        userRepository.addUser(new User(user2), password);
+        ChatServer.initialize(userRepository, new OfflineChatContainer());
         ChatServer.login(user1, password, TestServer.getMockSession());
         ChatServer.login(user2, password, TestServer.getMockSession());
     }

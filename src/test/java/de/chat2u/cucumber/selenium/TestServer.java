@@ -2,14 +2,12 @@ package de.chat2u.cucumber.selenium;
 
 import de.chat2u.ChatServer;
 import de.chat2u.Server;
-import de.chat2u.authentication.AuthenticationService;
-import de.chat2u.authentication.UserRepository;
-import de.chat2u.model.users.AuthenticationUser;
+import de.chat2u.persistence.users.DataBase;
+import de.chat2u.model.User;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +21,7 @@ import static org.mockito.Mockito.when;
  */
 public class TestServer {
 
-    private final AuthenticationService authenticationService = new AuthenticationService(new UserRepository<>());
+    private final DataBase dataBase = new OfflineDataBase();
 
     public static void main(String[] args) {
         new TestServer();
@@ -31,11 +29,11 @@ public class TestServer {
 
     private TestServer() {
         HashMap<String, String> userData = generateUserData();
-        userData.forEach((username, pw) -> authenticationService.addUser(new AuthenticationUser(username, pw)));
-        authenticationService.addUser(new AuthenticationUser("Arne", "Test123"));
-        authenticationService.addUser(new AuthenticationUser("Kito", "Test123"));
+        userData.forEach((username, pw) -> dataBase.addUser(new User(username), pw));
+        dataBase.addUser(new User("Arne"), "Test123");
+        dataBase.addUser(new User("Kito"), "Test123");
 
-        ChatServer.initialize(authenticationService);
+        ChatServer.initialize(dataBase, new OfflineChatContainer());
 
         userData.forEach((username, pw) -> ChatServer.login(username, pw, getMockSession()));
 

@@ -1,0 +1,16 @@
+C:\Users\arstulke\Desktop\Projects\Chat2U\src\main\java\de\chat2u\model\chats\Chat.java
+C:\Users\arstulke\Desktop\Projects\Chat2U\src\main\java\de\chat2u\persistence\chats\JPAChatContainer.java
+C:\Users\arstulke\Desktop\Projects\Chat2U\src\main\java\de\chat2u\ChatServer.java
+C:\Users\arstulke\Desktop\Projects\Chat2U\src\main\java\de\chat2u\persistence\OnlineUserList.java
+C:\Users\arstulke\Desktop\Projects\Chat2U\src\main\java\de\chat2u\network\ChatWebSocketHandler.java
+C:\Users\arstulke\Desktop\Projects\Chat2U\src\main\java\de\chat2u\persistence\chats\OnlineChatContainer.java
+C:\Users\arstulke\Desktop\Projects\Chat2U\src\main\java\de\chat2u\model\Message.java
+C:\Users\arstulke\Desktop\Projects\Chat2U\src\main\java\de\chat2u\Server.java
+C:\Users\arstulke\Desktop\Projects\Chat2U\src\main\java\de\chat2u\model\chats\Channel.java
+C:\Users\arstulke\Desktop\Projects\Chat2U\src\main\java\de\chat2u\persistence\users\JPADataBase.java
+C:\Users\arstulke\Desktop\Projects\Chat2U\src\main\java\de\chat2u\persistence\users\DataBase.java
+C:\Users\arstulke\Desktop\Projects\Chat2U\src\main\java\de\chat2u\persistence\users\OnlineDataBase.java
+C:\Users\arstulke\Desktop\Projects\Chat2U\src\main\java\de\chat2u\model\chats\Group.java
+C:\Users\arstulke\Desktop\Projects\Chat2U\src\main\java\de\chat2u\model\User.java
+C:\Users\arstulke\Desktop\Projects\Chat2U\src\main\java\de\chat2u\persistence\chats\ChatContainer.java
+C:\Users\arstulke\Desktop\Projects\Chat2U\src\main\java\de\chat2u\utils\MessageBuilder.java

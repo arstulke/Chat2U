@@ -17,7 +17,7 @@ import static org.junit.Assert.assertThat;
 public class MessageBuilderTest {
 
     @Test
-    public void buildsTextmessage() {
+    public void buildsTextMessage() {
         //given
         String msg = "Hallo, wie geht es dir ?";
         String sender = "User1";
@@ -27,7 +27,7 @@ public class MessageBuilderTest {
         String builtMessage = MessageBuilder.buildTextMessage(new Message(sender, msg, ChatServer.LobbyID)).toString();
 
         //then
-        String expectedMessage = "{\"secondData\":[],\"type\":\"textMessage\",\"primeData\":{\"chatID\":\"" + ChatServer.LobbyID + "\",\"message\":\"<article><b>User1<\\/b> Hallo, wie geht es dir ?<p><small class=\\\"text-muted\\\">" + MessageBuilder.getTimestamp(date) + "<\\/small><\\/p><\\/article>\"}}";
+        String expectedMessage = "{\"secondData\":[],\"type\":\"textMessage\",\"primeData\":{\"chatID\":\"73591734\",\"message\":\"<article><b>User1<\\/b> Hallo, wie geht es dir ?<p><small class=\\\"text-muted\\\">" + MessageBuilder.getTimestamp(date) + "<\\/small><\\/p><\\/article>\"}}";
         assertThat(builtMessage, is(expectedMessage));
     }
 }

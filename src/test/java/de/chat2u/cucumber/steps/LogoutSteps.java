@@ -4,9 +4,10 @@ import cucumber.api.java.de.Dann;
 import cucumber.api.java.de.Gegebensei;
 import cucumber.api.java.de.Wenn;
 import de.chat2u.ChatServer;
-import de.chat2u.authentication.AuthenticationService;
-import de.chat2u.authentication.UserRepository;
-import de.chat2u.model.users.AuthenticationUser;
+import de.chat2u.cucumber.selenium.OfflineChatContainer;
+import de.chat2u.persistence.users.DataBase;
+import de.chat2u.cucumber.selenium.OfflineDataBase;
+import de.chat2u.model.User;
 import org.junit.Assert;
 
 /**
@@ -17,9 +18,9 @@ public class LogoutSteps {
 
     @Gegebensei("^der angemeldete Teilnehmer \"([^\"]*)\" mit dem Passwort \"([^\"]*)\".$")
     public void derAngemeldeteTeilnehmerMitDemPasswort(String username, String password) throws Throwable {
-        UserRepository<AuthenticationUser> userRepository = new UserRepository<>();
-        userRepository.addUser(new AuthenticationUser(username, password));
-        ChatServer.initialize(new AuthenticationService(userRepository));
+        DataBase userRepository = new OfflineDataBase();
+        userRepository.addUser(new User(username), password);
+        ChatServer.initialize(userRepository, new OfflineChatContainer());
 
         ChatServer.login(username, password, null);
     }
