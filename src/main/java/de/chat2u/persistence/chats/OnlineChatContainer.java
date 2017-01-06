@@ -74,13 +74,13 @@ public class OnlineChatContainer implements ChatContainer {
 
     @Override
     public String createGroup(String name, Set<User> users) {
-        Set<String> userList = users.stream()
+        Set<String> usernameList = users.stream()
                 .collect(
                         HashSet::new,
                         (strings, user) -> strings.add(user.getUsername()),
                         (BiConsumer<Set<String>, Set<String>>) Set::addAll);
 
-        Group groupChat = new Group(name, userList);
+        Group groupChat = new Group(name, usernameList);
         if (insertChat(groupChat))
             return groupChat.getId();
         else
@@ -189,7 +189,7 @@ public class OnlineChatContainer implements ChatContainer {
 
 
     @Override
-    public Set<Group> getGroupsFrom(String username) {
+    public Set<Group> getGroupsFromUsername(String username) {
         String query = "SELECT `chat`.`name`, `chat`.`id` " +
                 "FROM `user` " +
                 "JOIN `chat_user` " +

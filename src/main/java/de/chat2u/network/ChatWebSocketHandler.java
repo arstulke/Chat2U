@@ -12,6 +12,7 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.MDC;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -43,7 +44,7 @@ public class ChatWebSocketHandler {
      * @param reason ist ein Grund
      */
     @OnWebSocketClose
-    public void onDisconnect(Session webSocketSession, int statusCode, String reason) {
+    public void onDisconnect(Session webSocketSession, int statusCode, String reason) throws JSONException {
         String username = ChatServer.getUsernameBySession(webSocketSession);
         ChatServer.logout(username);
     }
@@ -54,7 +55,14 @@ public class ChatWebSocketHandler {
     @OnWebSocketMessage
     public void onMessage(Session webSocketSession, String message) {
         try {
-            handleCommandFromClient(webSocketSession, new JSONObject(message));
+            if (message.startsWith("[")) {
+                JSONArray arr = new JSONArray(message);
+                for (int i = 0; i < arr.length(); i++) {
+                    handleCommandFromClient(webSocketSession, arr.getJSONObject(i));
+                }
+            } else {
+                handleCommandFromClient(webSocketSession, new JSONObject(message));
+            }
         } catch (JSONException e) {
             if (!message.equals("."))
                 LOGGER.debug(String.format("Fehler beim Verarbeiten der Nachricht(%s): %s", message.replaceAll("\n", ""), e.getMessage()));
@@ -63,7 +71,7 @@ public class ChatWebSocketHandler {
 
             String stackTrace = Arrays.toString(e.getStackTrace()).replace("), ", ")\n\t[" + Thread.currentThread().getName() + "] ");
             stackTrace = stackTrace.substring(1, stackTrace.length() - 1);
-            LOGGER.debug(message + ": \n\t[" + Thread.currentThread().getName() + "] " + stackTrace);
+            LOGGER.error(message + ": \n\t[" + Thread.currentThread().getName() + "] " + stackTrace);
         }
     }
 
@@ -77,37 +85,41 @@ public class ChatWebSocketHandler {
      * <p>- Nachrichten senden
      * <p>
      *
-     * @param webSocketSession ist die Session des Clients
+     * @param session ist die Session des Clients
      * @param messageObject    ist die Nachricht des Clients im JSOn Format
      * @throws JSONException wenn die Nachricht kein JSON ist oder ein falsches Format hat
      * @throws IOException   wenn keine Nachricht zurück an den Client gesenet werden kann.
      */
-    private void handleCommandFromClient(Session webSocketSession, JSONObject messageObject) throws IOException, JSONException {
+    private void handleCommandFromClient(Session session, JSONObject messageObject) throws IOException, JSONException {
         JSONObject params = (JSONObject) messageObject.get("params");
         String cmd = (String) messageObject.get("cmd");
 
         User user = null;
-        if (!cmd.equals("register") && !cmd.equals("login"))
-            user = ChatServer.userDataBase.getByUsername(ChatServer.getUsernameBySession(webSocketSession));
+        if (!cmd.equals("register") && !cmd.equals("login")) {
+            String username = ChatServer.getUsernameBySession(session);
+            user = ChatServer.userDataBase.getByUsername(username);
+        }
 
         switch (cmd) {
             case "register": {
                 JSONObject msg = ChatServer.register((String) params.get("username"), (String) params.get("passwort"));
-                ChatServer.sendMessageToSession(msg, webSocketSession);
+                ChatServer.sendMessageToSession(msg, session);
                 break;
             }
             case "login": {
-                ChatServer.login((String) params.get("username"), (String) params.get("passwort"), webSocketSession);
+                ChatServer.login((String) params.get("username"), (String) params.get("passwort"), session);
                 break;
             }
             case "logout":
-                ChatServer.logout((String) params.get("username"));
+                ChatServer.logout(user.getUsername());
+                session.getRemote().sendString("Goodbye " + user.getUsername());
                 break;
             case "sendMessage":
                 if (chats.getChatByID(params.getString("chatID")).contains(user.getUsername())) {
                     String sender = user.getUsername();
                     String message = params.getString("message");
                     if (message.trim().length() > 0) {
+                        LOGGER.info(user.getUsername() + " send the text message:(" + message + ")");
                         ChatServer.sendTextMessageToChat(sender, message, params.getString("chatID"));
                     }
                 }
@@ -137,7 +149,7 @@ public class ChatWebSocketHandler {
                     if (chatID != null) ChatServer.inviteUserToChat(chatID);
                 } else {
                     JSONObject msg = MessageBuilder.buildMessage("other", "blocked", "Du bist nicht in dem Chat enthalten.");
-                    ChatServer.sendMessageToSession(msg, webSocketSession);
+                    ChatServer.sendMessageToSession(msg, session);
                 }
                 break;
         }

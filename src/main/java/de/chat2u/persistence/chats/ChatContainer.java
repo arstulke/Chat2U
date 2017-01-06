@@ -31,5 +31,5 @@ public interface ChatContainer extends AutoCloseable {
 
     void addMessageToHistory(Message message);
 
-    Set<Group> getGroupsFrom(String username);
+    Set<Group> getGroupsFromUsername(String username);
 }

@@ -53,7 +53,7 @@ public class OnlineDataBase implements DataBase, AutoCloseable {
                 .addParameter("username", user.getUsername())
                 .executeUpdate();
 
-        ChatServer.chats.getGroupsFrom(user.getUsername()).forEach(group -> {
+        ChatServer.chats.getGroupsFromUsername(user.getUsername()).forEach(group -> {
             String secQuery = "INSERT INTO `chat_user` (`chat_id`, `username`) VALUES (:chatID, :username);";
             connection.createQuery(secQuery)
                     .addParameter("chatID", group.getId())

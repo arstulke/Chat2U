@@ -5,6 +5,12 @@ import de.chat2u.persistence.chats.ChatContainer;
 import de.chat2u.persistence.chats.JPAChatContainer;
 import de.chat2u.persistence.users.DataBase;
 import de.chat2u.persistence.users.JPADataBase;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import spark.Spark;
 
 /**
@@ -13,6 +19,12 @@ import spark.Spark;
  */
 public class Server {
     public static void main(String[] args) {
+        /*LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        Configuration config = ctx.getConfiguration();
+        LoggerConfig loggerConfig = config.getLoggerConfig(LogManager.ROOT_LOGGER_NAME);
+        loggerConfig.setLevel(Level.INFO);
+        ctx.updateLoggers();*/
+
         initialize();
         start();
     }

@@ -33,7 +33,7 @@ public class OnlineUserList implements Iterable<User> {
             if (entry.getValue().equals(webSocketSession))
                 return entry.getKey();
         }
-        return null;
+        throw new IllegalStateException("Session unbekannt\n" + users + "\n{user1=" + webSocketSession + "\n\n\n");
     }
 
     /**
