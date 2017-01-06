@@ -31,16 +31,6 @@ $(document).ready(function() {
         doc.input.loginPassword().focus();
     }
 
-    doc.div.onlineUserList().click(animateOnlineList);
-    function animateOnlineList() {
-        if(doc.ul_onlineUserList().css("display") === "none"){
-            doc.ul_onlineUserList().slideDown();
-        }else{
-
-            doc.ul_onlineUserList().slideUp();
-        }
-    }
-
     doc.div.registerPanelHead().click(handleClick);
     doc.div.loginPanelHead().click(handleClick);
     function handleClick() {

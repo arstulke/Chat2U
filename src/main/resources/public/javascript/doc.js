@@ -10,8 +10,6 @@ var doc = {
         chatContainer: function(){ return $("#chatContainer"); },
         tabContainer: function(){ return $("#tabContainer"); },
 		searchUser: function(){ return $("#userList"); },
-		onlineUserListBox: function(){ return $("#onlineUserListBox"); },
-		onlineUserList: function(){ return $("#onlineUserList"); },
     },
 
     input: {
@@ -35,7 +33,6 @@ var doc = {
 
     alert_createGroupBox: function(){ return $("#createGroupBoxAlert"); },
     ul_userList: function(){ return $("#ul_userList"); },
-    ul_onlineUserList:function(){ return $("#ul_onlineUserList"); },
     ul_groupUsers: function(){ return $("#groupUsers"); },
     ul_channelList: function(){ return $("#channelList"); },
     ul_groupList: function(){ return $("#groupList"); },
