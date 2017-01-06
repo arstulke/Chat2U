@@ -78,7 +78,7 @@ public class OfflineChatContainer implements ChatContainer {
     }
 
     @Override
-    public Set<Group> getGroupsFrom(String username) {
+    public Set<Group> getGroupsFromUsername(String username) {
         Set<Group> groups = new HashSet<>();
         chats.values().forEach(chat -> {
             if (chat instanceof Group && chat.contains(username)) {

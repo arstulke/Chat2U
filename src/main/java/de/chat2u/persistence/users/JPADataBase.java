@@ -3,6 +3,8 @@ package de.chat2u.persistence.users;
 import de.chat2u.model.User;
 import de.chat2u.persistence.chats.JPAChatContainer;
 
+import java.util.List;
+
 /**
  * Created JPADataBase in de.chat2u.persistence.users
  * by ARSTULKE on 19.12.2016.
@@ -13,16 +15,20 @@ public class JPADataBase implements DataBase {
         return ((JPAChatContainer.PersistentOperation<User>) entityManager -> {
             User user = entityManager.find(User.class, username);
             if (user == null) {
-                entityManager.persist(new User(username));
-                entityManager
-                        .createNativeQuery("UPDATE `user` SET `password` = :password WHERE `user`.`name` = :username ;")
+                return null;
+            } else {
+                List result = entityManager
+                        .createNativeQuery("SELECT * FROM `user` WHERE `password` = :password AND `name` = :username ;")
                         .setParameter("password", password)
-                        .setParameter("username", username)
-                        .executeUpdate();
+                        .setParameter("username", username).getResultList();
 
-                user = entityManager.find(User.class, username);
+                if (result.size() > 1) {
+                    throw new AssertionError("Datenbankfehler: authenticate - mit der Anfrage: "+username+" "+password);
+                } else if (result.size() < 1) {
+                    return null;
+                }
+                return user;
             }
-            return user;
         }).execute();
     }
 

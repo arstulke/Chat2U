@@ -17,7 +17,7 @@ public class Message implements Comparable<Message> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private Long id;
 
     @Column(name = "sender")
     private String sender;

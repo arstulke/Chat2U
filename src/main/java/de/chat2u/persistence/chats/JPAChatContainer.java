@@ -79,7 +79,7 @@ public class JPAChatContainer implements ChatContainer {
     }
 
     @Override
-    public Set<Group> getGroupsFrom(String username) {
+    public Set<Group> getGroupsFromUsername(String username) {
         return ((PersistentOperation<Set<Group>>) entityManager -> {
             User u = entityManager.find(User.class, username);
             if (u != null) {

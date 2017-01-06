@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+Message Timeinterval (ms):<br>
+<input id="command_interval" value="100"><br><br>
+Repetitions:<br>
+<input id="command_runs" value="1"><br><br>
+Threads:<br>
+<input id="command_threads" value="1"><br><br>
+Commands (split by new Line):<br>
+<textarea id="commands" placeholder="Type Commands here ..." rows="10" cols="150">{"cmd":"login","params": {"username":"user${thread}","passwort":"password"}}
+{"cmd":"sendMessage","params":{"message":"Hallo","chatID":"73591734"}}
+{"cmd":"logout","params":{}}</textarea>
+<button onclick="start()">Start</button>
+</body>
+<script>
+    function start() {
+        var commands = document.getElementById("commands").value.split("\n");
+        var threads = document.getElementById("command_threads").value;
+        var runs = document.getElementById("command_runs").value;
+        var command_interval = document.getElementById("command_interval").value;
+
+        startRun(0, commands, runs, threads, command_interval);
+    }
+
+    function startRun(index, commands, runs, threads, command_interval) {
+        var results = [];
+        for(var i = 1; i <= threads; i++) {
+            var worker;
+            worker = new Worker('send.js');
+            worker.postMessage({
+                interval: command_interval,
+                commands: commands,
+                hostname: document.location.hostname,
+                thread: i,
+                run: index
+            });
+            worker.addEventListener("message", function(msg) {
+                var data = msg.data;
+                results[results.length] = data.thread;
+                console.log("INFO Websocket[" + index + "." + data.thread + "] finished " + data.msg + (data.messages.length > 0 ? "\nmessages[\n\t" + data.messages.join("\n\t") + "\n]" : " (no messages received)"));
+
+                if(results.length == threads && index < runs - 1) {
+                    startRun(index + 1, commands, runs, threads, command_interval);
+                }
+
+                worker.terminate();
+            });
+        }
+    }
+</script>
+</html>

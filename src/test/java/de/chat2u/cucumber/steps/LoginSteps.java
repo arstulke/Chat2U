@@ -8,6 +8,7 @@ import de.chat2u.cucumber.selenium.OfflineChatContainer;
 import de.chat2u.persistence.users.DataBase;
 import de.chat2u.cucumber.selenium.OfflineDataBase;
 import de.chat2u.model.User;
+import org.json.JSONObject;
 import org.junit.Assert;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -19,7 +20,7 @@ import static org.junit.Assert.assertThat;
  * by ARSTULKE on 15.11.2016.
  */
 public class LoginSteps {
-    private String response;
+    private JSONObject response;
 
     @Gegebensei("^der registrierte Teilnehmer \"([^\"]*)\" mit dem Passwort \"([^\"]*)\".$")
     public void derRegistrierteTeilnehmerMitDemPasswort(String username, String password) throws Throwable {
@@ -41,6 +42,6 @@ public class LoginSteps {
 
     @Dann("^die Nachricht \"([^\"]*)\" erscheint.$")
     public void dieNachrichtErscheint(String message) throws Throwable {
-        Assert.assertThat(response, is("{\"secondData\":\"" + message + "\",\"type\":\"statusLogin\",\"primeData\":false}"));
+        Assert.assertThat(response.toString(), is("{\"secondData\":\"" + message + "\",\"type\":\"statusLogin\",\"primeData\":false}"));
     }
 }

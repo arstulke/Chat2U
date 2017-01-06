@@ -43,7 +43,7 @@ public class ChatServer {
      *
      * @param userRepository ist der Authentifizierungs-Service, welcher alle
      *                       registrierten User und Berechtigungsschlüssel enthält
-     * @param chatContainer ist der Service, der alle Chats verwaltet
+     * @param chatContainer  ist der Service, der alle Chats verwaltet
      */
     public static void initialize(DataBase userRepository, ChatContainer chatContainer) {
         ChatServer.userDataBase = userRepository;
@@ -80,6 +80,8 @@ public class ChatServer {
         if (userDataBase.contains(username))
             return buildMessage("statusRegister", false, "Benutzername bereits vergeben.");
         userDataBase.addUser(new User(username), password);
+
+        LOGGER.info(username + " registered successfully");
         return buildMessage("statusRegister", true, null);
     }
 
@@ -93,7 +95,7 @@ public class ChatServer {
      * @param userSession ist die Session des Users zum abspeichern
      * @return die Antwort der Datenbank über erfolg ("Gültige Zugangsdaten")
      */
-    public static String login(String username, String password, Session userSession) {
+    public static JSONObject login(String username, String password, Session userSession) {
         checksIllegalState();
 
         JSONObject msg;
@@ -102,6 +104,7 @@ public class ChatServer {
             if (user != null) {
                 onlineUsers.addUser(username, userSession);
                 msg = buildMessage("statusLogin", true, null);
+                LOGGER.info(username + " logged in successfully");
                 sendMessageToSession(msg, userSession);
 
                 chats.getChannels().forEach(channel -> {
@@ -126,7 +129,7 @@ public class ChatServer {
                     }
                 });
 
-                chats.getGroupsFrom(user.getUsername()).forEach(group -> {
+                chats.getGroupsFromUsername(user.getUsername()).forEach(group -> {
                     //sendOpenChatCommand
                     sendOpenChatCommand(user, group);
                     group.getHistory().forEach(message -> {
@@ -140,7 +143,7 @@ public class ChatServer {
                     chats.addMessageToHistory(messageObject);
                 });
 
-                return msg.toString();
+                return msg;
             } else {
                 msg = buildMessage("statusLogin", false, "Ungültige Zugangsdaten.");
             }
@@ -149,7 +152,7 @@ public class ChatServer {
         }
 
         sendMessageToSession(msg, userSession);
-        return msg.toString();
+        return msg;
     }
 
     /**
@@ -158,17 +161,20 @@ public class ChatServer {
      *
      * @param username ist der eindeutige username des Benutzers.
      */
-    public static void logout(String username) {
-        onlineUsers.removeUser(username);
+    public static void logout(String username) throws JSONException {
+        if (username != null) {
+            onlineUsers.removeUser(username);
 
-        chats.getGroupsFrom(username).forEach(group -> {
-            if (group != null)
-                sendTextMessageToChat("Server", username + " goes offline.", group.getId());
-        });
+            chats.getGroupsFromUsername(username).forEach(group -> {
+                if (group != null)
+                    sendTextMessageToChat("Server", username + " goes offline.", group.getId());
+            });
 
-        chats.getChannels().forEach(channel -> chats.removeUserFromChat(channel.getId(), username));//channel.removeUser(user.getUsername()));
+            chats.getChannels().forEach(channel -> chats.removeUserFromChat(channel.getId(), username));//channel.removeUser(user.getUsername()));
 
-        sendTextMessageToChat("Server:", username + " left the Server", LobbyID);
+            LOGGER.info(username + " logged out");
+            sendTextMessageToChat("Server:", username + " left the Server", LobbyID);
+        }
     }
 
     private static void sendMessageToChat(JSONObject json, Chat chat) {
@@ -179,7 +185,11 @@ public class ChatServer {
 
     //region SendMessageTo
     private static void sendMessageToUser(JSONObject msg, User user) {
-        sendMessageToSession(msg, onlineUsers.getSessionByName(user.getUsername()));
+        try {
+            sendMessageToSession(msg, onlineUsers.getSessionByName(user.getUsername()));
+        } catch (IllegalStateException e) {
+            LOGGER.warn("Die Nachricht" + msg.toString() + " konnte nicht an " + user.getUsername() + " gesendet werden.");
+        }
     }
 
     private static void sendOpenChatCommand(User user, Chat chat) {
@@ -281,8 +291,8 @@ public class ChatServer {
         }
     }
 
-    public static String getUsernameBySession(Session webSocketSession) {
-        return onlineUsers.getUsernameBySession(webSocketSession);
+    public static String getUsernameBySession(Session session) {
+        return onlineUsers.getUsernameBySession(session);
     }
 
     //endregion
